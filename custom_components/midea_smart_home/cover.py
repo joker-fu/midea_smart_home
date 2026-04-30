@@ -2,7 +2,6 @@ import logging
 from typing import Any, Optional
 
 from homeassistant.components.cover import CoverEntity, CoverEntityFeature
-from homeassistant.components.cover.const import CoverState
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
@@ -123,16 +122,16 @@ class MideaCoverEntity(MideaBaseEntity, CoverEntity):
         for devices that support pause/stop (like clothes drying racks).
         """
         if self.is_opening:
-            return CoverState.OPENING
+            return "opening"
         if self.is_closing:
-            return CoverState.CLOSING
+            return "closing"
         value = self._get_nested_value(self._entity_key)
         if value == self._stop_value:
             return "stopped"
         if self.is_closed:
-            return CoverState.CLOSED
+            return "closed"
         if self.is_closed is False:
-            return CoverState.OPEN
+            return "open"
         return None
 
     @property
