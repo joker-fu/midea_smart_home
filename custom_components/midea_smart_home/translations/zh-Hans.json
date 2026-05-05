@@ -635,6 +635,28 @@
           "resume": "继续"
         }
       },
+      "dishwasher_mode": {
+        "name": "洗涤模式",
+        "state": {
+          "auto_wash": "智能洗",
+          "eco_wash": "节能洗",
+          "fast_wash": "快速洗",
+          "fruit_wash": "瓜果洗",
+          "gentle_wash": "轻柔洗",
+          "germ": "除菌洗",
+          "hotpot_wash": "火锅洗",
+          "less_wash": "少量洗",
+          "oilnet_wash": "油网洗",
+          "pre_rinse": "预冲洗",
+          "quietnight_wash": "静音洗",
+          "seafood_wash": "海鲜洗",
+          "self_clean": "自清洁",
+          "single_disinfect": "单消毒",
+          "standard_wash": "标准洗",
+          "storage": "抑菌存储",
+          "strong_wash": "超强洗"
+        }
+      },
       "dryer": {
         "name": "烘干",
         "state": {
@@ -1070,7 +1092,40 @@
           "windbreaker": "风衣",
           "windcoat": "冲锋衣",
           "winter_wash": "冬季洗",
-          "wool": "羊毛"
+          "wool": "羊毛",
+          "big_dry": "大件烘",
+          "blood_stain_wash": "血渍洗",
+          "blue_oxygen_color_protect": "蓝氧护色洗",
+          "cold_air_fresh_air": "冷风清新",
+          "detergent_box_clean": "智投盒清洁",
+          "girl_underwear": "少女内衣",
+          "hot_air_dry": "热风暖衣",
+          "hot_wind_dry": "热风暖衣",
+          "jacket_care": "冲锋衣护理",
+          "mixed_dry": "混合烘",
+          "no_channeling_color": "防串色",
+          "nursing_underwear": "哺乳内衣",
+          "pet_remove_mite": "萌宠除螨",
+          "quick_dry_3kg": "3kg速烘",
+          "refresh_deodorize": "清新祛味",
+          "seasonal_refresh": "换季祛味",
+          "secretion_wash": "分泌物洗",
+          "shirt_care": "衬衫护理",
+          "socks": "袜子",
+          "socks_dry": "袜子烘",
+          "sports_underwear": "运动内衣",
+          "steam_bucket_self_clean": "蒸汽桶自洁",
+          "steam_care": "蒸汽护理",
+          "sterilize_remove_mite": "除菌除螨",
+          "sun_quilt": "晒被子",
+          "trench_coat": "风衣",
+          "trench_coat_care": "风衣护理",
+          "underpants": "内裤",
+          "underpants_dry": "内裤烘",
+          "underwear_dry": "内衣烘",
+          "white_clothes_clean": "白衣净",
+          "wool_coat": "羊毛大衣",
+          "woolen": "毛呢"
         }
       },
       "ptc": {

@@ -635,6 +635,28 @@
           "resume": "Resume"
         }
       },
+      "dishwasher_mode": {
+        "name": "Wash Mode",
+        "state": {
+          "auto_wash": "Auto Wash",
+          "eco_wash": "Eco Wash",
+          "fast_wash": "Fast Wash",
+          "fruit_wash": "Fruit Wash",
+          "gentle_wash": "Gentle Wash",
+          "germ": "Germ Wash",
+          "hotpot_wash": "Hotpot Wash",
+          "less_wash": "Less Wash",
+          "oilnet_wash": "Oil Net Wash",
+          "pre_rinse": "Pre Rinse",
+          "quietnight_wash": "Quiet Night Wash",
+          "seafood_wash": "Seafood Wash",
+          "self_clean": "Self Clean",
+          "single_disinfect": "Single Disinfect",
+          "standard_wash": "Standard Wash",
+          "storage": "Storage",
+          "strong_wash": "Strong Wash"
+        }
+      },
       "dryer": {
         "name": "Dryer",
         "state": {
@@ -1070,7 +1092,40 @@
           "windbreaker": "Windbreaker",
           "windcoat": "Windcoat",
           "winter_wash": "Winter",
-          "wool": "Wool"
+          "wool": "Wool",
+          "big_dry": "Big Dry",
+          "blood_stain_wash": "Blood Stain Wash",
+          "blue_oxygen_color_protect": "Blue Oxygen Color Protect",
+          "cold_air_fresh_air": "Cold Air Fresh",
+          "detergent_box_clean": "Detergent Box Clean",
+          "girl_underwear": "Teen Underwear",
+          "hot_air_dry": "Hot Air Dry",
+          "hot_wind_dry": "Hot Wind Dry",
+          "jacket_care": "Jacket Care",
+          "mixed_dry": "Mixed Dry",
+          "no_channeling_color": "Color Separation Protection",
+          "nursing_underwear": "Nursing Underwear",
+          "pet_remove_mite": "Pet Mite Removal",
+          "quick_dry_3kg": "3kg Quick Dry",
+          "refresh_deodorize": "Refresh & Deodorize",
+          "seasonal_refresh": "Seasonal Refresh",
+          "secretion_wash": "Secretion Wash",
+          "shirt_care": "Shirt Care",
+          "socks": "Socks",
+          "socks_dry": "Socks Dry",
+          "sports_underwear": "Sports Underwear",
+          "steam_bucket_self_clean": "Steam Bucket Self Clean",
+          "steam_care": "Steam Care",
+          "sterilize_remove_mite": "Sterilize & Mite Removal",
+          "sun_quilt": "Sun Quilt",
+          "trench_coat": "Trench Coat",
+          "trench_coat_care": "Trench Coat Care",
+          "underpants": "Underpants",
+          "underpants_dry": "Underpants Dry",
+          "underwear_dry": "Underwear Dry",
+          "white_clothes_clean": "White Clothes Clean",
+          "wool_coat": "Wool Coat",
+          "woolen": "Woolen"
         }
       },
       "ptc": {

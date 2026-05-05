@@ -1,0 +1,53 @@
+name: Daily Sync Origin → Simon
+
+on:
+  schedule:
+    - cron: '0 4 * * *'  # 每天 12:00 北京时间 (UTC+8 转换为 UTC)
+  workflow_dispatch:  # 支持手动触发
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.PAT }}
+
+      - name: Add origin remote
+        run: |
+          git remote add origin https://github.com/Cyborg2017/midea_smart_home.git
+          git fetch origin staging
+
+      - name: Merge with auto-resolve
+        run: |
+          git config user.name "GitHub Action"
+          git config user.email "action@github.com"
+          git checkout Simon/staging
+
+          # 尝试合并，但不自动 abort
+          git merge origin/staging --no-edit || {
+            echo "=== Merge conflict detected ==="
+
+            # 自动解决翻译冲突：使用 Simon 版本（theirs）
+            for f in custom_components/midea_smart_home/translations/*.json; do
+              if git ls-files -u "$f" | grep -q "^..100644"; then
+                echo "Auto-resolving translation: $f"
+                git checkout --theirs "$f"
+                git add "$f"
+              fi
+            done
+          }
+
+      - name: Check remaining conflicts
+        run: |
+          if git diff --cached --name-only --diff-filter=U | grep -q .; then
+            echo "=== Unresolved conflicts remain ==="
+            git diff --cached --name-only --diff-filter=U
+            echo "::error::Merge conflicts require manual resolution"
+            exit 1
+          fi
+
+      - name: Push
+        run: |
+          git push Simon staging --force
