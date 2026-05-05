@@ -8,46 +8,45 @@ on:
 jobs:
   sync:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          token: ${{ secrets.PAT }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Add origin remote
+      - name: Add upstream remote
         run: |
-          git remote add origin https://github.com/Cyborg2017/midea_smart_home.git
-          git fetch origin staging
+          git remote add upstream https://github.com/Cyborg2017/midea_smart_home.git
+          git fetch upstream staging
 
-      - name: Merge with auto-resolve
+      - name: Rebase with auto-resolve
         run: |
           git config user.name "GitHub Action"
           git config user.email "action@github.com"
-          git checkout Simon/staging
+          git config core.editor "true"
 
-          # 尝试合并，但不自动 abort
-          git merge origin/staging --no-edit || {
-            echo "=== Merge conflict detected ==="
+          # 尝试 rebase，但不自动 abort
+          git rebase upstream/staging || {
+            echo "=== Rebase conflict detected ==="
 
-            # 自动解决翻译冲突：使用 Simon 版本（theirs）
+            # 自动解决翻译冲突：使用 Simon 版本（ours）
             for f in custom_components/midea_smart_home/translations/*.json; do
               if git ls-files -u "$f" | grep -q "^..100644"; then
                 echo "Auto-resolving translation: $f"
-                git checkout --theirs "$f"
+                git checkout --ours "$f"
                 git add "$f"
               fi
             done
-          }
 
-      - name: Check remaining conflicts
-        run: |
-          if git diff --cached --name-only --diff-filter=U | grep -q .; then
-            echo "=== Unresolved conflicts remain ==="
-            git diff --cached --name-only --diff-filter=U
-            echo "::error::Merge conflicts require manual resolution"
-            exit 1
-          fi
+            # 继续 rebase
+            git rebase --continue || {
+              echo "::error::Rebase failed, manual intervention required"
+              exit 1
+            }
+          }
 
       - name: Push
         run: |
-          git push Simon staging --force
+          git push origin staging --force
