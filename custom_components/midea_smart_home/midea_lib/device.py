@@ -441,7 +441,7 @@ class MideaDevice:
         self._unavailable_delay = 5.0
         self._unavailable_timer: Optional[threading.Timer] = None
         self._recent_controls = {}  # {attr: (value, timestamp)}
-        self._control_timeout = 5.0
+        self._control_timeout = 60.0 if device_type == 0xE1 else 5.0
         self._control_hold = 5.0 if self._centralized else 1.0
         self._callbacks = []
         self._poll_thread: Optional[threading.Thread] = None

@@ -1,0 +1,60 @@
+name: Daily Sync Origin → Simon
+
+on:
+  schedule:
+    - cron: '0 4 * * *'  # 每天 12:00 北京时间 (UTC+8 转换为 UTC)
+  workflow_dispatch:  # 支持手动触发
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create sync tag
+        run: |
+          git config user.name "GitHub Action"
+          git config user.email "action@github.com"
+          TAG="sync-$(date +%Y%m%d-%H%M%S)"
+          git tag "$TAG"
+          echo "Created tag: $TAG"
+
+      - name: Add upstream remote
+        run: |
+          git remote add upstream https://github.com/Cyborg2017/midea_smart_home.git
+          git fetch upstream staging
+
+      - name: Rebase with auto-resolve
+        run: |
+          git config user.name "GitHub Action"
+          git config user.email "action@github.com"
+          git config core.editor "true"
+
+          # 尝试 rebase，但不自动 abort
+          git rebase upstream/staging || {
+            echo "=== Rebase conflict detected ==="
+
+            # 自动解决翻译冲突：使用 Simon 版本（ours）
+            for f in custom_components/midea_smart_home/translations/*.json; do
+              if git ls-files -u "$f" | grep -q "^..100644"; then
+                echo "Auto-resolving translation: $f"
+                git checkout --ours "$f"
+                git add "$f"
+              fi
+            done
+
+            # 继续 rebase
+            git rebase --continue || {
+              echo "::error::Rebase failed, manual intervention required"
+              exit 1
+            }
+          }
+
+      - name: Push
+        run: |
+          git push origin staging --force --tags
