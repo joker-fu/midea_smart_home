@@ -160,6 +160,9 @@
       "storage_door_state": {
         "name": "冷藏门状态"
       },
+      "water_lack": {
+        "name": "缺水"
+      },
       "water_output_switch": {
         "name": "龙头出水"
       }
@@ -314,6 +317,9 @@
       },
       "detergent": {
         "name": "洗衣液"
+      },
+      "dishwasher_storage_duration": {
+        "name": "抑菌存储"
       },
       "heating_temperature": {
         "name": "取暖温度"
@@ -532,6 +538,23 @@
           "small_cup": "小杯"
         }
       },
+      "db_dehydration_speed": {
+        "name": "脱水转速",
+        "state": {
+          "1000rpm": "1000转",
+          "800rpm": "800转",
+          "no_spin": "免脱水"
+        }
+      },
+      "db_detergent": {
+        "name": "洗衣液(智投)",
+        "state": {
+          "l1": "L1",
+          "l2": "L2",
+          "l3": "L3",
+          "off": "关闭"
+        }
+      },
       "db_dry": {
         "name": "烘干时间",
         "state": {
@@ -573,6 +596,26 @@
           "water_ssp": "深度洁筒"
         }
       },
+      "db_rinse_count": {
+        "name": "漂洗次数",
+        "state": {
+          "1_time": "1次",
+          "2_times": "2次",
+          "3_times": "3次",
+          "4_times": "4次",
+          "5_times": "5次"
+        }
+      },
+      "db_temperature": {
+        "name": "温度设定",
+        "state": {
+          "30c": "30°C",
+          "40c": "40°C",
+          "60c": "60°C",
+          "95c": "95°C",
+          "cold_water": "冷水"
+        }
+      },
       "dehydration_speed": {
         "name": "脱水转速",
         "state": {
@@ -594,6 +637,48 @@
           "l4": "L4",
           "off": "关闭",
           "smart": "智能"
+        }
+      },
+      "dishwasher_wash_region": {
+        "name": "分层洗",
+        "state": {
+          "lower": "下层",
+          "lower_zone_strong": "下层洗+专区强洗",
+          "upper": "上层",
+          "upper_lower": "上层+下层",
+          "zone_strong": "专区强洗"
+        }
+      },
+      "dishwasher_work_status_control": {
+        "name": "控制",
+        "state": {
+          "cancel": "取消",
+          "pause": "暂停",
+          "power_off": "关机",
+          "power_on": "开机",
+          "resume": "继续"
+        }
+      },
+      "dishwasher_mode": {
+        "name": "洗涤模式",
+        "state": {
+          "auto_wash": "智能洗",
+          "eco_wash": "节能洗",
+          "fast_wash": "快速洗",
+          "fruit_wash": "瓜果洗",
+          "gentle_wash": "轻柔洗",
+          "germ": "除菌洗",
+          "hotpot_wash": "火锅洗",
+          "less_wash": "少量洗",
+          "oilnet_wash": "油网洗",
+          "pre_rinse": "预冲洗",
+          "quietnight_wash": "静音洗",
+          "seafood_wash": "海鲜洗",
+          "self_clean": "自清洁",
+          "single_disinfect": "单消毒",
+          "standard_wash": "标准洗",
+          "storage": "抑菌存储",
+          "strong_wash": "超强洗"
         }
       },
       "dryer": {
@@ -620,6 +705,14 @@
           "80": "80°",
           "90": "90°",
           "swing": "摆风"
+        }
+      },
+      "dryness_level": {
+        "name": "烘干度",
+        "state": {
+          "extra_dry_for_storage": "超干储藏",
+          "fully_dry_for_wearing": "全干即穿",
+          "slightly_dry_for_ironing": "微干即熨"
         }
       },
       "dsp_sterilization_mode": {
@@ -709,6 +802,16 @@
           "on": "开启"
         }
       },
+      "forget_no_worry_time": {
+        "name": "延时取衣",
+        "state": {
+          "0h": "0小时",
+          "2h": "2小时",
+          "4h": "4小时",
+          "6h": "6小时",
+          "8h": "8小时"
+        }
+      },
       "fresh_air_mode": {
         "name": "新风模式",
         "state": {
@@ -725,6 +828,20 @@
           "4_hours": "4小时",
           "6_hours": "6小时",
           "8_hours": "8小时"
+        }
+      },
+      "fresh_anion_switch": {
+        "name": "净后新风",
+        "state": {
+          "off": "关闭",
+          "on": "开启"
+        }
+      },
+      "fresh_anion_switch_38129929": {
+        "name": "忘取无忧",
+        "state": {
+          "off": "关闭",
+          "on": "开启"
         }
       },
       "gear": {
@@ -1011,7 +1128,40 @@
           "windbreaker": "风衣",
           "windcoat": "冲锋衣",
           "winter_wash": "冬季洗",
-          "wool": "羊毛"
+          "wool": "羊毛",
+          "big_dry": "大件烘",
+          "blood_stain_wash": "血渍洗",
+          "blue_oxygen_color_protect": "蓝氧护色洗",
+          "cold_air_fresh_air": "冷风清新",
+          "detergent_box_clean": "智投盒清洁",
+          "girl_underwear": "少女内衣",
+          "hot_air_dry": "热风暖衣",
+          "hot_wind_dry": "热风暖衣",
+          "jacket_care": "冲锋衣护理",
+          "mixed_dry": "混合烘",
+          "no_channeling_color": "防串色",
+          "nursing_underwear": "哺乳内衣",
+          "pet_remove_mite": "萌宠除螨",
+          "quick_dry_3kg": "3kg速烘",
+          "refresh_deodorize": "清新祛味",
+          "seasonal_refresh": "换季祛味",
+          "secretion_wash": "分泌物洗",
+          "shirt_care": "衬衫护理",
+          "socks": "袜子",
+          "socks_dry": "袜子烘",
+          "sports_underwear": "运动内衣",
+          "steam_bucket_self_clean": "蒸汽桶自洁",
+          "steam_care": "蒸汽护理",
+          "sterilize_remove_mite": "除菌除螨",
+          "sun_quilt": "晒被子",
+          "trench_coat": "风衣",
+          "trench_coat_care": "风衣护理",
+          "underpants": "内裤",
+          "underpants_dry": "内裤烘",
+          "underwear_dry": "内衣烘",
+          "white_clothes_clean": "白衣净",
+          "wool_coat": "羊毛大衣",
+          "woolen": "毛呢"
         }
       },
       "ptc": {
@@ -1176,6 +1326,18 @@
           "sauce": "酱渍"
         }
       },
+      "stains_38129929": {
+        "name": "特渍",
+        "state": {
+          "blood": "血渍",
+          "coffee": "咖啡渍",
+          "grass": "草渍",
+          "lipstick": "口红渍",
+          "mud": "泥渍",
+          "off": "关闭",
+          "wine": "酒渍"
+        }
+      },
       "steam_quantity": {
         "name": "蒸汽挡位",
         "state": {
@@ -1269,6 +1431,27 @@
           "down": "下环绕风",
           "off": "关闭",
           "up": "上环绕风"
+        }
+      },
+      "wind_direction": {
+        "name": "风向",
+        "state": {
+          "100": "100°",
+          "110": "110°",
+          "120": "120°",
+          "60": "60°",
+          "70": "70°",
+          "80": "80°",
+          "90": "90°",
+          "swing": "摆风"
+        }
+      },
+      "wind_level": {
+        "name": "风力",
+        "state": {
+          "gentle": "柔和",
+          "silent": "静音",
+          "strong": "强劲"
         }
       },
       "wind_speed": {
@@ -1536,8 +1719,54 @@
       "dehydration_time_value": {
         "name": "脱水时间"
       },
+      "dishwasher_mode": {
+        "name": "当前模式",
+        "state": {
+          "90min_wash": "90分钟洗",
+          "auto_wash": "智能洗",
+          "bowl_wash": "碗碟洗",
+          "cloud_wash": "云程序",
+          "eco_wash": "节能洗",
+          "fast_wash": "快速洗",
+          "fruit_wash": "瓜果洗",
+          "germ": "除菌洗",
+          "glass_wash": "玻璃洗",
+          "hotpot_wash": "火锅洗",
+          "hour_wash": "一小时洗",
+          "kill_germ": "高温除菌",
+          "less_wash": "少量洗",
+          "max_rapid_wash": "超快洗",
+          "neutral_gear": "待机",
+          "oilnet_wash": "油网洗",
+          "quietnight_wash": "静音洗",
+          "seafood_wash": "海鲜洗",
+          "self_clean": "自清洁",
+          "self_define": "自定义",
+          "single_disinfect": "单消毒",
+          "single_dry": "单独烘干",
+          "soak_wash": "浸泡洗",
+          "standard_wash": "标准洗",
+          "strong_wash": "超强洗"
+        }
+      },
+      "dishwasher_work_status": {
+        "name": "工作状态",
+        "state": {
+          "cancel": "待机",
+          "error": "故障",
+          "order": "预约中",
+          "power_off": "关机",
+          "work": "运行中"
+        }
+      },
+      "dry_set_min": {
+        "name": "烘干设定时间"
+      },
       "dry_time": {
         "name": "烘干时间"
+      },
+      "e_cleaning_percentage": {
+        "name": "节能评分"
       },
       "end_time": {
         "name": "加热结束时间"
@@ -1896,8 +2125,14 @@
       "lock": {
         "name": "童锁"
       },
+      "low_temp_dry": {
+        "name": "低温烘干"
+      },
       "microbubble": {
         "name": "超微净泡"
+      },
+      "multi_dimensional_sterilize": {
+        "name": "多维除菌"
       },
       "nightly": {
         "name": "夜间模式"
@@ -1935,6 +2170,9 @@
       "ptc": {
         "name": "电辅热"
       },
+      "quick_dry_switch": {
+        "name": "快速"
+      },
       "radar_induction_enable": {
         "name": "人感夜灯"
       },
@@ -1944,8 +2182,14 @@
       "set_germicidal_countdown": {
         "name": "高温杀菌提醒"
       },
+      "six_d_air_flow_dry": {
+        "name": "6D气流烘"
+      },
       "smart_sterilize": {
         "name": "智能杀菌"
+      },
+      "smart_storage": {
+        "name": "智能存储"
       },
       "steam": {
         "name": "蒸汽"
@@ -1964,6 +2208,9 @@
       },
       "storage_power": {
         "name": "冷藏电源"
+      },
+      "strong_flash_dry": {
+        "name": "强闪烘干"
       },
       "total_power": {
         "name": "总电源"
