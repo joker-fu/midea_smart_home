@@ -1,16 +1,33 @@
 """Midea Smart Home Extra Logic Handler."""
 
 import logging
+import time
 from typing import Any, Optional
 
 _LOGGER = logging.getLogger(__name__)
+
+_DISHWASHER_COMPOSITE_KEYS = {
+    "mode",
+    "wash_region",
+    "additional",
+    "more_dry",
+    "door_auto_open",
+    "work_status",
+}
+
+_DISHWASHER_PENDING_KEYS = (
+    "mode",
+    "wash_region",
+    "additional",
+    "more_dry",
+    "door_auto_open",
+)
 
 
 class DeviceLogicHandler:
     def __init__(self, device_type: int, device_name: str):
         self.device_type = device_type
         self.device_name = device_name
-        self._last_standby_status: Any = None
 
     def adjust_control_status(self, data: dict, running_status: str) -> None:
         control_status = "start" if running_status == "start" else "pause"
@@ -43,126 +60,20 @@ class DeviceLogicHandler:
             if "db_running_status" in data:
                 self.adjust_control_status(data, data["db_running_status"])
             self.process_progress(data, "db_running_status", "db_progress")
-            self._adjust_db_running_status_for_power_off(data)
-            self._adjust_db_remain_time(data)
+
+        elif self.device_type == 0xE1:
+            self._apply_dishwasher_pending_state(data, recent_controls, control_timeout)
 
         elif self.device_type in [0xDA, 0xDB, 0xDC]:
             if "running_status" in data:
                 self.adjust_control_status(data, data["running_status"])
             self.process_progress(data, "running_status", "progress")
-            self._adjust_remain_time(data)
 
         elif self.device_type == 0xEA:
             self.adjust_work_switch(data)
 
         elif self.device_type == 0xAC:
             self.adjust_ac_mode(data)
-
-        elif self.device_type == 0x9C:
-            self.adjust_b3_function_control(data)
-
-        elif self.device_type == 0xED:
-            self.adjust_standby_status_for_wash(data)
-
-    def apply_special_handling_for_poll(self, data: dict, suffix: str, raw_status: dict = None) -> bool:
-        """Apply special handling for poll data with suffix (_l or _r).
-
-        Only process the specific bucket's data (left or right),
-        do not affect the other bucket's data.
-
-        Returns:
-            True if data should be processed, False if data should be skipped.
-        """
-        if self.device_type != 0xD9:
-            return True
-
-        status_key = f"db_running_status{suffix}"
-        progress_key = f"db_progress{suffix}"
-        remain_time_key = f"db_remain_time{suffix}"
-
-        if status_key not in data:
-            return True
-
-        running_status = data[status_key]
-
-        if running_status == "end" and not self._validate_end_status(raw_status):
-            return False
-
-        # Handle common (non-suffixed) fields from the first poll response
-        if raw_status and raw_status.get('db_position') == 1:
-            if "db_running_status" in data:
-                self.adjust_control_status(data, data["db_running_status"])
-            self.process_progress(data, "db_running_status", "db_progress")
-            self._adjust_db_running_status_for_power_off(data)
-            self._adjust_db_remain_time(data)
-
-        # Handle suffixed progress for the specific bucket
-        if progress_key in data:
-            if running_status != "start":
-                data[progress_key] = "idle"
-            else:
-                self.process_progress(data, status_key, progress_key)
-
-        # Handle suffixed remain time for the specific bucket
-        if remain_time_key in data:
-            self._adjust_remain_time_by_status(data, remain_time_key, running_status)
-
-        return True
-
-    def _validate_end_status(self, raw_status: dict) -> bool:
-        """Validate that an 'end' running status is legitimate.
-
-        Checks that progress is 0 and remain_time <= 1 to filter out
-        false 'end' signals from the device.
-
-        Returns:
-            True if the end status is valid, False otherwise.
-        """
-        if not raw_status:
-            return False
-        raw_progress = raw_status.get("db_progress")
-        raw_remain_time = raw_status.get("db_remain_time")
-        if raw_progress is None or raw_remain_time is None:
-            return False
-        try:
-            if isinstance(raw_progress, str):
-                raw_progress = int(raw_progress, 16) if raw_progress.startswith("0x") else int(raw_progress)
-            if raw_progress != 0:
-                return False
-        except (ValueError, TypeError):
-            return False
-        try:
-            if isinstance(raw_remain_time, str):
-                raw_remain_time = int(raw_remain_time, 16) if raw_remain_time.startswith("0x") else int(raw_remain_time)
-            if raw_remain_time > 1:
-                return False
-        except (ValueError, TypeError):
-            return False
-        return True
-
-    @staticmethod
-    def _adjust_remain_time_by_status(data: dict, remain_time_key: str, running_status: str) -> None:
-        """Adjust remain time based on running status for any key prefix."""
-        if running_status == "start":
-            return
-        elif running_status == "end":
-            data[remain_time_key] = 0
-        else:
-            data[remain_time_key] = None
-
-    def _adjust_db_running_status_for_power_off(self, data: dict) -> None:
-        db_power = data.get("db_power")
-        if db_power == "off" or db_power == 0:
-            if "db_running_status" in data:
-                data["db_running_status"] = "standby"
-
-    def _adjust_remain_time(self, data: dict) -> None:
-        if "remain_time" in data and "running_status" in data:
-            self._adjust_remain_time_by_status(data, "remain_time", data["running_status"])
-
-    def _adjust_db_remain_time(self, data: dict) -> None:
-        if "db_remain_time" in data and "db_running_status" in data:
-            self._adjust_remain_time_by_status(data, "db_remain_time", data["db_running_status"])
 
     def process_progress(self, data: dict, status_key: str, progress_key: str) -> None:
         """Process progress sensor special logic"""
@@ -225,33 +136,105 @@ class DeviceLogicHandler:
             control["bucket"] = "db"
             if "db_location" not in control and current_data and "db_location" in current_data:
                 control["db_location"] = current_data["db_location"]
+        elif self.device_type == 0xE1:
+            control = self._prepare_dishwasher_control(control, current_data)
         return control
 
-    def adjust_b3_function_control(self, data: dict) -> None:
-        """For T0x9C devices, map b3_upstair_status to b3_function_control."""
-        if "b3_upstair_status" not in data:
+    def _prepare_dishwasher_control(
+        self,
+        control: dict,
+        current_data: dict | None = None,
+    ) -> dict:
+        if not any(key in control for key in _DISHWASHER_COMPOSITE_KEYS):
+            return control
+
+        current_data = current_data or {}
+        prepared = control.copy()
+
+        if "mode" in prepared:
+            prepared.setdefault("wash_region", 3)
+            prepared.setdefault("additional", 0)
+
+        if "mode" not in prepared:
+            prepared["mode"] = self._normalize_dishwasher_mode(current_data.get("mode"))
+
+        if "work_status" not in prepared:
+            prepared["work_status"] = self._normalize_dishwasher_work_status(
+                current_data.get("work_status")
+            )
+
+        if "wash_region" not in prepared:
+            prepared["wash_region"] = self._normalize_dishwasher_int(
+                current_data.get("wash_region"), 3
+            )
+
+        if "additional" not in prepared:
+            prepared["additional"] = self._normalize_dishwasher_int(
+                current_data.get("additional"), 0
+            )
+
+        if "more_dry" not in prepared:
+            prepared["more_dry"] = self._normalize_dishwasher_int(
+                current_data.get("more_dry"), 0
+            )
+
+        if "door_auto_open" not in prepared:
+            prepared["door_auto_open"] = self._normalize_dishwasher_int(
+                current_data.get("door_auto_open"), 0
+            )
+
+        return prepared
+
+    def _normalize_dishwasher_work_status(self, value: Any) -> str:
+        if value in {"cancel", "work", "order"}:
+            return value
+        if value in {"power_on", "power_off", "cancel_order"}:
+            return "cancel"
+        return "cancel"
+
+    def _normalize_dishwasher_mode(self, value: Any) -> str:
+        if isinstance(value, str) and value:
+            return value
+        return "neutral_gear"
+
+    def _normalize_dishwasher_int(self, value: Any, default: int) -> int:
+        if isinstance(value, bool):
+            return int(value)
+        if value is None:
+            return default
+        try:
+            return int(value)
+        except (TypeError, ValueError):
+            return default
+
+    def _apply_dishwasher_pending_state(
+        self,
+        data: dict,
+        recent_controls: dict,
+        control_timeout: float,
+    ) -> None:
+        work_status = data.get("work_status")
+        mode = data.get("mode")
+
+        # The local protocol reports pre-start selections as cancel + neutral_gear.
+        # Keep recent user selections visible in HA until the device reports a real running state.
+        if work_status not in {"cancel", "power_off"} or mode != "neutral_gear":
             return
 
-        status_map = {
-            "power_off": 1,
-            "uperization": 2,
-            "drying": 4,
-        }
-        mapped = status_map.get(data["b3_upstair_status"])
-        if mapped is not None:
-            data["b3_function_control"] = mapped
+        for key in _DISHWASHER_PENDING_KEYS:
+            recent = recent_controls.get(key)
+            if not recent:
+                continue
 
-    def adjust_standby_status_for_wash(self, data: dict) -> None:
-        """For T0xED devices, prevent standby_status update when wash is on."""
-        if self.device_type != 0xED:
-            return
+            value, timestamp = recent
+            if timestamp is None:
+                continue
 
-        if "standby_status" not in data or "wash" not in data:
-            return
+            # Device.py cleans expired controls after this hook, so re-check here.
+            if time.time() - timestamp >= control_timeout:
+                continue
 
-        wash_status = data.get("wash")
-        if wash_status == "on" or wash_status == 1:
-            if self._last_standby_status is not None:
-                data["standby_status"] = self._last_standby_status
-        else:
-            self._last_standby_status = data.get("standby_status")
+            if key == "mode" and value == "neutral_gear":
+                continue
+
+            data[key] = value

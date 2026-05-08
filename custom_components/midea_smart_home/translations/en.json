@@ -157,6 +157,9 @@
       "storage_door_state": {
         "name": "Refrigerator Door State"
       },
+      "water_lack": {
+        "name": "Water Shortage"
+      },
       "water_output_switch": {
         "name": "Tap Water"
       }
@@ -311,6 +314,9 @@
       },
       "detergent": {
         "name": "Detergent"
+      },
+      "dishwasher_storage_duration": {
+        "name": "Antibacterial Storage"
       },
       "heating_temperature": {
         "name": "Heating Temperature"
@@ -529,6 +535,23 @@
           "small_cup": "Small Cup"
         }
       },
+      "db_dehydration_speed": {
+        "name": "Dehydration Speed",
+        "state": {
+          "1000rpm": "1000 RPM",
+          "800rpm": "800 RPM",
+          "no_spin": "No Spin"
+        }
+      },
+      "db_detergent": {
+        "name": "Detergent (Smart)",
+        "state": {
+          "l1": "L1",
+          "l2": "L2",
+          "l3": "L3",
+          "off": "Off"
+        }
+      },
       "db_dry": {
         "name": "Drying Time",
         "state": {
@@ -570,6 +593,26 @@
           "water_ssp": "Deep Clean"
         }
       },
+      "db_rinse_count": {
+        "name": "Rinse Count",
+        "state": {
+          "1_time": "1 Time",
+          "2_times": "2 Times",
+          "3_times": "3 Times",
+          "4_times": "4 Times",
+          "5_times": "5 Times"
+        }
+      },
+      "db_temperature": {
+        "name": "Temperature",
+        "state": {
+          "30c": "30°C",
+          "40c": "40°C",
+          "60c": "60°C",
+          "95c": "95°C",
+          "cold_water": "Cold Water"
+        }
+      },
       "dehydration_speed": {
         "name": "Dehydration Speed",
         "state": {
@@ -591,6 +634,48 @@
           "l4": "L4",
           "off": "Off",
           "smart": "Smart"
+        }
+      },
+      "dishwasher_wash_region": {
+        "name": "Zone Wash",
+        "state": {
+          "lower": "Lower",
+          "lower_zone_strong": "Lower + Zone Strong",
+          "upper": "Upper",
+          "upper_lower": "Upper + Lower",
+          "zone_strong": "Zone Strong"
+        }
+      },
+      "dishwasher_work_status_control": {
+        "name": "Control",
+        "state": {
+          "cancel": "Cancel",
+          "pause": "Pause",
+          "power_off": "Power Off",
+          "power_on": "Power On",
+          "resume": "Resume"
+        }
+      },
+      "dishwasher_mode": {
+        "name": "Wash Mode",
+        "state": {
+          "auto_wash": "Auto Wash",
+          "eco_wash": "Eco Wash",
+          "fast_wash": "Fast Wash",
+          "fruit_wash": "Fruit Wash",
+          "gentle_wash": "Gentle Wash",
+          "germ": "Germ Wash",
+          "hotpot_wash": "Hotpot Wash",
+          "less_wash": "Less Wash",
+          "oilnet_wash": "Oil Net Wash",
+          "pre_rinse": "Pre Rinse",
+          "quietnight_wash": "Quiet Night Wash",
+          "seafood_wash": "Seafood Wash",
+          "self_clean": "Self Clean",
+          "single_disinfect": "Single Disinfect",
+          "standard_wash": "Standard Wash",
+          "storage": "Storage",
+          "strong_wash": "Strong Wash"
         }
       },
       "dryer": {
@@ -617,6 +702,14 @@
           "80": "80°",
           "90": "90°",
           "swing": "Swing"
+        }
+      },
+      "dryness_level": {
+        "name": "Dryness Level",
+        "state": {
+          "extra_dry_for_storage": "Extra Dry for Storage",
+          "fully_dry_for_wearing": "Fully Dry for Wearing",
+          "slightly_dry_for_ironing": "Slightly Dry for Ironing"
         }
       },
       "dsp_sterilization_mode": {
@@ -706,6 +799,16 @@
           "on": "On"
         }
       },
+      "forget_no_worry_time": {
+        "name": "Delay Take Clothes",
+        "state": {
+          "0h": "0 h",
+          "2h": "2 h",
+          "4h": "4 h",
+          "6h": "6 h",
+          "8h": "8 h"
+        }
+      },
       "fresh_air_mode": {
         "name": "Fresh Air Mode",
         "state": {
@@ -722,6 +825,20 @@
           "4_hours": "4 Hours",
           "6_hours": "6 Hours",
           "8_hours": "8 Hours"
+        }
+      },
+      "fresh_anion_switch": {
+        "name": "Fresh Air Care",
+        "state": {
+          "off": "Off",
+          "on": "On"
+        }
+      },
+      "fresh_anion_switch_38129929": {
+        "name": "Worry-Free Care",
+        "state": {
+          "off": "Off",
+          "on": "On"
         }
       },
       "gear": {
@@ -1008,7 +1125,40 @@
           "windbreaker": "Windbreaker",
           "windcoat": "Windcoat",
           "winter_wash": "Winter",
-          "wool": "Wool"
+          "wool": "Wool",
+          "big_dry": "Big Dry",
+          "blood_stain_wash": "Blood Stain Wash",
+          "blue_oxygen_color_protect": "Blue Oxygen Color Protect",
+          "cold_air_fresh_air": "Cold Air Fresh",
+          "detergent_box_clean": "Detergent Box Clean",
+          "girl_underwear": "Teen Underwear",
+          "hot_air_dry": "Hot Air Dry",
+          "hot_wind_dry": "Hot Wind Dry",
+          "jacket_care": "Jacket Care",
+          "mixed_dry": "Mixed Dry",
+          "no_channeling_color": "Color Separation Protection",
+          "nursing_underwear": "Nursing Underwear",
+          "pet_remove_mite": "Pet Mite Removal",
+          "quick_dry_3kg": "3kg Quick Dry",
+          "refresh_deodorize": "Refresh & Deodorize",
+          "seasonal_refresh": "Seasonal Refresh",
+          "secretion_wash": "Secretion Wash",
+          "shirt_care": "Shirt Care",
+          "socks": "Socks",
+          "socks_dry": "Socks Dry",
+          "sports_underwear": "Sports Underwear",
+          "steam_bucket_self_clean": "Steam Bucket Self Clean",
+          "steam_care": "Steam Care",
+          "sterilize_remove_mite": "Sterilize & Mite Removal",
+          "sun_quilt": "Sun Quilt",
+          "trench_coat": "Trench Coat",
+          "trench_coat_care": "Trench Coat Care",
+          "underpants": "Underpants",
+          "underpants_dry": "Underpants Dry",
+          "underwear_dry": "Underwear Dry",
+          "white_clothes_clean": "White Clothes Clean",
+          "wool_coat": "Wool Coat",
+          "woolen": "Woolen"
         }
       },
       "ptc": {
@@ -1173,6 +1323,18 @@
           "sauce": "Sauce Stain"
         }
       },
+      "stains_38129929": {
+        "name": "Stains",
+        "state": {
+          "blood": "Blood Stain",
+          "coffee": "Coffee Stain",
+          "grass": "Grass Stain",
+          "lipstick": "Lipstick Stain",
+          "mud": "Mud Stain",
+          "off": "Off",
+          "wine": "Wine Stain"
+        }
+      },
       "steam_quantity": {
         "name": "Steam Level",
         "state": {
@@ -1266,6 +1428,27 @@
           "down": "Down",
           "off": "Off",
           "up": "Up"
+        }
+      },
+      "wind_direction": {
+        "name": "Wind Direction",
+        "state": {
+          "100": "100°",
+          "110": "110°",
+          "120": "120°",
+          "60": "60°",
+          "70": "70°",
+          "80": "80°",
+          "90": "90°",
+          "swing": "Swing"
+        }
+      },
+      "wind_level": {
+        "name": "Wind Level",
+        "state": {
+          "gentle": "Gentle",
+          "silent": "Silent",
+          "strong": "Strong"
         }
       },
       "wind_speed": {
@@ -1533,8 +1716,54 @@
       "dehydration_time_value": {
         "name": "Dehydration Time"
       },
+      "dishwasher_mode": {
+        "name": "Current Mode",
+        "state": {
+          "90min_wash": "90 Min Wash",
+          "auto_wash": "Auto Wash",
+          "bowl_wash": "Bowl Wash",
+          "cloud_wash": "Cloud Wash",
+          "eco_wash": "Eco Wash",
+          "fast_wash": "Quick Wash",
+          "fruit_wash": "Fruit Wash",
+          "germ": "Germ Wash",
+          "glass_wash": "Glass Wash",
+          "hotpot_wash": "Hotpot Wash",
+          "hour_wash": "1 Hour Wash",
+          "kill_germ": "High Temp Sterilize",
+          "less_wash": "Half Load",
+          "max_rapid_wash": "Max Rapid Wash",
+          "neutral_gear": "Standby",
+          "oilnet_wash": "Oil Filter Wash",
+          "quietnight_wash": "Quiet Night Wash",
+          "seafood_wash": "Seafood Wash",
+          "self_clean": "Self Clean",
+          "self_define": "Custom",
+          "single_disinfect": "Disinfect Only",
+          "single_dry": "Dry Only",
+          "soak_wash": "Soak Wash",
+          "standard_wash": "Standard Wash",
+          "strong_wash": "Strong Wash"
+        }
+      },
+      "dishwasher_work_status": {
+        "name": "Work Status",
+        "state": {
+          "cancel": "Standby",
+          "error": "Error",
+          "order": "Scheduled",
+          "power_off": "Powered Off",
+          "work": "Running"
+        }
+      },
+      "dry_set_min": {
+        "name": "Dry Time Setting"
+      },
       "dry_time": {
         "name": "Dry Time"
+      },
+      "e_cleaning_percentage": {
+        "name": "Energy Saving Score"
       },
       "end_time": {
         "name": "Heating End Time"
@@ -1893,8 +2122,14 @@
       "lock": {
         "name": "Child Lock"
       },
+      "low_temp_dry": {
+        "name": "Low Temperature Dry"
+      },
       "microbubble": {
         "name": "Microbubble Soak"
+      },
+      "multi_dimensional_sterilize": {
+        "name": "Multi-Dimensional Sterilize"
       },
       "nightly": {
         "name": "Night Mode"
@@ -1932,6 +2167,9 @@
       "ptc": {
         "name": "PTC Heater"
       },
+      "quick_dry_switch": {
+        "name": "Quick"
+      },
       "radar_induction_enable": {
         "name": "Motion Night Light"
       },
@@ -1941,8 +2179,14 @@
       "set_germicidal_countdown": {
         "name": "Sterilization Reminder"
       },
+      "six_d_air_flow_dry": {
+        "name": "6D Air Flow Dry"
+      },
       "smart_sterilize": {
         "name": "Smart Sterilization"
+      },
+      "smart_storage": {
+        "name": "Smart Storage"
       },
       "steam": {
         "name": "Steam"
@@ -1961,6 +2205,9 @@
       },
       "storage_power": {
         "name": "Refrigerator Power"
+      },
+      "strong_flash_dry": {
+        "name": "Strong Flash Dry"
       },
       "total_power": {
         "name": "Total Power"
