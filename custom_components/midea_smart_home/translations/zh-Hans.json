@@ -1397,6 +1397,18 @@
           "sauce": "酱渍"
         }
       },
+      "stains_38129929": {
+        "name": "特渍",
+        "state": {
+          "blood": "血渍",
+          "coffee": "咖啡渍",
+          "grass": "草渍",
+          "lipstick": "口红渍",
+          "mud": "泥渍",
+          "off": "关闭",
+          "wine": "酒渍"
+        }
+      },
       "steam_quantity": {
         "name": "蒸汽挡位",
         "state": {

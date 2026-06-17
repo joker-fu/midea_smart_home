@@ -1397,6 +1397,18 @@
           "sauce": "Sauce Stain"
         }
       },
+      "stains_38129929": {
+        "name": "Stains",
+        "state": {
+          "blood": "Blood Stain",
+          "coffee": "Coffee Stain",
+          "grass": "Grass Stain",
+          "lipstick": "Lipstick Stain",
+          "mud": "Mud Stain",
+          "off": "Off",
+          "wine": "Wine Stain"
+        }
+      },
       "steam_quantity": {
         "name": "Steam Level",
         "state": {
