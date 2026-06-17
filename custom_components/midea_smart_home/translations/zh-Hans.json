@@ -716,6 +716,14 @@
           "off": "关闭"
         }
       },
+      "dryness_level": {
+        "name": "烘干度",
+        "state": {
+          "extra_dry_for_storage": "超干储藏",
+          "fully_dry_for_wearing": "全干即穿",
+          "slightly_dry_for_ironing": "微干即熨"
+        }
+      },
       "dsp_sterilization_mode": {
         "name": "DSP除菌模式",
         "state": {
@@ -801,6 +809,16 @@
         "state": {
           "off": "关闭",
           "on": "开启"
+        }
+      },
+      "forget_no_worry_time": {
+        "name": "延时取衣",
+        "state": {
+          "0h": "0小时",
+          "2h": "2小时",
+          "4h": "4小时",
+          "6h": "6小时",
+          "8h": "8小时"
         }
       },
       "fresh_air_mode": {
@@ -1149,14 +1167,19 @@
           "baby_clothes": "婴儿服",
           "bed_clothes": "床上用品",
           "big": "大件",
+          "big_dry": "大件烘",
           "blanket": "家纺",
+          "blood_stain_wash": "血渍洗",
+          "blue_oxygen_color_protect": "蓝氧护色洗",
           "bucket_self_clean": "筒自洁",
           "child": "童装",
           "clean_stains": "特渍洗",
+          "cold_air_fresh_air": "冷风清新",
           "cold_wash": "冷水洗",
           "cotton": "棉麻",
           "deep_ssp": "深度筒自洁",
           "dehumidification": "除螨除潮",
+          "detergent_box_clean": "智投盒清洁",
           "down_jacket": "羽绒服",
           "eco": "节能洗",
           "embathe": "浸洗",
@@ -1168,43 +1191,71 @@
           "fixed_time_dry": "定时烘",
           "fleece_blanket": "绒毯",
           "fresh_air": "清新",
+          "girl_underwear": "少女内衣",
           "hanfu_autumn_winter": "汉服秋冬洗",
           "hanfu_spring_summer": "汉服春夏洗",
+          "hot_air_dry": "热风暖衣",
+          "hot_wind_dry": "热风暖衣",
           "intelligent": "智能洗",
           "jacket": "冲锋衣",
+          "jacket_care": "冲锋衣护理",
           "jean": "牛仔",
           "memory": "记忆",
+          "mixed_dry": "混合烘",
           "mixed_wash": "混合",
           "new_clothes_wash": "新衣洗",
+          "no_channeling_color": "防串色",
+          "nursing_underwear": "哺乳内衣",
           "outdoor": "户外服",
+          "pet_remove_mite": "萌宠除螨",
           "polar_fleece": "摇粒绒",
           "quick_dry": "快烘",
+          "quick_dry_3kg": "3kg速烘",
           "quick_dry_20": "快烘20分钟",
+          "refresh_deodorize": "清新祛味",
           "remove_mite_wash": "除螨洗",
           "rinsing_dehydration": "漂+脱",
+          "seasonal_refresh": "换季祛味",
+          "secretion_wash": "分泌物洗",
           "shirt": "衬衫",
+          "shirt_care": "衬衫护理",
           "silk": "丝绸",
           "single_dehytration": "单脱水",
           "single_drying": "单烘干",
           "small_piece_dry": "小件烘",
+          "socks": "袜子",
+          "socks_dry": "袜子烘",
           "sport_clothes": "运动服",
+          "sports_underwear": "运动内衣",
           "spring_autumn_wash": "春秋洗",
           "ssp": "筒自洁",
+          "steam_bucket_self_clean": "蒸汽桶自洁",
+          "steam_care": "蒸汽护理",
           "steam_sterilize_wash": "蒸汽消毒洗",
           "steep": "浸泡洗",
           "sterilize": "除菌烘",
+          "sterilize_remove_mite": "除菌除螨",
           "sterilize_wash": "消毒洗",
           "strong_wash": "强洗",
           "summer_wash": "夏日洗",
+          "sun_quilt": "晒被子",
           "super_clean": "超净洗",
           "towel": "毛巾",
+          "trench_coat": "风衣",
+          "trench_coat_care": "风衣护理",
+          "underpants": "内裤",
+          "underpants_dry": "内裤烘",
           "underwear": "内衣",
+          "underwear_dry": "内衣烘",
           "uniforms": "校服",
           "warm_clothes": "暖衣",
+          "white_clothes_clean": "白衣净",
           "windbreaker": "风衣",
           "windcoat": "冲锋衣",
           "winter_wash": "冬季洗",
-          "wool": "羊毛"
+          "wool": "羊毛",
+          "wool_coat": "羊毛大衣",
+          "woolen": "毛呢"
         }
       },
       "ptc": {
@@ -1544,6 +1595,14 @@
           "down": "下环绕风",
           "off": "关闭",
           "up": "上环绕风"
+        }
+      },
+      "wind_level": {
+        "name": "风力",
+        "state": {
+          "gentle": "柔和",
+          "silent": "静音",
+          "strong": "强劲"
         }
       },
       "wind_speed": {
@@ -2222,6 +2281,9 @@
       "move_clean": {
         "name": "移动清洗"
       },
+      "multi_dimensional_sterilize": {
+        "name": "多维除菌"
+      },
       "nightly": {
         "name": "夜间模式"
       },
@@ -2261,6 +2323,9 @@
       "purifier": {
         "name": "净化"
       },
+      "quick_dry_switch": {
+        "name": "快速"
+      },
       "radar_induction_enable": {
         "name": "人感夜灯"
       },
@@ -2278,6 +2343,9 @@
       },
       "silent_mode": {
         "name": "超智能降噪"
+      },
+      "six_d_air_flow_dry": {
+        "name": "6D气流烘"
       },
       "smart_sterilize": {
         "name": "智能杀菌"

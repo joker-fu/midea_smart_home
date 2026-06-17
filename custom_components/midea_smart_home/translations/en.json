@@ -716,6 +716,14 @@
           "off": "Off"
         }
       },
+      "dryness_level": {
+        "name": "Dryness Level",
+        "state": {
+          "extra_dry_for_storage": "Extra Dry for Storage",
+          "fully_dry_for_wearing": "Fully Dry for Wearing",
+          "slightly_dry_for_ironing": "Slightly Dry for Ironing"
+        }
+      },
       "dsp_sterilization_mode": {
         "name": "DSP Sterilization Mode",
         "state": {
@@ -801,6 +809,16 @@
         "state": {
           "off": "Off",
           "on": "On"
+        }
+      },
+      "forget_no_worry_time": {
+        "name": "Delay Take Clothes",
+        "state": {
+          "0h": "0 h",
+          "2h": "2 h",
+          "4h": "4 h",
+          "6h": "6 h",
+          "8h": "8 h"
         }
       },
       "fresh_air_mode": {
@@ -1149,14 +1167,19 @@
           "baby_clothes": "Baby Clothes",
           "bed_clothes": "Bed Clothes",
           "big": "Big Items",
+          "big_dry": "Big Dry",
           "blanket": "Blanket",
+          "blood_stain_wash": "Blood Stain Wash",
+          "blue_oxygen_color_protect": "Blue Oxygen Color Protect",
           "bucket_self_clean": "Bucket Self Clean",
           "child": "Child Clothes",
           "clean_stains": "Stain Removal",
+          "cold_air_fresh_air": "Cold Air Fresh",
           "cold_wash": "Cold Wash",
           "cotton": "Cotton",
           "deep_ssp": "Deep Self-Clean",
           "dehumidification": "Dehumidification",
+          "detergent_box_clean": "Detergent Box Clean",
           "down_jacket": "Down Jacket",
           "eco": "Eco Wash",
           "embathe": "Soak Wash",
@@ -1168,43 +1191,71 @@
           "fixed_time_dry": "Timed Dry",
           "fleece_blanket": "Fleece Blanket",
           "fresh_air": "Fresh Air",
+          "girl_underwear": "Teen Underwear",
           "hanfu_autumn_winter": "Hanfu Autumn/Winter",
           "hanfu_spring_summer": "Hanfu Spring/Summer",
+          "hot_air_dry": "Hot Air Dry",
+          "hot_wind_dry": "Hot Wind Dry",
           "intelligent": "Intelligent",
           "jacket": "Jacket",
+          "jacket_care": "Jacket Care",
           "jean": "Jeans",
           "memory": "Memory",
+          "mixed_dry": "Mixed Dry",
           "mixed_wash": "Mixed",
           "new_clothes_wash": "New Clothes",
+          "no_channeling_color": "Color Separation Protection",
+          "nursing_underwear": "Nursing Underwear",
           "outdoor": "Outdoor",
+          "pet_remove_mite": "Pet Mite Removal",
           "polar_fleece": "Polar Fleece",
           "quick_dry": "Quick Dry",
+          "quick_dry_3kg": "3kg Quick Dry",
           "quick_dry_20": "Quick Dry 20min",
+          "refresh_deodorize": "Refresh & Deodorize",
           "remove_mite_wash": "Mite Removal",
           "rinsing_dehydration": "Rinse+Spin",
+          "seasonal_refresh": "Seasonal Refresh",
+          "secretion_wash": "Secretion Wash",
           "shirt": "Shirt",
+          "shirt_care": "Shirt Care",
           "silk": "Silk",
           "single_dehytration": "Spin Only",
           "single_drying": "Dry Only",
           "small_piece_dry": "Small Piece Dry",
+          "socks": "Socks",
+          "socks_dry": "Socks Dry",
           "sport_clothes": "Sportswear",
+          "sports_underwear": "Sports Underwear",
           "spring_autumn_wash": "Spring/Autumn",
           "ssp": "Self Clean",
+          "steam_bucket_self_clean": "Steam Bucket Self Clean",
+          "steam_care": "Steam Care",
           "steam_sterilize_wash": "Steam Sterilize",
           "steep": "Soak Wash",
           "sterilize": "Sterilize Dry",
+          "sterilize_remove_mite": "Sterilize & Mite Removal",
           "sterilize_wash": "Sterilize Wash",
           "strong_wash": "Strong Wash",
           "summer_wash": "Summer",
+          "sun_quilt": "Sun Quilt",
           "super_clean": "Super Clean",
           "towel": "Towel",
+          "trench_coat": "Trench Coat",
+          "trench_coat_care": "Trench Coat Care",
+          "underpants": "Underpants",
+          "underpants_dry": "Underpants Dry",
           "underwear": "Underwear",
+          "underwear_dry": "Underwear Dry",
           "uniforms": "Uniforms",
           "warm_clothes": "Warm Clothes",
+          "white_clothes_clean": "White Clothes Clean",
           "windbreaker": "Windbreaker",
           "windcoat": "Windcoat",
           "winter_wash": "Winter",
-          "wool": "Wool"
+          "wool": "Wool",
+          "wool_coat": "Wool Coat",
+          "woolen": "Woolen"
         }
       },
       "ptc": {
@@ -1544,6 +1595,14 @@
           "down": "Down",
           "off": "Off",
           "up": "Up"
+        }
+      },
+      "wind_level": {
+        "name": "Wind Level",
+        "state": {
+          "gentle": "Gentle",
+          "silent": "Silent",
+          "strong": "Strong"
         }
       },
       "wind_speed": {
@@ -2222,6 +2281,9 @@
       "move_clean": {
         "name": "Move Clean"
       },
+      "multi_dimensional_sterilize": {
+        "name": "Multi-Dimensional Sterilize"
+      },
       "nightly": {
         "name": "Night Mode"
       },
@@ -2261,6 +2323,9 @@
       "purifier": {
         "name": "Purifier"
       },
+      "quick_dry_switch": {
+        "name": "Quick"
+      },
       "radar_induction_enable": {
         "name": "Motion Night Light"
       },
@@ -2278,6 +2343,9 @@
       },
       "silent_mode": {
         "name": "Silent Mode"
+      },
+      "six_d_air_flow_dry": {
+        "name": "6D Air Flow Dry"
       },
       "smart_sterilize": {
         "name": "Smart Sterilization"
