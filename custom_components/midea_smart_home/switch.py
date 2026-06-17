@@ -32,10 +32,12 @@ async def async_setup_entry(
                 condition = config.get("condition")
                 command = config.get("command")
                 include_current = config.get("include_current")
+                command_on = config.get("command_on")
+                command_off = config.get("command_off")
                 entities.append(
                     MideaSwitchEntity(
                         coordinator, device_id, device_type, sn, sn8, device_name,
-                        switch_id, translation_key, switch_rationale, condition, command, include_current, model
+                        switch_id, translation_key, switch_rationale, condition, command, include_current, model, command_on, command_off
                     )
                 )
 
@@ -60,6 +62,8 @@ class MideaSwitchEntity(MideaBaseEntity, SwitchEntity):
         command: dict = None,
         include_current: list = None,
         model: str = None,
+        command_on: dict | None = None,
+        command_off: dict | None = None,
     ):
         config = {"translation_key": translation_key} if translation_key else {}
         super().__init__(
@@ -69,6 +73,8 @@ class MideaSwitchEntity(MideaBaseEntity, SwitchEntity):
         self._switch_id = switch_id
         self._command = command
         self._include_current = include_current or []
+        self._command_on = command_on
+        self._command_off = command_off
 
     def _get_status_on_off(self, attribute_key: str) -> bool:
         data = self.coordinator.data or {}
@@ -94,6 +100,10 @@ class MideaSwitchEntity(MideaBaseEntity, SwitchEntity):
         return self._get_status_on_off(self._switch_id)
 
     async def _async_set_status_on_off(self, attribute_key: str, turn_on: bool) -> None:
+        command = self._command_on if turn_on else self._command_off
+        if isinstance(command, dict):
+            await self.coordinator.async_set_control(command)
+            return
         value = self._rationale[int(turn_on)]
         merged_command = {}
         if isinstance(self._command, dict):
