@@ -423,6 +423,9 @@
       "detergent": {
         "name": "Detergent"
       },
+      "dishwasher_storage_duration": {
+        "name": "Antibacterial Storage"
+      },
       "honey_temperature": {
         "name": "Honey Water Temperature"
       },
@@ -692,6 +695,48 @@
           "l4": "L4",
           "off": "Off",
           "smart": "Smart"
+        }
+      },
+      "dishwasher_mode": {
+        "name": "Wash Mode",
+        "state": {
+          "auto_wash": "Auto Wash",
+          "eco_wash": "Eco Wash",
+          "fast_wash": "Fast Wash",
+          "fruit_wash": "Fruit Wash",
+          "gentle_wash": "Gentle Wash",
+          "germ": "Germ Wash",
+          "hotpot_wash": "Hotpot Wash",
+          "less_wash": "Less Wash",
+          "oilnet_wash": "Oil Net Wash",
+          "pre_rinse": "Pre Rinse",
+          "quietnight_wash": "Quiet Night Wash",
+          "seafood_wash": "Seafood Wash",
+          "self_clean": "Self Clean",
+          "single_disinfect": "Single Disinfect",
+          "standard_wash": "Standard Wash",
+          "storage": "Storage",
+          "strong_wash": "Strong Wash"
+        }
+      },
+      "dishwasher_wash_region": {
+        "name": "Zone Wash",
+        "state": {
+          "lower": "Lower",
+          "lower_zone_strong": "Lower + Zone Strong",
+          "upper": "Upper",
+          "upper_lower": "Upper + Lower",
+          "zone_strong": "Zone Strong"
+        }
+      },
+      "dishwasher_work_status_control": {
+        "name": "Control",
+        "state": {
+          "cancel": "Cancel",
+          "pause": "Pause",
+          "power_off": "Power Off",
+          "power_on": "Power On",
+          "resume": "Resume"
         }
       },
       "dry_gear": {
@@ -1876,6 +1921,49 @@
       "dehydration_time_value": {
         "name": "Dehydration Time"
       },
+      "dishwasher_mode": {
+        "name": "Current Mode",
+        "state": {
+          "90min_wash": "90 Min Wash",
+          "auto_wash": "Auto Wash",
+          "bowl_wash": "Bowl Wash",
+          "cloud_wash": "Cloud Wash",
+          "eco_wash": "Eco Wash",
+          "fast_wash": "Quick Wash",
+          "fruit_wash": "Fruit Wash",
+          "germ": "Germ Wash",
+          "glass_wash": "Glass Wash",
+          "hotpot_wash": "Hotpot Wash",
+          "hour_wash": "1 Hour Wash",
+          "kill_germ": "High Temp Sterilize",
+          "less_wash": "Half Load",
+          "max_rapid_wash": "Max Rapid Wash",
+          "neutral_gear": "Standby",
+          "oilnet_wash": "Oil Filter Wash",
+          "quietnight_wash": "Quiet Night Wash",
+          "seafood_wash": "Seafood Wash",
+          "self_clean": "Self Clean",
+          "self_define": "Custom",
+          "single_disinfect": "Disinfect Only",
+          "single_dry": "Dry Only",
+          "soak_wash": "Soak Wash",
+          "standard_wash": "Standard Wash",
+          "strong_wash": "Strong Wash"
+        }
+      },
+      "dishwasher_work_status": {
+        "name": "Work Status",
+        "state": {
+          "cancel": "Standby",
+          "error": "Error",
+          "order": "Scheduled",
+          "power_off": "Powered Off",
+          "work": "Running"
+        }
+      },
+      "dry_set_min": {
+        "name": "Dry Time Setting"
+      },
       "dry_time": {
         "name": "Dry Time"
       },
@@ -2370,6 +2458,9 @@
       },
       "strength_clean": {
         "name": "Strength Clean"
+      },
+      "strong_flash_dry": {
+        "name": "Strong Flash Dry"
       },
       "telstar_saving_mode": {
         "name": "Telstar Saving Mode"

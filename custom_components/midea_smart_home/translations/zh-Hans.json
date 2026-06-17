@@ -423,6 +423,9 @@
       "detergent": {
         "name": "洗衣液"
       },
+      "dishwasher_storage_duration": {
+        "name": "抑菌存储"
+      },
       "honey_temperature": {
         "name": "蜂蜜水设定温度"
       },
@@ -692,6 +695,48 @@
           "l4": "L4",
           "off": "关闭",
           "smart": "智能"
+        }
+      },
+      "dishwasher_mode": {
+        "name": "洗涤模式",
+        "state": {
+          "auto_wash": "智能洗",
+          "eco_wash": "节能洗",
+          "fast_wash": "快速洗",
+          "fruit_wash": "瓜果洗",
+          "gentle_wash": "轻柔洗",
+          "germ": "除菌洗",
+          "hotpot_wash": "火锅洗",
+          "less_wash": "少量洗",
+          "oilnet_wash": "油网洗",
+          "pre_rinse": "预冲洗",
+          "quietnight_wash": "静音洗",
+          "seafood_wash": "海鲜洗",
+          "self_clean": "自清洁",
+          "single_disinfect": "单消毒",
+          "standard_wash": "标准洗",
+          "storage": "抑菌存储",
+          "strong_wash": "超强洗"
+        }
+      },
+      "dishwasher_wash_region": {
+        "name": "分层洗",
+        "state": {
+          "lower": "下层",
+          "lower_zone_strong": "下层洗+专区强洗",
+          "upper": "上层",
+          "upper_lower": "上层+下层",
+          "zone_strong": "专区强洗"
+        }
+      },
+      "dishwasher_work_status_control": {
+        "name": "控制",
+        "state": {
+          "cancel": "取消",
+          "pause": "暂停",
+          "power_off": "关机",
+          "power_on": "开机",
+          "resume": "继续"
         }
       },
       "dry_gear": {
@@ -1876,6 +1921,49 @@
       "dehydration_time_value": {
         "name": "脱水时间"
       },
+      "dishwasher_mode": {
+        "name": "当前模式",
+        "state": {
+          "90min_wash": "90分钟洗",
+          "auto_wash": "智能洗",
+          "bowl_wash": "碗碟洗",
+          "cloud_wash": "云程序",
+          "eco_wash": "节能洗",
+          "fast_wash": "快速洗",
+          "fruit_wash": "瓜果洗",
+          "germ": "除菌洗",
+          "glass_wash": "玻璃洗",
+          "hotpot_wash": "火锅洗",
+          "hour_wash": "一小时洗",
+          "kill_germ": "高温除菌",
+          "less_wash": "少量洗",
+          "max_rapid_wash": "超快洗",
+          "neutral_gear": "待机",
+          "oilnet_wash": "油网洗",
+          "quietnight_wash": "静音洗",
+          "seafood_wash": "海鲜洗",
+          "self_clean": "自清洁",
+          "self_define": "自定义",
+          "single_disinfect": "单消毒",
+          "single_dry": "单独烘干",
+          "soak_wash": "浸泡洗",
+          "standard_wash": "标准洗",
+          "strong_wash": "超强洗"
+        }
+      },
+      "dishwasher_work_status": {
+        "name": "工作状态",
+        "state": {
+          "cancel": "待机",
+          "error": "故障",
+          "order": "预约中",
+          "power_off": "关机",
+          "work": "运行中"
+        }
+      },
+      "dry_set_min": {
+        "name": "烘干设定时间"
+      },
       "dry_time": {
         "name": "烘干时间"
       },
@@ -2370,6 +2458,9 @@
       },
       "strength_clean": {
         "name": "强力清洗"
+      },
+      "strong_flash_dry": {
+        "name": "强闪烘干"
       },
       "telstar_saving_mode": {
         "name": "超智能省电"
