@@ -108,19 +108,28 @@ class MideaHumidifierEntity(MideaBaseEntity, HumidifierEntity):
     def is_on(self):
         if not self._key_power:
             return False
-        return self._get_status_on_off(self._key_power)
+        value = self._get_nested_value(self._key_power)
+        rationale = self._config.get("rationale")
+        if isinstance(rationale, list) and len(rationale) > 1:
+            return value == rationale[1]
+        if isinstance(rationale, list) and rationale:
+            return value in rationale
+        return self._is_on(value)
 
     @property
     def target_humidity(self):
         if not self._key_target_humidity:
             return None
         value = self._get_nested_value(self._key_target_humidity)
-        if value is not None:
-            try:
-                return int(value)
-            except (ValueError, TypeError):
-                return None
-        return None
+        if value is None:
+            return None
+        try:
+            int_value = int(value)
+        except (ValueError, TypeError):
+            return None
+        if int_value < self._min_humidity or int_value > self._max_humidity:
+            return None
+        return int_value
 
     @property
     def current_humidity(self):
@@ -145,10 +154,21 @@ class MideaHumidifierEntity(MideaBaseEntity, HumidifierEntity):
 
     @property
     def mode(self):
-        if not self._key_mode:
+        if not self._key_mode or not self._key_modes:
             return None
         data = self.coordinator.data or {}
-        return data.get(self._key_mode)
+        for mode_key, mode_config in self._key_modes.items():
+            if not isinstance(mode_config, dict):
+                continue
+            match = True
+            for attr, expected in mode_config.items():
+                actual = data.get(attr)
+                if actual != expected:
+                    match = False
+                    break
+            if match:
+                return mode_key
+        return None
 
     @property
     def available_modes(self):
@@ -158,11 +178,19 @@ class MideaHumidifierEntity(MideaBaseEntity, HumidifierEntity):
 
     async def async_turn_on(self, **kwargs: Any) -> None:
         if self._key_power:
-            await self.coordinator.async_set_control(self._key_power, "on")
+            rationale = self._config.get("rationale")
+            if isinstance(rationale, list) and len(rationale) > 1:
+                await self.coordinator.async_set_control(self._key_power, rationale[1])
+            else:
+                await self.coordinator.async_set_control(self._key_power, "on")
 
     async def async_turn_off(self, **kwargs: Any) -> None:
         if self._key_power:
-            await self.coordinator.async_set_control(self._key_power, "off")
+            rationale = self._config.get("rationale")
+            if isinstance(rationale, list) and len(rationale) > 0:
+                await self.coordinator.async_set_control(self._key_power, rationale[0])
+            else:
+                await self.coordinator.async_set_control(self._key_power, "off")
 
     async def async_set_humidity(self, humidity: int) -> None:
         if self._key_target_humidity:

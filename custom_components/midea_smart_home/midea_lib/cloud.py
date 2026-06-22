@@ -73,13 +73,11 @@ PRESET_ACCOUNTS: list[dict[str, Any]] = [
     }
 ]
 
-
 def get_default_cloud() -> str:
     for key, value in SUPPORTED_CLOUDS.items():
         if cast(dict, value).get("default"):
             return key
     raise ElementMissing
-
 
 def get_preset_account_cloud() -> dict[str, str]:
     """Return the first preset account (backward compat for discover step)."""
@@ -95,7 +93,6 @@ def get_preset_account_cloud() -> dict[str, str]:
         "password": password,
         "cloud_name": PRESET_ACCOUNTS[0]["cloud_name"],
     }
-
 
 def get_all_preset_accounts() -> list[dict[str, str]]:
     """Return all preset accounts as [{username, password, cloud_name}, ...].
@@ -600,6 +597,12 @@ async def download_lua_file(hass, access_token: str, sn: str, device_type: int, 
                                 modified = modified.replace(
                                     'if (tonumber(tb["db_error_code"], 16) ~= 0)',
                                     'if (tb["db_error_code"] and tonumber(tb["db_error_code"], 16) ~= 0)'
+                                )
+                                
+                                # Replace group_data_four with group_data_one in conditional byte assignment
+                                modified = modified.replace(
+                                    'if(queryType == "group_data_four") then 				bodyBytes[3] = 0x41 			end',
+                                    'if(queryType == "group_data_one") then 				bodyBytes[3] = 0x41 			end'
                                 )
 
                                 # Fix Lua 5.1 # operator on 0-indexed tables.
