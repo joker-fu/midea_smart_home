@@ -766,6 +766,13 @@
           "zone_strong": "专区强洗"
         }
       },
+      "dishwasher_water_temp": {
+        "name": "水温",
+        "state": {
+          "cold_water": "冷水",
+          "warm_water": "温水（36℃）"
+        }
+      },
       "dishwasher_work_status_control": {
         "name": "控制",
         "state": {

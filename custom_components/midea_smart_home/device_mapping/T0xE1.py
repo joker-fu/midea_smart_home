@@ -427,6 +427,7 @@ DEVICE_MAPPING = {
                 "more_dry": {
                     "translation_key": "strong_flash_dry",
                     "rationale": [0, 1],
+                    "condition": {"not_in": ["mode", ["seafood_wash", "fruit_wash", "soak_wash", "fast_wash"]]},
                 },
                 "uvswitch": {
                     "rationale": [0, 1],
@@ -436,7 +437,8 @@ DEVICE_MAPPING = {
                 },
                 "airswitch": {
                     "device_class": SwitchDeviceClass.SWITCH,
-                    "rationale": [0, 1]
+                    "rationale": [0, 1],
+                    "condition": {"not_in": ["mode", ["soak_wash", "fast_wash"]]},
                 },
                 "auto_throw": {
                     "device_class": SwitchDeviceClass.SWITCH,
@@ -489,6 +491,15 @@ DEVICE_MAPPING = {
                         "lower_zone_strong": {"wash_region": 2, "additional": 1},
                         "zone_strong": {"wash_region": 0, "additional": 1},
                     },
+                    "condition": {"not_in": ["mode", ["oilnet_wash"]]},
+                },
+                "water_temp": {
+                    "translation_key": "dishwasher_water_temp",
+                    "options": {
+                        "cold_water": {"waterswitch": 0},
+                        "warm_water": {"waterswitch": 1},
+                    },
+                    "condition": {"in": ["mode", ["seafood_wash", "fruit_wash"]]},
                 },
                 "softwater": {
                     "options": {
@@ -518,6 +529,7 @@ DEVICE_MAPPING = {
                     "step": 1,
                     "unit_of_measurement": UnitOfTime.HOURS,
                     "mode": "box",
+                    "condition": {"not_in": ["mode", ["soak_wash", "fast_wash"]]},
                 },
             },
             Platform.SENSOR: {

@@ -766,6 +766,13 @@
           "zone_strong": "Zone Strong"
         }
       },
+      "dishwasher_water_temp": {
+        "name": "Water Temperature",
+        "state": {
+          "cold_water": "Cold Water",
+          "warm_water": "Warm Water (36°C)"
+        }
+      },
       "dishwasher_work_status_control": {
         "name": "Control",
         "state": {

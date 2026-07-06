@@ -211,6 +211,14 @@ class MideaBaseEntity(CoordinatorEntity[MideaCoordinator]):
             actual_value = data.get(attr)
             return actual_value == expected_value
 
+        if "in" in condition:
+            attr, expected_values = condition["in"]
+            return data.get(attr) in expected_values
+
+        if "not_in" in condition:
+            attr, excluded_values = condition["not_in"]
+            return data.get(attr) not in excluded_values
+
         return True
 
     async def _async_set_status_on_off(
