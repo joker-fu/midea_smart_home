@@ -13,10 +13,12 @@ DEVICE_MAPPING = {
             {"prevent_straight_wind"},
             {"prevent_super_cool"},
             {"wind_swing_lr_angle"},
-            {"wind_swing_ud_angle"}
+            {"wind_swing_ud_angle"},
+            {"group_data_four"}
         ],
         "polling_query": [
-            {"indoor_temperature"}
+            {"indoor_temperature"},
+            {"group_data_four"}
         ],
         "centralized": ["buzzer"],
         "calculate":{
@@ -165,6 +167,30 @@ DEVICE_MAPPING = {
                 },
                 "power_saving": {
                     "device_class": SwitchDeviceClass.SWITCH
+                },
+                "self_clean": {
+                    "device_class": SwitchDeviceClass.SWITCH
+                }
+            },
+            Platform.TIME: {
+                "power_on_timer": {
+                    "target_keys": {
+                        "duration": "power_on_time_value"
+                    },
+                    "time_mode": "convert",
+                    "command": {"power_on_timer": "on"}
+                },
+                "power_off_timer": {
+                    "target_keys": {
+                        "duration": "power_off_time_value"
+                    },
+                    "time_mode": "convert",
+                    "command": {"power_off_timer": "on"}
+                }
+            },
+            Platform.BUTTON: {
+                "cancel_power_on_off_timer": {
+                    "command": {"power_on_timer": "off", "power_off_timer": "off"}
                 }
             },
             Platform.SENSOR: {
@@ -180,6 +206,19 @@ DEVICE_MAPPING = {
                     "device_class": SensorDeviceClass.TEMPERATURE,
                     "unit_of_measurement": UnitOfTemperature.CELSIUS,
                     "state_class": SensorStateClass.MEASUREMENT
+                },
+                "current_time_power": {
+                    "device_class": SensorDeviceClass.POWER,
+                    "unit_of_measurement": UnitOfPower.KILO_WATT,
+                    "state_class": SensorStateClass.MEASUREMENT,
+                    "suggested_display_precision": 1
+                },
+                "total_power_consumption": {
+                    "device_class": SensorDeviceClass.ENERGY,
+                    "unit_of_measurement": UnitOfEnergy.KILO_WATT_HOUR,
+                    "state_class": SensorStateClass.TOTAL_INCREASING,
+                    "suggested_display_precision": 2,
+                    "translation_key": "total_elec_value"
                 }
             }
         }
@@ -190,10 +229,12 @@ DEVICE_MAPPING = {
             {},
             {"prevent_super_cool"},
             {"wind_swing_lr_angle"},
-            {"wind_swing_ud_angle"}
+            {"wind_swing_ud_angle"},
+            {"group_data_four"}
         ],
         "polling_query": [
-            {"indoor_temperature"}
+            {"indoor_temperature"},
+            {"group_data_four"}
         ],
         "centralized": ["buzzer"],
         "calculate":{
@@ -328,6 +369,30 @@ DEVICE_MAPPING = {
                 },
                 "power_saving": {
                     "device_class": SwitchDeviceClass.SWITCH
+                },
+                "self_clean": {
+                    "device_class": SwitchDeviceClass.SWITCH
+                }
+            },
+            Platform.TIME: {
+                "power_on_timer": {
+                    "target_keys": {
+                        "duration": "power_on_time_value"
+                    },
+                    "time_mode": "convert",
+                    "command": {"power_on_timer": "on"}
+                },
+                "power_off_timer": {
+                    "target_keys": {
+                        "duration": "power_off_time_value"
+                    },
+                    "time_mode": "convert",
+                    "command": {"power_off_timer": "on"}
+                }
+            },
+            Platform.BUTTON: {
+                "cancel_power_on_off_timer": {
+                    "command": {"power_on_timer": "off", "power_off_timer": "off"}
                 }
             },
             Platform.SENSOR: {
@@ -343,6 +408,19 @@ DEVICE_MAPPING = {
                     "device_class": SensorDeviceClass.TEMPERATURE,
                     "unit_of_measurement": UnitOfTemperature.CELSIUS,
                     "state_class": SensorStateClass.MEASUREMENT
+                },
+                "current_time_power": {
+                    "device_class": SensorDeviceClass.POWER,
+                    "unit_of_measurement": UnitOfPower.KILO_WATT,
+                    "state_class": SensorStateClass.MEASUREMENT,
+                    "suggested_display_precision": 1
+                },
+                "total_power_consumption": {
+                    "device_class": SensorDeviceClass.ENERGY,
+                    "unit_of_measurement": UnitOfEnergy.KILO_WATT_HOUR,
+                    "state_class": SensorStateClass.TOTAL_INCREASING,
+                    "suggested_display_precision": 2,
+                    "translation_key": "total_elec_value"
                 }
             }
         }
@@ -669,6 +747,30 @@ DEVICE_MAPPING = {
                 "linkage_2": {
                     "device_class": SwitchDeviceClass.SWITCH,
                     "rationale": [0, 1]
+                },
+                "self_clean": {
+                    "device_class": SwitchDeviceClass.SWITCH
+                }
+            },
+            Platform.TIME: {
+                "power_on_timer": {
+                    "target_keys": {
+                        "duration": "power_on_time_value"
+                    },
+                    "time_mode": "convert",
+                    "command": {"power_on_timer": "on"}
+                },
+                "power_off_timer": {
+                    "target_keys": {
+                        "duration": "power_off_time_value"
+                    },
+                    "time_mode": "convert",
+                    "command": {"power_off_timer": "on"}
+                }
+            },
+            Platform.BUTTON: {
+                "cancel_power_on_off_timer": {
+                    "command": {"power_on_timer": "off", "power_off_timer": "off"}
                 }
             },
             Platform.SENSOR: {
@@ -715,10 +817,12 @@ DEVICE_MAPPING = {
             {"fresh_air_fan_speed"},
             {"fresh_air_mode_two"},
             {"inner_purifier"},
-            {"inner_purifier_fan_speed"}
+            {"inner_purifier_fan_speed"},
+            {"group_data_four"}
         ],
         "polling_query": [
-            {"indoor_temperature"}
+            {"indoor_temperature"},
+            {"group_data_four"}
         ],
         "centralized": ["buzzer"],
         "calculate":{
@@ -837,7 +941,31 @@ DEVICE_MAPPING = {
                     "device_class": SwitchDeviceClass.SWITCH,
                 },
                 "ptc": {
-                    "device_class": SwitchDeviceClass.SWITCH,
+                    "device_class": SwitchDeviceClass.SWITCH
+                },
+                "self_clean": {
+                    "device_class": SwitchDeviceClass.SWITCH
+                }
+            },
+            Platform.TIME: {
+                "power_on_timer": {
+                    "target_keys": {
+                        "duration": "power_on_time_value"
+                    },
+                    "time_mode": "convert",
+                    "command": {"power_on_timer": "on"}
+                },
+                "power_off_timer": {
+                    "target_keys": {
+                        "duration": "power_off_time_value"
+                    },
+                    "time_mode": "convert",
+                    "command": {"power_off_timer": "on"}
+                }
+            },
+            Platform.BUTTON: {
+                "cancel_power_on_off_timer": {
+                    "command": {"power_on_timer": "off", "power_off_timer": "off"}
                 }
             },
             Platform.SENSOR: {
@@ -852,6 +980,19 @@ DEVICE_MAPPING = {
                 "fresh_filter_time_use": {
                     "state_class": SensorStateClass.MEASUREMENT,
                     "unit_of_measurement": UnitOfTime.HOURS
+                },
+                "current_time_power": {
+                    "device_class": SensorDeviceClass.POWER,
+                    "unit_of_measurement": UnitOfPower.KILO_WATT,
+                    "state_class": SensorStateClass.MEASUREMENT,
+                    "suggested_display_precision": 1
+                },
+                "total_power_consumption": {
+                    "device_class": SensorDeviceClass.ENERGY,
+                    "unit_of_measurement": UnitOfEnergy.KILO_WATT_HOUR,
+                    "state_class": SensorStateClass.TOTAL_INCREASING,
+                    "suggested_display_precision": 2,
+                    "translation_key": "total_elec_value"
                 }
             }
         }
@@ -861,10 +1002,12 @@ DEVICE_MAPPING = {
         "initial_query": [
             {},
             {"wind_swing_lr_angle"},
-            {"wind_swing_ud_angle"}
+            {"wind_swing_ud_angle"},
+            {"group_data_four"}
         ],
         "polling_query": [
-            {"indoor_temperature"}
+            {"indoor_temperature"},
+            {"group_data_four"}
         ],
         "centralized": ["buzzer"],
         "calculate":{
@@ -947,7 +1090,31 @@ DEVICE_MAPPING = {
                     "device_class": SwitchDeviceClass.SWITCH,
                 },
                 "ptc": {
-                    "device_class": SwitchDeviceClass.SWITCH,
+                    "device_class": SwitchDeviceClass.SWITCH
+                },
+                "self_clean": {
+                    "device_class": SwitchDeviceClass.SWITCH
+                }
+            },
+            Platform.TIME: {
+                "power_on_timer": {
+                    "target_keys": {
+                        "duration": "power_on_time_value"
+                    },
+                    "time_mode": "convert",
+                    "command": {"power_on_timer": "on"}
+                },
+                "power_off_timer": {
+                    "target_keys": {
+                        "duration": "power_off_time_value"
+                    },
+                    "time_mode": "convert",
+                    "command": {"power_off_timer": "on"}
+                }
+            },
+            Platform.BUTTON: {
+                "cancel_power_on_off_timer": {
+                    "command": {"power_on_timer": "off", "power_off_timer": "off"}
                 }
             },
             Platform.SENSOR: {
@@ -963,6 +1130,19 @@ DEVICE_MAPPING = {
                     "device_class": SensorDeviceClass.TEMPERATURE,
                     "unit_of_measurement": UnitOfTemperature.CELSIUS,
                     "state_class": SensorStateClass.MEASUREMENT
+                },
+                "current_time_power": {
+                    "device_class": SensorDeviceClass.POWER,
+                    "unit_of_measurement": UnitOfPower.KILO_WATT,
+                    "state_class": SensorStateClass.MEASUREMENT,
+                    "suggested_display_precision": 1
+                },
+                "total_power_consumption": {
+                    "device_class": SensorDeviceClass.ENERGY,
+                    "unit_of_measurement": UnitOfEnergy.KILO_WATT_HOUR,
+                    "state_class": SensorStateClass.TOTAL_INCREASING,
+                    "suggested_display_precision": 2,
+                    "translation_key": "total_elec_value"
                 }
             }
         }
@@ -975,10 +1155,12 @@ DEVICE_MAPPING = {
             {"prevent_straight_wind"},
             {"prevent_super_cool"},
             {"wind_swing_lr_angle"},
-            {"wind_swing_ud_angle"}
+            {"wind_swing_ud_angle"},
+            {"group_data_four"}
         ],
         "polling_query": [
-            {"indoor_temperature"}
+            {"indoor_temperature"},
+            {"group_data_four"}
         ],
         "centralized": ["buzzer"],
         "calculate":{
@@ -1127,6 +1309,30 @@ DEVICE_MAPPING = {
                 },
                 "power_saving": {
                     "device_class": SwitchDeviceClass.SWITCH
+                },
+                "self_clean": {
+                    "device_class": SwitchDeviceClass.SWITCH
+                }
+            },
+            Platform.TIME: {
+                "power_on_timer": {
+                    "target_keys": {
+                        "duration": "power_on_time_value"
+                    },
+                    "time_mode": "convert",
+                    "command": {"power_on_timer": "on"}
+                },
+                "power_off_timer": {
+                    "target_keys": {
+                        "duration": "power_off_time_value"
+                    },
+                    "time_mode": "convert",
+                    "command": {"power_off_timer": "on"}
+                }
+            },
+            Platform.BUTTON: {
+                "cancel_power_on_off_timer": {
+                    "command": {"power_on_timer": "off", "power_off_timer": "off"}
                 }
             },
             Platform.SENSOR: {
@@ -1142,6 +1348,19 @@ DEVICE_MAPPING = {
                     "device_class": SensorDeviceClass.TEMPERATURE,
                     "unit_of_measurement": UnitOfTemperature.CELSIUS,
                     "state_class": SensorStateClass.MEASUREMENT
+                },
+                "current_time_power": {
+                    "device_class": SensorDeviceClass.POWER,
+                    "unit_of_measurement": UnitOfPower.KILO_WATT,
+                    "state_class": SensorStateClass.MEASUREMENT,
+                    "suggested_display_precision": 1
+                },
+                "total_power_consumption": {
+                    "device_class": SensorDeviceClass.ENERGY,
+                    "unit_of_measurement": UnitOfEnergy.KILO_WATT_HOUR,
+                    "state_class": SensorStateClass.TOTAL_INCREASING,
+                    "suggested_display_precision": 2,
+                    "translation_key": "total_elec_value"
                 }
             }
         }
@@ -1152,7 +1371,8 @@ DEVICE_MAPPING = {
             {},
             {"e0_query"},
             {"screen_display"},
-            {"smart_dry_value"}
+            {"smart_dry_value"},
+            {"group_data_four"}
         ],
         "polling_query": [
             {"e0_query"},
@@ -1367,6 +1587,30 @@ DEVICE_MAPPING = {
                 "prevent_straight_wind": {
                     "device_class": SwitchDeviceClass.SWITCH,
                     "rationale": [1, 2]
+                },
+                "self_clean": {
+                    "device_class": SwitchDeviceClass.SWITCH
+                }
+            },
+            Platform.TIME: {
+                "power_on_timer": {
+                    "target_keys": {
+                        "duration": "power_on_time_value"
+                    },
+                    "time_mode": "convert",
+                    "command": {"power_on_timer": "on"}
+                },
+                "power_off_timer": {
+                    "target_keys": {
+                        "duration": "power_off_time_value"
+                    },
+                    "time_mode": "convert",
+                    "command": {"power_off_timer": "on"}
+                }
+            },
+            Platform.BUTTON: {
+                "cancel_power_on_off_timer": {
+                    "command": {"power_on_timer": "off", "power_off_timer": "off"}
                 }
             },
             Platform.SENSOR: {
@@ -1415,10 +1659,12 @@ DEVICE_MAPPING = {
             {"wind_swing_ud_angle"},
             {"fresh_air"},
             {"fresh_filter_time_use"},
-            {"fresh_air_fan_speed"}
+            {"fresh_air_fan_speed"},
+            {"group_data_four"}
         ],
         "polling_query": [
-            {"indoor_temperature"}
+            {"indoor_temperature"},
+            {"group_data_four"}
         ],
         "centralized": ["buzzer"],
         "calculate":{
@@ -1535,7 +1781,31 @@ DEVICE_MAPPING = {
                     "device_class": SwitchDeviceClass.SWITCH,
                 },
                 "ptc": {
-                    "device_class": SwitchDeviceClass.SWITCH,
+                    "device_class": SwitchDeviceClass.SWITCH
+                },
+                "self_clean": {
+                    "device_class": SwitchDeviceClass.SWITCH
+                }
+            },
+            Platform.TIME: {
+                "power_on_timer": {
+                    "target_keys": {
+                        "duration": "power_on_time_value"
+                    },
+                    "time_mode": "convert",
+                    "command": {"power_on_timer": "on"}
+                },
+                "power_off_timer": {
+                    "target_keys": {
+                        "duration": "power_off_time_value"
+                    },
+                    "time_mode": "convert",
+                    "command": {"power_off_timer": "on"}
+                }
+            },
+            Platform.BUTTON: {
+                "cancel_power_on_off_timer": {
+                    "command": {"power_on_timer": "off", "power_off_timer": "off"}
                 }
             },
             Platform.SENSOR: {
@@ -1550,6 +1820,19 @@ DEVICE_MAPPING = {
                "fresh_filter_time_use": {
                     "state_class": SensorStateClass.MEASUREMENT,
                     "unit_of_measurement": UnitOfTime.HOURS
+                },
+                "current_time_power": {
+                    "device_class": SensorDeviceClass.POWER,
+                    "unit_of_measurement": UnitOfPower.KILO_WATT,
+                    "state_class": SensorStateClass.MEASUREMENT,
+                    "suggested_display_precision": 1
+                },
+                "total_power_consumption": {
+                    "device_class": SensorDeviceClass.ENERGY,
+                    "unit_of_measurement": UnitOfEnergy.KILO_WATT_HOUR,
+                    "state_class": SensorStateClass.TOTAL_INCREASING,
+                    "suggested_display_precision": 2,
+                    "translation_key": "total_elec_value"
                 }
             }
         }
@@ -1660,6 +1943,27 @@ DEVICE_MAPPING = {
                         "mode_1": {"ptc": "on", "ptc_default_rule": 1},
                         "mode_2": {"ptc": "on", "ptc_default_rule": 0}
                     }
+                },
+            },
+            Platform.TIME: {
+                "power_on_timer": {
+                    "target_keys": {
+                        "duration": "power_on_time_value"
+                    },
+                    "time_mode": "convert",
+                    "command": {"power_on_timer": "on"}
+                },
+                "power_off_timer": {
+                    "target_keys": {
+                        "duration": "power_off_time_value"
+                    },
+                    "time_mode": "convert",
+                    "command": {"power_off_timer": "on"}
+                }
+            },
+            Platform.BUTTON: {
+                "cancel_power_on_off_timer": {
+                    "command": {"power_on_timer": "off", "power_off_timer": "off"}
                 }
             },
             Platform.SWITCH: {
@@ -1683,6 +1987,9 @@ DEVICE_MAPPING = {
                     "rationale": [0, 3]
                 },
                 "power_saving": {
+                    "device_class": SwitchDeviceClass.SWITCH
+                },
+                "self_clean": {
                     "device_class": SwitchDeviceClass.SWITCH
                 }
             },
@@ -1721,17 +2028,19 @@ DEVICE_MAPPING = {
             }
         }
     },
-    ("22040055", "22040023", "22040053"): {
+    ("22040055", "22040023", "22040053", "22040057"): {
         "rationale": ["off", "on"],
         "initial_query": [
             {},
             {"prevent_straight_wind"},
             {"prevent_super_cool"},
             {"wind_swing_lr_angle"},
-            {"wind_swing_ud_angle"}
+            {"wind_swing_ud_angle"},
+            {"group_data_four"}
         ],
         "polling_query": [
-            {"indoor_temperature"}
+            {"indoor_temperature"},
+            {"group_data_four"}
         ],
         "centralized": ["buzzer"],
         "calculate":{
@@ -1828,7 +2137,31 @@ DEVICE_MAPPING = {
                     "device_class": SwitchDeviceClass.SWITCH,
                 },
                 "ptc": {
-                    "device_class": SwitchDeviceClass.SWITCH,
+                    "device_class": SwitchDeviceClass.SWITCH
+                },
+                "self_clean": {
+                    "device_class": SwitchDeviceClass.SWITCH
+                }
+            },
+            Platform.TIME: {
+                "power_on_timer": {
+                    "target_keys": {
+                        "duration": "power_on_time_value"
+                    },
+                    "time_mode": "convert",
+                    "command": {"power_on_timer": "on"}
+                },
+                "power_off_timer": {
+                    "target_keys": {
+                        "duration": "power_off_time_value"
+                    },
+                    "time_mode": "convert",
+                    "command": {"power_off_timer": "on"}
+                }
+            },
+            Platform.BUTTON: {
+                "cancel_power_on_off_timer": {
+                    "command": {"power_on_timer": "off", "power_off_timer": "off"}
                 }
             },
             Platform.SENSOR: {
@@ -1844,6 +2177,19 @@ DEVICE_MAPPING = {
                     "device_class": SensorDeviceClass.TEMPERATURE,
                     "unit_of_measurement": UnitOfTemperature.CELSIUS,
                     "state_class": SensorStateClass.MEASUREMENT
+                },
+                "current_time_power": {
+                    "device_class": SensorDeviceClass.POWER,
+                    "unit_of_measurement": UnitOfPower.KILO_WATT,
+                    "state_class": SensorStateClass.MEASUREMENT,
+                    "suggested_display_precision": 1
+                },
+                "total_power_consumption": {
+                    "device_class": SensorDeviceClass.ENERGY,
+                    "unit_of_measurement": UnitOfEnergy.KILO_WATT_HOUR,
+                    "state_class": SensorStateClass.TOTAL_INCREASING,
+                    "suggested_display_precision": 2,
+                    "translation_key": "total_elec_value"
                 }
             }
         }
@@ -1853,11 +2199,13 @@ DEVICE_MAPPING = {
         "initial_query": [
             {},
             {"indoor_temperature"},
+            {"out_run_status"},
             {"prevent_super_cool"},
             {"run_status"}
         ],
         "polling_query": [
-            {"indoor_temperature"}
+            {"indoor_temperature"},
+            {"out_run_status"}
         ],
         "calculate": {
             "get": [
@@ -1929,6 +2277,30 @@ DEVICE_MAPPING = {
                     "device_class": SwitchDeviceClass.SWITCH,
                     "rationale": ["off", "on"],
                     "command": {"follow_body_sense_enable": 1}
+                },
+                "self_clean": {
+                    "device_class": SwitchDeviceClass.SWITCH
+                }
+            },
+            Platform.TIME: {
+                "power_on_timer": {
+                    "target_keys": {
+                        "duration": "power_on_time_value"
+                    },
+                    "time_mode": "convert",
+                    "command": {"power_on_timer": "on"}
+                },
+                "power_off_timer": {
+                    "target_keys": {
+                        "duration": "power_off_time_value"
+                    },
+                    "time_mode": "convert",
+                    "command": {"power_off_timer": "on"}
+                }
+            },
+            Platform.BUTTON: {
+                "cancel_power_on_off_timer": {
+                    "command": {"power_on_timer": "off", "power_off_timer": "off"}
                 }
             },
             Platform.SENSOR: {
@@ -1936,6 +2308,11 @@ DEVICE_MAPPING = {
                     "device_class": SensorDeviceClass.ENUM,
                 },
                 "indoor_temperature": {
+                    "device_class": SensorDeviceClass.TEMPERATURE,
+                    "unit_of_measurement": UnitOfTemperature.CELSIUS,
+                    "state_class": SensorStateClass.MEASUREMENT
+                },
+                "outdoor_temperature": {
                     "device_class": SensorDeviceClass.TEMPERATURE,
                     "unit_of_measurement": UnitOfTemperature.CELSIUS,
                     "state_class": SensorStateClass.MEASUREMENT
@@ -2013,6 +2390,30 @@ DEVICE_MAPPING = {
                     "device_class": SwitchDeviceClass.SWITCH,
                     "rationale": ["off", "on"],
                     "command": {"follow_body_sense_enable": 1}
+                },
+                "self_clean": {
+                    "device_class": SwitchDeviceClass.SWITCH
+                }
+            },
+            Platform.TIME: {
+                "power_on_timer": {
+                    "target_keys": {
+                        "duration": "power_on_time_value"
+                    },
+                    "time_mode": "convert",
+                    "command": {"power_on_timer": "on"}
+                },
+                "power_off_timer": {
+                    "target_keys": {
+                        "duration": "power_off_time_value"
+                    },
+                    "time_mode": "convert",
+                    "command": {"power_off_timer": "on"}
+                }
+            },
+            Platform.BUTTON: {
+                "cancel_power_on_off_timer": {
+                    "command": {"power_on_timer": "off", "power_off_timer": "off"}
                 }
             },
             Platform.SENSOR: {
@@ -2107,6 +2508,9 @@ DEVICE_MAPPING = {
                     "device_class": SwitchDeviceClass.SWITCH,
                     "rationale": ["off", "on"],
                     "command": {"follow_body_sense_enable": 1}
+                },
+                "self_clean": {
+                    "device_class": SwitchDeviceClass.SWITCH
                 }
             },
             Platform.SELECT: {
@@ -2131,6 +2535,27 @@ DEVICE_MAPPING = {
                         "rightmost": {"left_right_wind_direction": 9, "wind_swing_lr": "off"}
                     },
                     "translation_key": "wind_swing_lr_angle"
+                }
+            },
+            Platform.TIME: {
+                "power_on_timer": {
+                    "target_keys": {
+                        "duration": "power_on_time_value"
+                    },
+                    "time_mode": "convert",
+                    "command": {"power_on_timer": "on"}
+                },
+                "power_off_timer": {
+                    "target_keys": {
+                        "duration": "power_off_time_value"
+                    },
+                    "time_mode": "convert",
+                    "command": {"power_off_timer": "on"}
+                }
+            },
+            Platform.BUTTON: {
+                "cancel_power_on_off_timer": {
+                    "command": {"power_on_timer": "off", "power_off_timer": "off"}
                 }
             },
             Platform.SENSOR: {
@@ -2200,7 +2625,31 @@ DEVICE_MAPPING = {
                     "device_class": SwitchDeviceClass.SWITCH,
                 },
                 "ptc": {
-                    "device_class": SwitchDeviceClass.SWITCH,
+                    "device_class": SwitchDeviceClass.SWITCH
+                },
+                "self_clean": {
+                    "device_class": SwitchDeviceClass.SWITCH
+                }
+            },
+            Platform.TIME: {
+                "power_on_timer": {
+                    "target_keys": {
+                        "duration": "power_on_time_value"
+                    },
+                    "time_mode": "convert",
+                    "command": {"power_on_timer": "on"}
+                },
+                "power_off_timer": {
+                    "target_keys": {
+                        "duration": "power_off_time_value"
+                    },
+                    "time_mode": "convert",
+                    "command": {"power_off_timer": "on"}
+                }
+            },
+            Platform.BUTTON: {
+                "cancel_power_on_off_timer": {
+                    "command": {"power_on_timer": "off", "power_off_timer": "off"}
                 }
             },
             Platform.SENSOR: {
@@ -2220,10 +2669,12 @@ DEVICE_MAPPING = {
         "initial_query": [
             {},
             {"indoor_temperature"},
+            {"out_run_status"},
             {"run_status"}
         ],
         "polling_query": [
-            {"indoor_temperature"}
+            {"indoor_temperature"},
+            {"out_run_status"}
         ],
         "calculate": {
             "get": [
@@ -2271,6 +2722,27 @@ DEVICE_MAPPING = {
                     "precision": PRECISION_HALVES,
                 }
             },
+            Platform.TIME: {
+                "power_on_timer": {
+                    "target_keys": {
+                        "duration": "power_on_time_value"
+                    },
+                    "time_mode": "convert",
+                    "command": {"power_on_timer": "on"}
+                },
+                "power_off_timer": {
+                    "target_keys": {
+                        "duration": "power_off_time_value"
+                    },
+                    "time_mode": "convert",
+                    "command": {"power_off_timer": "on"}
+                }
+            },
+            Platform.BUTTON: {
+                "cancel_power_on_off_timer": {
+                    "command": {"power_on_timer": "off", "power_off_timer": "off"}
+                }
+            },
             Platform.SWITCH: {
                 "fengguan_remove_odor": {
                     "device_class": SwitchDeviceClass.SWITCH,
@@ -2286,6 +2758,9 @@ DEVICE_MAPPING = {
                     "device_class": SwitchDeviceClass.SWITCH,
                     "rationale": ["off", "on"],
                     "command": {"follow_body_sense_enable": 1}
+                },
+                "self_clean": {
+                    "device_class": SwitchDeviceClass.SWITCH
                 }
             },
             Platform.SENSOR: {
@@ -2293,6 +2768,11 @@ DEVICE_MAPPING = {
                     "device_class": SensorDeviceClass.ENUM,
                 },
                 "indoor_temperature": {
+                    "device_class": SensorDeviceClass.TEMPERATURE,
+                    "unit_of_measurement": UnitOfTemperature.CELSIUS,
+                    "state_class": SensorStateClass.MEASUREMENT
+                },
+                "outdoor_temperature": {
                     "device_class": SensorDeviceClass.TEMPERATURE,
                     "unit_of_measurement": UnitOfTemperature.CELSIUS,
                     "state_class": SensorStateClass.MEASUREMENT
@@ -2373,6 +2853,30 @@ DEVICE_MAPPING = {
                     "device_class": SwitchDeviceClass.SWITCH,
                     "rationale": ["off", "on"],
                     "command": {"follow_body_sense_enable": 1}
+                },
+                "self_clean": {
+                    "device_class": SwitchDeviceClass.SWITCH
+                }
+            },
+            Platform.TIME: {
+                "power_on_timer": {
+                    "target_keys": {
+                        "duration": "power_on_time_value"
+                    },
+                    "time_mode": "convert",
+                    "command": {"power_on_timer": "on"}
+                },
+                "power_off_timer": {
+                    "target_keys": {
+                        "duration": "power_off_time_value"
+                    },
+                    "time_mode": "convert",
+                    "command": {"power_off_timer": "on"}
+                }
+            },
+            Platform.BUTTON: {
+                "cancel_power_on_off_timer": {
+                    "command": {"power_on_timer": "off", "power_off_timer": "off"}
                 }
             },
             Platform.SENSOR: {

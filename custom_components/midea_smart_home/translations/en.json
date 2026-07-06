@@ -184,6 +184,9 @@
       }
     },
     "button": {
+      "cancel_power_on_off_timer": {
+        "name": "Cancel Timer"
+      },
       "left_stove_off": {
         "name": "Turn Off Left Stove"
       },
@@ -308,9 +311,14 @@
           "preset_mode": {
             "state": {
               "baby": "Baby",
+              "baby_wind": "Baby Wind",
               "comfort": "Comfort",
+              "const_temperature": "Constant Temperature",
+              "fanmanual": "Manual",
+              "forest_wind": "Forest Wind",
               "normal": "Normal",
               "sleep": "Sleep",
+              "sleep_wind": "Sleep Wind",
               "storm": "Storm",
               "strong": "Strong"
             }
@@ -405,12 +413,16 @@
         "state_attributes": {
           "effect": {
             "state": {
+              "eating": "Dining",
               "film": "Cinema",
+              "ledmanual": "Custom",
               "life": "Daily Life",
               "manual": "Manual",
               "mild": "Soft",
               "moon": "Night",
-              "read": "Reading"
+              "night": "Night",
+              "read": "Reading",
+              "work": "Work"
             }
           }
         }
@@ -1090,13 +1102,17 @@
         "state": {
           "air_dry": "Dry",
           "auto": "Auto",
+          "boiling_congee": "Porridge",
           "close_all": "Off",
           "coarse_rice": "Coarse Rice",
           "cook_soup": "Cook Soup",
           "double_layer_cook": "Double Layer Cook",
           "factory_test": "Factory Test",
           "firewood_rice": "Firewood Rice",
+          "heat_rice": "Reheat Rice",
+          "hot_fast_rice": "Quick Rice",
           "keep_warm": "Keep Warm",
+          "luscious_rice": "Fragrant Rice",
           "manual": "Manual",
           "normal": "Normal",
           "normal_continus": "Normal Continuous",
@@ -1116,6 +1132,14 @@
           "gear_3": "Gear 3",
           "gear_4": "Gear 4",
           "off": "Off"
+        }
+      },
+      "mouthfeel": {
+        "name": "Mouthfeel",
+        "state": {
+          "hard": "Hard",
+          "middle": "Middle",
+          "soft": "Soft"
         }
       },
       "no_obsolete_water": {
@@ -1168,6 +1192,15 @@
           "280": "4min 40s",
           "290": "4min 50s",
           "300": "5min"
+        }
+      },
+      "order_mode": {
+        "name": "Appointment Mode",
+        "state": {
+          "order_boiling_congee": "Porridge",
+          "order_luscious_rice": "Fragrant Rice",
+          "order_stewing": "Stewing",
+          "stop": "Stop"
         }
       },
       "plateau_boiling_point": {
@@ -2182,11 +2215,17 @@
       "mode": {
         "name": "Running Mode"
       },
+      "mouthfeel": {
+        "name": "Mouthfeel"
+      },
       "new_wind_humidity": {
         "name": "Fresh Air Humidity"
       },
       "night_light_brightness": {
         "name": "Night Light Brightness"
+      },
+      "order_time": {
+        "name": "Order Remaining Time"
       },
       "out_tds": {
         "name": "Outlet TDS"
@@ -2237,6 +2276,9 @@
       },
       "return_water_tem": {
         "name": "Return Water Temperature"
+      },
+      "rice_type": {
+        "name": "Rice Type"
       },
       "running_status": {
         "name": "Running Status"
@@ -2648,6 +2690,17 @@
     "text": {
       "external_humidity_sensor": {
         "name": "External Humidity Sensor"
+      }
+    },
+    "time": {
+      "power_off_timer": {
+        "name": "Power Off Timer"
+      },
+      "power_on_timer": {
+        "name": "Power On Timer"
+      },
+      "work_time": {
+        "name": "Work Time"
       }
     },
     "vacuum": {

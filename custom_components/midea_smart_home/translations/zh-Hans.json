@@ -184,6 +184,9 @@
       }
     },
     "button": {
+      "cancel_power_on_off_timer": {
+        "name": "取消定时"
+      },
       "left_stove_off": {
         "name": "关闭左灶"
       },
@@ -308,9 +311,14 @@
           "preset_mode": {
             "state": {
               "baby": "宝宝风",
+              "baby_wind": "婴儿风",
               "comfort": "舒适风",
+              "const_temperature": "恒温模式",
+              "fanmanual": "手动模式",
+              "forest_wind": "森林风",
               "normal": "正常风",
               "sleep": "睡眠风",
+              "sleep_wind": "睡眠风",
               "storm": "循环风",
               "strong": "强劲风"
             }
@@ -405,12 +413,16 @@
         "state_attributes": {
           "effect": {
             "state": {
+              "eating": "聚餐",
               "film": "影院",
+              "ledmanual": "自定义",
               "life": "生活",
               "manual": "自定义",
               "mild": "柔和",
               "moon": "夜晚",
-              "read": "阅读"
+              "night": "夜灯",
+              "read": "阅读",
+              "work": "工作"
             }
           }
         }
@@ -1090,13 +1102,17 @@
         "state": {
           "air_dry": "干燥",
           "auto": "自动",
+          "boiling_congee": "煮粥",
           "close_all": "关闭",
           "coarse_rice": "杂粮饭",
           "cook_soup": "煲汤",
           "double_layer_cook": "双层煮",
           "factory_test": "工厂测试",
           "firewood_rice": "柴火饭",
+          "heat_rice": "热饭",
+          "hot_fast_rice": "热水快饭",
           "keep_warm": "保温",
+          "luscious_rice": "香甜饭",
           "manual": "手动",
           "normal": "正常",
           "normal_continus": "正常持续",
@@ -1116,6 +1132,14 @@
           "gear_3": "3档",
           "gear_4": "4档",
           "off": "关闭"
+        }
+      },
+      "mouthfeel": {
+        "name": "口感",
+        "state": {
+          "hard": "Q弹",
+          "middle": "适中",
+          "soft": "软糯"
         }
       },
       "no_obsolete_water": {
@@ -1168,6 +1192,15 @@
           "280": "4分钟40秒",
           "290": "4分钟50秒",
           "300": "5分钟"
+        }
+      },
+      "order_mode": {
+        "name": "预约模式",
+        "state": {
+          "order_boiling_congee": "预约煮粥",
+          "order_luscious_rice": "预约香甜饭",
+          "order_stewing": "预约蒸煮",
+          "stop": "停止"
         }
       },
       "plateau_boiling_point": {
@@ -2182,11 +2215,17 @@
       "mode": {
         "name": "运行模式"
       },
+      "mouthfeel": {
+        "name": "口感"
+      },
       "new_wind_humidity": {
         "name": "新风湿度"
       },
       "night_light_brightness": {
         "name": "夜灯亮度"
+      },
+      "order_time": {
+        "name": "预约剩余时间"
       },
       "out_tds": {
         "name": "纯水TDS"
@@ -2237,6 +2276,9 @@
       },
       "return_water_tem": {
         "name": "回水温度"
+      },
+      "rice_type": {
+        "name": "米种类"
       },
       "running_status": {
         "name": "运行状态"
@@ -2648,6 +2690,17 @@
     "text": {
       "external_humidity_sensor": {
         "name": "外部湿度传感器"
+      }
+    },
+    "time": {
+      "power_off_timer": {
+        "name": "定时关机"
+      },
+      "power_on_timer": {
+        "name": "定时开机"
+      },
+      "work_time": {
+        "name": "工作时间"
       }
     },
     "vacuum": {
