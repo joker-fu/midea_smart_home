@@ -55,6 +55,10 @@ DEVICE_MAPPING = {
                 },
                 "freezer_door_open_overtime": {
                     "device_class": BinarySensorDeviceClass.PROBLEM
+                },
+                "freezing_all_ice_status": {
+                    "device_class": BinarySensorDeviceClass.OCCUPANCY,
+                    "rationale": ["invalid", "valid"]
                 }
             },
             Platform.CLIMATE: {
@@ -66,7 +70,6 @@ DEVICE_MAPPING = {
                     },
                     "target_temperature": "storage_temperature",
                     "current_temperature": "refrigeration_real_temperature",
-                    "pre_mode": "mode",
                     "min_temp": 2,
                     "max_temp": 8,
                     "temperature_unit": UnitOfTemperature.CELSIUS,
@@ -243,6 +246,10 @@ DEVICE_MAPPING = {
                 },
                 "freezer_door_open_overtime": {
                     "device_class": BinarySensorDeviceClass.PROBLEM
+                },
+                "freezing_all_ice_status": {
+                    "device_class": BinarySensorDeviceClass.OCCUPANCY,
+                    "rationale": ["invalid", "valid"]
                 }
             },
             Platform.CLIMATE: {
@@ -254,7 +261,6 @@ DEVICE_MAPPING = {
                     },
                     "target_temperature": "storage_temperature",
                     "current_temperature": "refrigeration_real_temperature",
-                    "pre_mode": "mode",
                     "min_temp": 2,
                     "max_temp": 8,
                     "temperature_unit": UnitOfTemperature.CELSIUS,
@@ -417,7 +423,6 @@ DEVICE_MAPPING = {
                     },
                     "target_temperature": "storage_temperature",
                     "current_temperature": "refrigeration_real_temperature",
-                    "pre_mode": "mode",
                     "min_temp": 2,
                     "max_temp": 8,
                     "temperature_unit": UnitOfTemperature.CELSIUS,
@@ -502,6 +507,10 @@ DEVICE_MAPPING = {
                 },
                 "freezer_door_open_overtime": {
                     "device_class": BinarySensorDeviceClass.PROBLEM
+                },
+                "freezing_all_ice_status": {
+                    "device_class": BinarySensorDeviceClass.OCCUPANCY,
+                    "rationale": ["invalid", "valid"]
                 }
             },
             Platform.CLIMATE: {
@@ -513,7 +522,6 @@ DEVICE_MAPPING = {
                     },
                     "target_temperature": "storage_temperature",
                     "current_temperature": "refrigeration_real_temperature",
-                    "pre_mode": "mode",
                     "min_temp": 2,
                     "max_temp": 8,
                     "temperature_unit": UnitOfTemperature.CELSIUS,
@@ -623,7 +631,6 @@ DEVICE_MAPPING = {
                     },
                     "target_temperature": "storage_temperature",
                     "current_temperature": "refrigeration_real_temperature",
-                    "pre_mode": "mode",
                     "min_temp": 2,
                     "max_temp": 8,
                     "temperature_unit": UnitOfTemperature.CELSIUS,
@@ -711,7 +718,6 @@ DEVICE_MAPPING = {
                     },
                     "target_temperature": "storage_temperature",
                     "current_temperature": "refrigeration_real_temperature",
-                    "pre_mode": "mode",
                     "min_temp": 2,
                     "max_temp": 8,
                     "temperature_unit": UnitOfTemperature.CELSIUS,

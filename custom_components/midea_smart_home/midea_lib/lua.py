@@ -183,6 +183,10 @@ _G.cjson = cjson
                 result = self._data_to_json(data_value)
                 _LOGGER.debug("data_to_json input length: %d", len(data_value) if data_value else 0)
 
+                # Handle None or empty result from Lua function
+                if not result:
+                    return '{"status":{"version":0}}'
+
                 # Clean trailing commas in JSON string values
                 # Lua files often concatenate strings with ", " separator but use string.sub(str, 1, -2)
                 # which only removes 1 character, leaving a trailing comma in the JSON output
@@ -192,15 +196,23 @@ _G.cjson = cjson
                 return result
             except lupa.lua51.LuaError as e:
                 error_msg = str(e)
-                if "attempt to perform arithmetic on a nil value" in error_msg or \
-                   "attempt to concatenate a nil value" in error_msg or \
-                   "index nil value" in error_msg:
+                # Nil value errors occur when device returns incomplete data that
+                # Lua script cannot handle (e.g., bit.band on nil, indexing nil).
+                # These are known script limitations, downgrade to DEBUG level.
+                lowered = error_msg.lower()
+                is_nil_value_issue = "nil value" in lowered and (
+                    "attempt to perform arithmetic" in lowered
+                    or "attempt to concatenate" in lowered
+                    or "attempt to index" in lowered
+                    or "index" in lowered and "nil value" in lowered
+                    or "attempt to call" in lowered  # attempt to call nil value
+                )
+                if is_nil_value_issue:
                     _LOGGER.debug(
-                        "Lua data_to_json skipped (known script issue): %s. "
-                        "Data length: %d, first 200 chars: %s",
-                        error_msg,
-                        len(data_value) if data_value else 0,
-                        str(data_value)[:200] if data_value else ""
+                        "Lua data_to_json skipped (nil value in device data): %s. "
+                        "Data length: %d",
+                        error_msg.split("\n")[0],  # Only first line to keep logs clean
+                        len(data_value) if data_value else 0
                     )
                     return '{"status":{"version":0}}'
                 else:

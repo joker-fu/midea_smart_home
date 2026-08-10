@@ -30,10 +30,13 @@ class DeviceLogicHandler:
         self.device_name = device_name
         self._last_standby_status: Any = None
         self._last_high_float_type: Any = None
+        self._last_valid_humidity: Any = None
+        self._last_valid_input_temp: Any = None
+        self._last_valid_env_temp: Any = None
 
-    def adjust_control_status(self, data: dict, running_status: str) -> None:
+    def adjust_control_status(self, data: dict, running_status: str, prefix: str) -> None:
         control_status = "start" if running_status == "start" else "pause"
-        control_status_key = "db_control_status" if self.device_type == 0xD9 else "control_status"
+        control_status_key = f"{prefix}_control_status" if prefix else "control_status"
         data[control_status_key] = control_status
 
     def adjust_work_switch(self, data: dict) -> None:
@@ -65,27 +68,52 @@ class DeviceLogicHandler:
             if power == "off" or power == 0:
                 data["mode"] = "idle"
 
+    def adjust_ac_humidity(self, data: dict, status: dict) -> None:
+        """For AC devices, only accept valid indoor_humidity values.
+
+        Filters out invalid humidity readings (0 or None) from non-0x45 messages,
+        preserving the last valid humidity value.
+        """
+        if "indoor_humidity" not in status:
+            return
+
+        humidity_value = status["indoor_humidity"]
+        # Only update if the new value is valid (not None and not 0)
+        if humidity_value is not None and humidity_value != 0:
+            data["indoor_humidity"] = humidity_value
+            self._last_valid_humidity = humidity_value
+        elif self._last_valid_humidity is not None:
+            # Keep the last valid humidity value if new value is invalid
+            data["indoor_humidity"] = self._last_valid_humidity
+
     def apply_special_handling(
         self,
         data: dict,
         recent_controls: dict,
         control_timeout: float,
         is_control: bool = False,
-        control_attrs: dict = None
+        control_attrs: dict = None,
+        status: dict = None
     ) -> None:
         if self.device_type == 0xD9:
-            if "db_running_status" in data:
-                self.adjust_control_status(data, data["db_running_status"])
-            self.process_progress(data, "db_running_status", "db_progress")
-            self._adjust_db_running_status_for_power_off(data)
-            self._adjust_db_remain_time(data)
+            # All drums in push path use the same generic handling.
+            for prefix in ("da", "db", "dc"):
+                running_key = f"{prefix}_running_status"
+                if running_key not in data:
+                    continue
+                self._d9_push_device_running_status_for_power_off(data, prefix)
+                self.adjust_control_status(data, data[running_key], prefix=prefix)
+                # dc drum (dryer) reports progress via dc_dry_status
+                progress_key = "dc_dry_status" if prefix == "dc" else f"{prefix}_progress"
+                self.process_progress(data, running_key, progress_key)
+                self._d9_push_device_remain_time(data, prefix)
 
         elif self.device_type == 0xE1:
             self._apply_dishwasher_pending_state(data, recent_controls, control_timeout)
 
         elif self.device_type in [0xDA, 0xDB, 0xDC]:
             if "running_status" in data:
-                self.adjust_control_status(data, data["running_status"])
+                self.adjust_control_status(data, data["running_status"], prefix="")
             self.process_progress(data, "running_status", "progress")
             self._adjust_remain_time(data)
 
@@ -95,6 +123,8 @@ class DeviceLogicHandler:
 
         elif self.device_type == 0xAC:
             self.adjust_ac_mode(data)
+            if status:
+                self.adjust_ac_humidity(data, status)
 
         elif self.device_type == 0x9C:
             self.adjust_b3_function_control(data)
@@ -102,6 +132,11 @@ class DeviceLogicHandler:
         elif self.device_type == 0xED:
             self.adjust_standby_status_for_wash(data)
             self.adjust_high_float_type_when_filter_on(data)
+            if status:
+                self.adjust_ed_temperature(data, status)
+
+        elif self.device_type == 0x26:
+            self.adjust_bath_heater_direction(data)
 
     def apply_special_handling_for_poll(self, data: dict, suffix: str, raw_status: dict = None) -> bool:
         """Apply special handling for poll data with suffix (_l or _r).
@@ -129,11 +164,11 @@ class DeviceLogicHandler:
 
         # Handle common (non-suffixed) fields from the first poll response
         if raw_status and raw_status.get('db_position') == 1:
+            self._d9_polling_device_running_status_for_power_off(data)
             if "db_running_status" in data:
-                self.adjust_control_status(data, data["db_running_status"])
+                self.adjust_control_status(data, data["db_running_status"], prefix="db")
             self.process_progress(data, "db_running_status", "db_progress")
-            self._adjust_db_running_status_for_power_off(data)
-            self._adjust_db_remain_time(data)
+            self._d9_polling_device_remain_time(data)
 
         # Handle suffixed progress for the specific bucket
         if progress_key in data:
@@ -213,7 +248,7 @@ class DeviceLogicHandler:
         else:
             data["db_remain_time_long"] = max(remain_l, remain_r)
 
-    def _adjust_db_running_status_for_power_off(self, data: dict) -> None:
+    def _d9_polling_device_running_status_for_power_off(self, data: dict) -> None:
         db_power = data.get("db_power")
         if db_power == "off" or db_power == 0:
             if "db_running_status" in data:
@@ -223,9 +258,27 @@ class DeviceLogicHandler:
         if "remain_time" in data and "running_status" in data:
             self._adjust_remain_time_by_status(data, "remain_time", data["running_status"])
 
-    def _adjust_db_remain_time(self, data: dict) -> None:
+    def _d9_polling_device_remain_time(self, data: dict) -> None:
         if "db_remain_time" in data and "db_running_status" in data:
             self._adjust_remain_time_by_status(data, "db_remain_time", data["db_running_status"])
+
+    def _d9_push_device_running_status_for_power_off(self, data: dict, prefix: str) -> None:
+        """Generic power-off status adjustment for da/db/dc drum prefix."""
+        power = data.get(f"{prefix}_power")
+        if power == "off" or power == 0:
+            running_key = f"{prefix}_running_status"
+            if running_key in data:
+                data[running_key] = "standby"
+            # dc drum (dryer) also resets dry_status to idle on power off
+            if prefix == "dc" and "dc_dry_status" in data:
+                data["dc_dry_status"] = "idle"
+
+    def _d9_push_device_remain_time(self, data: dict, prefix: str) -> None:
+        """Generic remain time adjustment for da/db/dc drum prefix."""
+        remain_key = f"{prefix}_remain_time"
+        running_key = f"{prefix}_running_status"
+        if remain_key in data and running_key in data:
+            self._adjust_remain_time_by_status(data, remain_key, data[running_key])
 
     def process_progress(self, data: dict, status_key: str, progress_key: str) -> None:
         """Process progress sensor special logic"""
@@ -250,7 +303,17 @@ class DeviceLogicHandler:
                 return
             calculated_value = -1
 
-        if self.device_type == 0xDA:
+        # For T0xD9 combo devices, map each drum by its prefix (da/db/dc)
+        effective_type = self.device_type
+        if self.device_type == 0xD9:
+            if progress_key.startswith("da_"):
+                effective_type = 0xDA
+            elif progress_key.startswith("db_"):
+                effective_type = 0xDB
+            elif progress_key.startswith("dc_"):
+                effective_type = 0xDC
+
+        if effective_type == 0xDA:
             progress_map = {
                 0: "idle",
                 1: "spin",
@@ -261,14 +324,7 @@ class DeviceLogicHandler:
                 6: "dry",
                 7: "soak",
             }
-        elif self.device_type == 0xDC:
-            progress_map = {
-                0: "idle",
-                1: "dry",
-                2: "anti-wrinkle",
-                3: "cold_air",
-            }
-        else:
+        elif effective_type == 0xDB:
             progress_map = {
                 0: "idle",
                 1: "spin",
@@ -280,14 +336,29 @@ class DeviceLogicHandler:
                 7: "spin_high",
                 8: "unknown",
             }
+        elif effective_type == 0xDC:
+            progress_map = {
+                0: "idle",
+                1: "dry",
+                2: "anti-wrinkle",
+                3: "cold_air",
+            }
+        else:
+            return
         data[progress_key] = progress_map.get(calculated_value, "unknown")
 
     def prepare_control_data(self, control: dict, current_data: dict = None) -> dict:
         """Prepare control data with device-specific requirements."""
         if self.device_type == 0xD9:
-            control["bucket"] = "db"
-            if "db_location" not in control and current_data and "db_location" in current_data:
-                control["db_location"] = current_data["db_location"]
+            # Determine drum prefix from location field
+            if "da_location" in control:
+                control["bucket"] = "da"
+            elif "dc_location" in control:
+                control["bucket"] = "dc"
+            else:
+                control["bucket"] = "db"
+                if "db_location" not in control and current_data and "db_location" in current_data:
+                    control["db_location"] = current_data["db_location"]
         elif self.device_type == 0xE1:
             control = self._prepare_dishwasher_control(control, current_data)
         return control
@@ -440,3 +511,60 @@ class DeviceLogicHandler:
                 data["high_float_type"] = self._last_high_float_type
         else:
             self._last_high_float_type = data.get("high_float_type")
+
+    def adjust_ed_temperature(self, data: dict, status: dict) -> None:
+        """For T0xED devices, filter out invalid temperature readings (0).
+
+        Preserves the last valid temperature value for input_temperature_Sensing
+        and env_temperature sensors.
+        """
+        if self.device_type != 0xED:
+            return
+
+        for key, last_valid_key in [
+            ("input_temperature_Sensing", "_last_valid_input_temp"),
+            ("env_temperature", "_last_valid_env_temp")
+        ]:
+            if key not in status:
+                continue
+
+            value = status[key]
+            if value is not None and value != 0:
+                data[key] = value
+                setattr(self, last_valid_key, value)
+            elif getattr(self, last_valid_key) is not None:
+                data[key] = getattr(self, last_valid_key)
+
+    def adjust_bath_heater_direction(self, data: dict) -> None:
+        """For T0x26 devices, map direction values to nearest multiple of 10.
+
+        Bath heater direction values should be multiples of 10 between 60-120,
+        or 253 for swing mode. This method maps arbitrary integer values to
+        the nearest configured value (60, 70, 80, 90, 100, 110, 120).
+        """
+        direction_keys = [
+            "heating_direction",
+            "bath_direction",
+            "blowing_direction",
+            "drying_direction",
+            "soft_wind_direction"
+        ]
+
+        for key in direction_keys:
+            if key not in data:
+                continue
+
+            value = data[key]
+            # Keep swing mode (253) unchanged
+            try:
+                value_num = int(value) if isinstance(value, str) else value
+                if value_num == 253:
+                    continue
+
+                # Map to nearest multiple of 10 within valid range
+                mapped = round(value_num / 10) * 10
+                result = str(max(60, min(120, mapped)))
+                data[key] = result
+            except (ValueError, TypeError):
+                # If conversion fails, keep original value
+                pass

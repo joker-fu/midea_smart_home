@@ -50,10 +50,12 @@
         "data": {
           "account": "Account",
           "password": "Password",
-          "scan_address": "Scan Address"
+          "scan_address": "Scan Address",
+          "scan_mode": "Scan Mode"
         },
         "data_description": {
-          "scan_address": "Enter router address (e.g., 192.168.1.1) to scan entire subnet, device IP to scan specific device, or 'auto' for automatic detection"
+          "scan_address": "Enter router address (e.g., 192.168.1.1) to scan entire subnet, device IP to scan specific device, or 'auto' for automatic detection",
+          "scan_mode": "Note: In broadcast mode, if the device list is repeatedly incomplete, try unicast mode (scanning may take longer in this mode; please wait patiently)."
         },
         "description": "Enter your Midea Meiju account credentials to download necessary resource files",
         "title": "Midea Smart Home Setup"
@@ -82,6 +84,9 @@
       },
       "current_radar_status": {
         "name": "Radar Induction Status"
+      },
+      "db_detergent_needed_b": {
+        "name": "Bottom Drum Detergent Needed"
       },
       "db_detergent_needed_l": {
         "name": "Left Bucket Detergent Needed"
@@ -116,11 +121,17 @@
       "flip_status": {
         "name": "Lid Status"
       },
+      "flowmeter_error": {
+        "name": "Flowmeter Error"
+      },
       "freezer_door_open_overtime": {
         "name": "Freezer Door Open Overtime"
       },
       "freezer_door_state": {
         "name": "Freezer Door State"
+      },
+      "freezing_all_ice_status": {
+        "name": "Freezing All Ice Status"
       },
       "heat_status": {
         "name": "Heat Status"
@@ -146,6 +157,24 @@
       "lack_water": {
         "name": "Water Shortage Status"
       },
+      "leak_water": {
+        "name": "Leak Water"
+      },
+      "low_battery": {
+        "name": "Low Battery"
+      },
+      "low_salt": {
+        "name": "Low Salt"
+      },
+      "maintenance_remind": {
+        "name": "Maintenance Reminder"
+      },
+      "micro_leak": {
+        "name": "Micro Leak"
+      },
+      "no_salt": {
+        "name": "No Salt"
+      },
       "oilcup_position": {
         "name": "Oil Cup Position"
       },
@@ -161,8 +190,20 @@
       "pure_water_status": {
         "name": "Pure Water Bucket Status"
       },
+      "rsj_stand_by": {
+        "name": "Softener Standby"
+      },
+      "rtc_error": {
+        "name": "RTC Error"
+      },
+      "salt_level_sensor_error": {
+        "name": "Salt Level Sensor Error"
+      },
       "screen_status": {
         "name": "Screen Status"
+      },
+      "smelly_trigger": {
+        "name": "Smelly Trigger"
       },
       "softener_lack": {
         "name": "Softener Status"
@@ -240,6 +281,15 @@
       "bath_heater": {
         "name": "Thermostat (Bath Heater)",
         "state_attributes": {
+          "fan_mode": {
+            "state": {
+              "silent": "Silent",
+              "soft_wind": "Soft Wind",
+              "standard": "Standard",
+              "storm": "Storm",
+              "strong": "Strong"
+            }
+          },
           "preset_mode": {
             "state": {
               "bath": "Bath",
@@ -247,6 +297,37 @@
               "close": "Close",
               "drying": "Drying",
               "heating": "Heating",
+              "soft_wind": "Soft Wind",
+              "ventilation": "Ventilation"
+            }
+          },
+          "swing_mode": {
+            "state": {
+              "60": "60°",
+              "70": "70°",
+              "80": "80°",
+              "90": "90°",
+              "100": "100°",
+              "110": "110°",
+              "120": "120°",
+              "swing": "Swing"
+            }
+          }
+        }
+      },
+      "cooling_fan": {
+        "name": "Thermostat (Cooling Fan)",
+        "state_attributes": {
+          "fan_mode": {
+            "state": {
+              "soft_wind": "Soft Wind",
+              "strong": "Strong"
+            }
+          },
+          "preset_mode": {
+            "state": {
+              "blowing": "Blowing",
+              "close": "Close",
               "ventilation": "Ventilation"
             }
           },
@@ -437,6 +518,12 @@
     "lock": {
       "child_lock": {
         "name": "Child Lock"
+      },
+      "db_baby_lock_b": {
+        "name": "Bottom Drum Child Lock"
+      },
+      "dc_baby_lock_t": {
+        "name": "Top Drum Child Lock"
       }
     },
     "number": {
@@ -445,6 +532,9 @@
       },
       "boiling_water_temperature": {
         "name": "Boiling Water Set Temperature"
+      },
+      "clean_water_consumption": {
+        "name": "Cleaning Water Consumption"
       },
       "custom_height": {
         "name": "Laundry Height"
@@ -476,11 +566,17 @@
       "hosting_upper": {
         "name": "PM2.5 Upper (Auto Purification)"
       },
+      "leak_water_protection_value": {
+        "name": "Leak Water Protection Value"
+      },
       "lightness": {
         "name": "Brightness"
       },
       "main_light_brightness": {
         "name": "Main Light Brightness"
+      },
+      "micro_leak_protection_value": {
+        "name": "Micro Leak Protection Value"
       },
       "milk_temperature": {
         "name": "Milk Temperature"
@@ -518,6 +614,12 @@
       "temperature": {
         "name": "Set Temperature"
       },
+      "timing_regeneration_hour": {
+        "name": "Timed Regeneration Hour"
+      },
+      "timing_regeneration_min": {
+        "name": "Timed Regeneration Minute"
+      },
       "warm_water_temperature": {
         "name": "Warm Water Set Temperature"
       },
@@ -529,6 +631,9 @@
       },
       "wash_time": {
         "name": "Wash Time"
+      },
+      "water_hardness": {
+        "name": "Water Hardness"
       },
       "weight": {
         "name": "Weight"
@@ -636,6 +741,15 @@
           "light": "Bright"
         }
       },
+      "clean_interval": {
+        "name": "Cleaning Interval",
+        "state": {
+          "7_days": "7 days",
+          "15_days": "15 days",
+          "30_days": "30 days",
+          "off": "Off"
+        }
+      },
       "clean_mode": {
         "name": "Clean Mode",
         "state": {
@@ -672,6 +786,24 @@
           "off_quantify": "Off",
           "small_amount": "Small Amount",
           "small_cup": "Small Cup"
+        }
+      },
+      "db_dehydration_speed_b": {
+        "name": "Dehydration Speed",
+        "state": {
+          "800rpm": "800 RPM",
+          "1000rpm": "1000 RPM",
+          "no_spin": "No Spin"
+        }
+      },
+      "db_detergent_b": {
+        "name": "Detergent",
+        "state": {
+          "l1": "L1",
+          "l2": "L2",
+          "l3": "L3",
+          "l4": "L4",
+          "off": "Off"
         }
       },
       "db_dry": {
@@ -713,6 +845,80 @@
           "underpants": "Underpants",
           "underwear": "Underwear",
           "water_ssp": "Deep Clean"
+        }
+      },
+      "db_program_b": {
+        "name": "Wash Program",
+        "state": {
+          "baby_clothes": "Baby Clothes",
+          "big": "Big",
+          "cotton": "Cotton",
+          "down_jacket": "Down Jacket",
+          "eco": "Eco",
+          "enzyme": "Enzyme",
+          "fast_wash": "Quick Wash",
+          "fast_wash_30": "Quick Wash 30",
+          "jean": "Jean",
+          "mixed_wash": "Mixed Wash",
+          "outdoor": "Outdoor",
+          "remove_mite_wash": "Mite Removal",
+          "rinsing_dehydration": "Rinse+Spin",
+          "shirt": "Shirt",
+          "single_dehytration": "Spin Only",
+          "ssp": "Deep Clean",
+          "steam_sterilize_wash": "Steam Sterilize Wash",
+          "steep": "Steep",
+          "towel": "Towel",
+          "wool": "Wool"
+        }
+      },
+      "db_rinse_count_b": {
+        "name": "Rinse Count",
+        "state": {
+          "1_time": "1 Time",
+          "2_times": "2 Times",
+          "3_times": "3 Times",
+          "4_times": "4 Times",
+          "5_times": "5 Times"
+        }
+      },
+      "db_temperature_b": {
+        "name": "Wash Temperature",
+        "state": {
+          "30c": "30°C",
+          "40c": "40°C",
+          "60c": "60°C",
+          "95c": "95°C",
+          "cold_water": "Cold Water"
+        }
+      },
+      "dc_intensity_t": {
+        "name": "Drying Intensity",
+        "state": {
+          "iron_now": "Iron Now",
+          "store": "Store",
+          "wear_now": "Wear Now"
+        }
+      },
+      "dc_program_t": {
+        "name": "Drying Program",
+        "state": {
+          "air_wash": "Air Wash",
+          "baby_clothes": "Baby Clothes",
+          "big_dry": "Big Dry",
+          "cotton": "Cotton",
+          "down_jacket": "Down Jacket",
+          "fixed_time_dry": "Fixed Time Dry",
+          "fresh_air": "Fresh Air",
+          "hot_wind_dry": "Hot Wind Dry",
+          "jean": "Jean",
+          "mixed_dry": "Mixed Dry",
+          "outdoor": "Outdoor",
+          "quick_dry": "Quick Dry",
+          "shirt": "Shirt",
+          "sterilize_dry": "Sterilize Dry",
+          "towel": "Towel",
+          "wool_care": "Wool Care"
         }
       },
       "degerming": {
@@ -1570,6 +1776,47 @@
           "30": "30 days"
         }
       },
+      "single_max_water_consumption": {
+        "name": "Leak Protection Volume",
+        "state": {
+          "500l": "500 L",
+          "700l": "700 L",
+          "900l": "900 L",
+          "1500l": "1500 L",
+          "2000l": "2000 L",
+          "off": "Off"
+        }
+      },
+      "single_max_water_time": {
+        "name": "Leak Protection Time",
+        "state": {
+          "30min": "0.5 h",
+          "60min": "1 h",
+          "90min": "1.5 h",
+          "120min": "2 h",
+          "150min": "2.5 h",
+          "180min": "3 h",
+          "210min": "3.5 h",
+          "240min": "4 h",
+          "270min": "4.5 h",
+          "300min": "5 h",
+          "330min": "5.5 h",
+          "360min": "6 h",
+          "390min": "6.5 h",
+          "420min": "7 h",
+          "450min": "7.5 h",
+          "480min": "8 h",
+          "510min": "8.5 h",
+          "540min": "9 h",
+          "570min": "9.5 h",
+          "600min": "10 h",
+          "630min": "10.5 h",
+          "660min": "11 h",
+          "690min": "11.5 h",
+          "720min": "12 h",
+          "off": "Off"
+        }
+      },
       "soak_count": {
         "name": "Rinse Count",
         "state": {
@@ -1750,6 +1997,15 @@
           "medium_high": "Medium-High",
           "medium_low": "Medium-Low",
           "off": "Off"
+        }
+      },
+      "whirl_wind": {
+        "name": "Whirl Wind",
+        "state": {
+          "left_right_whirl_wind": "Left & Right",
+          "left_whirl_wind": "Left",
+          "off": "Off",
+          "right_whirl_wind": "Right"
         }
       },
       "wind_around": {
@@ -1997,8 +2253,17 @@
       "battery_percent": {
         "name": "Battery Level"
       },
+      "battery_voltage": {
+        "name": "Battery Voltage"
+      },
       "bottom_temperature": {
         "name": "Bottom Temperature"
+      },
+      "clean_interval_next_days_remaining": {
+        "name": "Remaining Days Until Next Cleaning"
+      },
+      "clean_water_consumption_next_remaining": {
+        "name": "Remaining Water Consumption Until Next Cleaning"
       },
       "cur_humidity": {
         "name": "Current Humidity"
@@ -2021,11 +2286,34 @@
       "current_time_power": {
         "name": "Real-time Power"
       },
+      "days_since_last_regeneration": {
+        "name": "Days Since Last Regeneration"
+      },
+      "db_error_code_b": {
+        "name": "Bottom Drum Error Code"
+      },
       "db_error_code_l": {
         "name": "Left Bucket Error Code"
       },
       "db_error_code_r": {
         "name": "Right Bucket Error Code"
+      },
+      "db_progress_b": {
+        "name": "Bottom Drum Progress",
+        "state": {
+          "anti-wrinkle": "Anti-Wrinkle",
+          "cold_air": "Cold Air",
+          "dry": "Dry",
+          "idle": "Idle",
+          "pre-wash": "Pre Wash",
+          "rinse": "Rinse",
+          "soak": "Soak",
+          "spin": "Spin",
+          "spin_high": "Spin High",
+          "unknown": "Unknown",
+          "wash": "Wash",
+          "weight": "Weight"
+        }
       },
       "db_progress_l": {
         "name": "Left Bucket Progress",
@@ -2061,6 +2349,9 @@
           "weight": "Weight"
         }
       },
+      "db_remain_time_b": {
+        "name": "Bottom Drum Remaining Time"
+      },
       "db_remain_time_l": {
         "name": "Left Bucket Remaining Time"
       },
@@ -2070,11 +2361,36 @@
       "db_remain_time_r": {
         "name": "Right Bucket Remaining Time"
       },
+      "db_running_status_b": {
+        "name": "Bottom Drum Running Status"
+      },
       "db_running_status_l": {
         "name": "Left Bucket Running Status"
       },
       "db_running_status_r": {
         "name": "Right Bucket Running Status"
+      },
+      "dc_dry_status_t": {
+        "name": "Top Drum Dry Status",
+        "state": {
+          "anti-wrinkle": "Anti-Wrinkle",
+          "cold_air": "Cold Air",
+          "dry": "Dry",
+          "idle": "Idle",
+          "unknown": "Unknown"
+        }
+      },
+      "dc_dry_time_t": {
+        "name": "Top Drum Dry Time"
+      },
+      "dc_error_code_t": {
+        "name": "Top Drum Error Code"
+      },
+      "dc_remain_time_t": {
+        "name": "Top Drum Remaining Time"
+      },
+      "dc_running_status_t": {
+        "name": "Top Drum Running Status"
       },
       "deep_filter_percent": {
         "name": "Filter Life Remaining"
@@ -2152,6 +2468,9 @@
       "flexzone_temperature": {
         "name": "Flexzone Set Temperature"
       },
+      "flushing_days": {
+        "name": "Flushing Days"
+      },
       "freezing_real_temperature": {
         "name": "Freezer Actual Temperature"
       },
@@ -2194,14 +2513,26 @@
       "indoor_temperature": {
         "name": "Indoor Temperature"
       },
+      "input_pressure_sensing": {
+        "name": "Inlet Water Pressure"
+      },
+      "input_temperature_sensing": {
+        "name": "Inlet Water Temperature"
+      },
       "lan_ip": {
         "name": "LAN IP"
+      },
+      "left_salt": {
+        "name": "Salt Remaining"
       },
       "life_pcb": {
         "name": "PCB Filter Remaining Quantity"
       },
       "life_ro": {
         "name": "RO Filter Remaining Quantity"
+      },
+      "location_status": {
+        "name": "Current Position"
       },
       "main_light_brightness": {
         "name": "Main Light Brightness"
@@ -2251,6 +2582,9 @@
       "power_statistics": {
         "name": "Current Power"
       },
+      "pre_regeneration_days": {
+        "name": "Pre-regeneration Days"
+      },
       "progress": {
         "name": "Progress",
         "state": {
@@ -2271,8 +2605,17 @@
       "refrigeration_real_temperature": {
         "name": "Refrigerator Actual Temperature"
       },
+      "regeneration_count": {
+        "name": "Regeneration Count"
+      },
+      "regeneration_left_seconds": {
+        "name": "Regeneration Time Remaining"
+      },
       "remain_time": {
         "name": "Remaining Time"
+      },
+      "remind_maintenance_days": {
+        "name": "Days Until Maintenance"
       },
       "return_water_tem": {
         "name": "Return Water Temperature"
@@ -2283,14 +2626,29 @@
       "running_status": {
         "name": "Running Status"
       },
+      "salt_alarm_threshold": {
+        "name": "Salt Alarm Threshold"
+      },
       "set_time": {
         "name": "Set Time"
+      },
+      "smelly_level": {
+        "name": "Smelly Level"
+      },
+      "smelly_threshold": {
+        "name": "Smelly Threshold"
+      },
+      "soft_available_big": {
+        "name": "Soft Water Remaining"
       },
       "storage_temperature": {
         "name": "Refrigerator Set Temperature"
       },
       "sub_work_status": {
         "name": "Sub Work Status"
+      },
+      "supply_voltage": {
+        "name": "Supply Voltage"
       },
       "sweep_mop_mode": {
         "name": "Sweep Mop Mode"
@@ -2300,6 +2658,9 @@
       },
       "temp_set": {
         "name": "Target Temperature"
+      },
+      "today_water_consumption": {
+        "name": "Today's Water Consumption"
       },
       "top_temperature": {
         "name": "Top Temperature"
@@ -2312,6 +2673,12 @@
       },
       "tvoc_density": {
         "name": "TVOC Density"
+      },
+      "use_days": {
+        "name": "Days In Use"
+      },
+      "velocity": {
+        "name": "Flow Rate"
       },
       "warming_time": {
         "name": "Warming Time"
@@ -2330,14 +2697,26 @@
       "wash_time_value": {
         "name": "Wash Time"
       },
+      "water_consumption_average": {
+        "name": "Average Water Consumption"
+      },
+      "water_consumption_big": {
+        "name": "Total Water Consumption"
+      },
       "water_consumption_l": {
         "name": "Water Consumption"
       },
       "water_consumption_once": {
         "name": "Water Consumption Once"
       },
+      "water_consumption_today": {
+        "name": "Water Consumption Today"
+      },
       "water_feedback": {
         "name": "Water Level Feedback"
+      },
+      "water_flow": {
+        "name": "Water Flow"
       },
       "water_full_level": {
         "name": "Water Full Level"
@@ -2449,6 +2828,30 @@
       "damp_dry_signal": {
         "name": "Damp Dry Signal"
       },
+      "db_control_status_b": {
+        "name": "Bottom Drum Start/Pause"
+      },
+      "db_cycle_memory_b": {
+        "name": "Bottom Drum Cycle Memory"
+      },
+      "db_power_b": {
+        "name": "Bottom Drum Power"
+      },
+      "db_voice_not_disturb_switch_b": {
+        "name": "Bottom Drum Do Not Disturb"
+      },
+      "dc_control_status_t": {
+        "name": "Top Drum Start/Pause"
+      },
+      "dc_power_t": {
+        "name": "Top Drum Power"
+      },
+      "dc_prevent_wrinkle_t": {
+        "name": "Top Drum Anti-Wrinkle"
+      },
+      "dc_sterilize_t": {
+        "name": "Top Drum Sterilize"
+      },
       "deep_cold_mode": {
         "name": "-30°C Deep Freeze (Deep Freeze Lock Fresh)"
       },
@@ -2512,6 +2915,9 @@
       "heat": {
         "name": "Heating"
       },
+      "holiday_mode": {
+        "name": "Holiday Mode"
+      },
       "human_sensing_switch": {
         "name": "Motion Screen Wake"
       },
@@ -2536,6 +2942,9 @@
       "laundry": {
         "name": "One-Key Laundry"
       },
+      "leak_water_protection": {
+        "name": "Leak Water Protection"
+      },
       "light": {
         "name": "Light"
       },
@@ -2550,6 +2959,12 @@
       },
       "linkage_2": {
         "name": "One-Key Good Air"
+      },
+      "maintenance_reminder_switch": {
+        "name": "Maintenance Reminder Switch"
+      },
+      "micro_leak_protection": {
+        "name": "Micro Leak Protection"
       },
       "microbubble": {
         "name": "Microbubble Soak"
@@ -2571,6 +2986,12 @@
       },
       "offline_voice_function": {
         "name": "Offline Voice"
+      },
+      "open_close_switch": {
+        "name": "Open/Close Switch"
+      },
+      "open_close_water_pressure": {
+        "name": "Water Pressure Valve"
       },
       "open_door_tips_switch": {
         "name": "Door Open Alert"
@@ -2605,6 +3026,9 @@
       "radar_induction_enable": {
         "name": "Motion Night Light"
       },
+      "regeneration": {
+        "name": "Regeneration"
+      },
       "remind_sound": {
         "name": "Reminder Sound"
       },
@@ -2628,6 +3052,15 @@
       },
       "smart_sterilize": {
         "name": "Smart Sterilization"
+      },
+      "smelly_enable": {
+        "name": "Smelly Enable"
+      },
+      "soften": {
+        "name": "Soften"
+      },
+      "start_clean": {
+        "name": "Start Cleaning"
       },
       "steam": {
         "name": "Steam"
@@ -2703,6 +3136,11 @@
         "name": "Work Time"
       }
     },
+    "update": {
+      "check_for_updates": {
+        "name": "Update Prompt"
+      }
+    },
     "vacuum": {
       "vacuum": {
         "name": "Robot Vacuum",
@@ -2736,27 +3174,40 @@
     }
   },
   "options": {
+    "abort": {
+      "no_configurable_devices": "No devices with polling attributes found"
+    },
     "error": {
       "all_devices_added": "All discovered devices have already been added",
       "no_account_password": "Please configure account and password first",
-      "no_cache_found": "No local cache files found, no need to clean",
+      "no_cache_found": "No local configuration files found, no need to clean",
       "no_configurable_devices": "No devices with polling attributes found",
       "no_devices_found": "No new devices found on local network"
     },
     "step": {
       "add_device": {
         "data": {
-          "scan_address": "Scan Address"
+          "scan_address": "Scan Address",
+          "scan_mode": "Scan Mode"
         },
         "data_description": {
-          "scan_address": "Enter router address to scan entire subnet, device IP to scan specific device, or 'auto' for automatic detection"
+          "scan_address": "Enter router address to scan entire subnet, device IP to scan specific device, or 'auto' for automatic detection",
+          "scan_mode": "Note: In broadcast mode, if the device list is repeatedly incomplete, try unicast mode (scanning may take longer in this mode; please wait patiently)."
         },
         "description": "Search for new devices on local network (already added devices will be filtered out)",
         "title": "Add New Device"
       },
       "clear_cache": {
-        "description": "Clear local cache files:\n\n    📁 Current cache will be backed up to: .storage/midea_smart_home-backup\n\n    ⚠️ Click Submit to proceed",
-        "title": "Clear Local Cache"
+        "description": "Clear local configuration files:\n\n    📁 Local lua/json configuration files will be cleared and backed up to: .storage/midea_smart_home-backup\n\n    ⚠️ Note: This operation will completely remove configuration files. Do not proceed unless you need to fully reconfigure the integration",
+        "title": "Clear Local Configuration"
+      },
+      "configure_notifications": {
+        "data": {
+          "notify_offline": "Send notification when device goes offline",
+          "notify_online": "Send notification when device comes online"
+        },
+        "description": "Configure whether to send persistent notifications in Home Assistant when devices go offline or come back online.",
+        "title": "Configure Online/Offline Notifications"
       },
       "configure_polling": {
         "data": {
@@ -2768,6 +3219,16 @@
         },
         "description": "⚠️ The following devices have delayed status updates for some attributes. Configure auxiliary polling for real-time status updates:\n\n{device_info}\n\n💡 Tip: Select \"off\" to completely disable polling (won't affect device-initiated status updates)",
         "title": "Configure Polling Interval"
+      },
+      "configure_update_check": {
+        "data": {
+          "update_check_interval": "Update Check Interval",
+          "option_off": "Off",
+          "option_12h": "Every 12 hours",
+          "option_24h": "Every 24 hours"
+        },
+        "description": "Configure whether to periodically check for new integration versions.\n\n💡 An update check is always performed on Home Assistant startup (regardless of this setting).\n\nCurrent setting: {current_interval}",
+        "title": "Configure Integration Update Check"
       },
       "get_token_option": {
         "data": {
@@ -2786,8 +3247,10 @@
       "init": {
         "menu_options": {
           "add_device": "➕ Add New Device",
-          "clear_cache": "🗑️ Clear local cache files",
+          "clear_cache": "🗑️ Clear local configuration files",
+          "configure_notifications": "🔔 Configure Device Notifications",
           "configure_polling": "⏱️ Configure Polling Interval",
+          "configure_update_check": "🔄 Configure Integration Update Check",
           "sync_cloud": "☁️ Sync device info from cloud",
           "update_account": "🔑 Update Midea Account/Password"
         },
@@ -2822,6 +3285,14 @@
           "password": "Midea Meiju password"
         },
         "title": "Update Account/Password"
+      }
+    }
+  },
+  "selector": {
+    "scan_mode": {
+      "options": {
+        "broadcast": "Broadcast",
+        "unicast": "Unicast"
       }
     }
   }

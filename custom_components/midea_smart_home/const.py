@@ -30,8 +30,14 @@ CONF_HOME_NAME = "home_name"
 CONF_ROOM_NAME = "room_name"
 CONF_PROTOCOL = "protocol"
 CONF_CATEGORY = "category"
+CONF_UPDATE_CHECK_INTERVAL = "update_check_interval"
 
 DEFAULT_PORT = 6444
+
+UPDATE_CHECK_OFF = "off"
+UPDATE_CHECK_12H = "12"
+UPDATE_CHECK_24H = "24"
+UPDATE_CHECK_DEFAULT = UPDATE_CHECK_24H
 
 
 class ProtocolVersion:
@@ -62,11 +68,11 @@ DEVICE_TYPES = {
     0xE3: "Gas Water Heater",
     0xE6: "Gas Wall Hanging Stove",
     0xEA: "Rice Cooker",
-    0xED: "Net Drinking Machine / Water Purifier / Pipeline Machine",
+    0xED: "Net Drinking Machine / Water Purifier / Pipeline Machine / Water Softener / Pre-filter​",
     0xFA: "Electric Fan",
     0xFB: "Electric Heater",
     0xFC: "Air Purifier",
     0xFD: "Humidifier"
 }
 
-PLATFORMS = ["climate", "sensor", "switch", "select", "button", "number", "vacuum", "binary_sensor", "fan", "humidifier", "light", "cover", "water_heater", "text", "lock", "time"]
+PLATFORMS = ["climate", "sensor", "switch", "select", "button", "number", "vacuum", "binary_sensor", "fan", "humidifier", "light", "cover", "water_heater", "text", "lock", "time", "update"]

@@ -12,6 +12,7 @@ from homeassistant import config_entries
 from homeassistant.core import callback
 from homeassistant.data_entry_flow import FlowResult
 import homeassistant.helpers.config_validation as cv
+from homeassistant.helpers.selector import SelectSelector, SelectSelectorConfig, SelectSelectorMode
 
 from .const import (
     CONF_ACCOUNT,
@@ -54,6 +55,13 @@ STEP_USER_DATA_SCHEMA = vol.Schema({
     vol.Required(CONF_ACCOUNT): str,
     vol.Required(CONF_PASSWORD): str,
     vol.Optional("scan_address", default="auto"): str,
+    vol.Optional("scan_mode", default="broadcast"): SelectSelector(
+        SelectSelectorConfig(
+            options=["broadcast", "unicast"],
+            translation_key="scan_mode",
+            mode=SelectSelectorMode.DROPDOWN,
+        )
+    )
 })
 
 def get_lua_storage_path(hass_config_dir: str) -> Path:
@@ -97,6 +105,7 @@ class MideaSmartHomeConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         self._account: str = None
         self._password: str = None
         self._scan_address: str = "auto"
+        self._scan_mode: str = "broadcast"
         self._session: ClientSession = None
         self._preset_cloud = None
         self._user_cloud = None
@@ -118,6 +127,7 @@ class MideaSmartHomeConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             self._account = user_input.get(CONF_ACCOUNT)
             self._password = user_input.get(CONF_PASSWORD)
             self._scan_address = user_input.get("scan_address", "auto")
+            self._scan_mode = user_input.get("scan_mode", "broadcast")
 
             existing_entries = self.hass.config_entries.async_entries(DOMAIN)
             for entry in existing_entries:
@@ -142,7 +152,7 @@ class MideaSmartHomeConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         self, user_input: dict[str, Any] | None = None
     ) -> FlowResult:
         self._discovered_devices = await self.hass.async_add_executor_job(
-            discover_devices, DISCOVERY_TIMEOUT, self._scan_address
+            discover_devices, DISCOVERY_TIMEOUT, self._scan_address, self._scan_mode
         )
 
         if not self._discovered_devices:
@@ -727,6 +737,7 @@ class MideaSmartHomeOptionsFlowHandler(config_entries.OptionsFlow):
         self._selected_devices: list = []
         self._current_device_index: int = 0
         self._devices_data: list = list(config_entry.data.get("devices", []))
+        self._scan_mode: str = "broadcast"
         self._session: ClientSession = None
         self._preset_cloud = None
         self._user_cloud = None
@@ -862,7 +873,7 @@ class MideaSmartHomeOptionsFlowHandler(config_entries.OptionsFlow):
     ) -> FlowResult:
         return self.async_show_menu(
             step_id="init",
-            menu_options=["add_device", "update_account", "sync_cloud", "clear_cache", "configure_polling"],
+            menu_options=["add_device", "update_account", "sync_cloud", "clear_cache", "configure_polling", "configure_notifications", "configure_update_check"],
         )
 
     async def async_step_add_device(
@@ -870,18 +881,28 @@ class MideaSmartHomeOptionsFlowHandler(config_entries.OptionsFlow):
     ) -> FlowResult:
         if user_input is not None:
             scan_address = user_input.get("scan_address", "auto")
-            return await self._discover_devices(scan_address)
+            self._scan_mode = user_input.get("scan_mode", "broadcast")
+            return await self._discover_devices(scan_address, self._scan_mode)
 
         return self.async_show_form(
             step_id="add_device",
             data_schema=vol.Schema({
                 vol.Optional("scan_address", default="auto"): str,
+                vol.Optional("scan_mode", default="broadcast"): SelectSelector(
+                    SelectSelectorConfig(
+                        options=["broadcast", "unicast"],
+                        translation_key="scan_mode",
+                        mode=SelectSelectorMode.DROPDOWN,
+                    )
+                ),
             }),
         )
 
-    async def _discover_devices(self, scan_address: str = "auto") -> FlowResult:
+    async def _discover_devices(
+        self, scan_address: str = "auto", scan_mode: str = "broadcast"
+    ) -> FlowResult:
         self._discovered_devices = await self.hass.async_add_executor_job(
-            discover_devices, DISCOVERY_TIMEOUT, scan_address
+            discover_devices, DISCOVERY_TIMEOUT, scan_address, scan_mode
         )
 
         if not self._discovered_devices:
@@ -997,7 +1018,7 @@ class MideaSmartHomeOptionsFlowHandler(config_entries.OptionsFlow):
     async def async_step_select_device_rescan_option(
         self, user_input: dict[str, Any] | None = None
     ) -> FlowResult:
-        return await self._discover_devices()
+        return await self._discover_devices(scan_mode=self._scan_mode)
 
     async def async_step_get_token_option(
         self, user_input: dict[str, Any] | None = None
@@ -1453,7 +1474,7 @@ class MideaSmartHomeOptionsFlowHandler(config_entries.OptionsFlow):
             return default
 
         # Find devices that have polling_attributes configured in their device_mapping
-        from .device_mapping import get_device_mapping
+        from .device_mapping import get_device_mapping, is_d9_polling_device
         configurable_devices = []
 
         # Define polling options: disabled and intervals in seconds
@@ -1471,6 +1492,15 @@ class MideaSmartHomeOptionsFlowHandler(config_entries.OptionsFlow):
             "30": _translate("option_30s", "30s"),
         }
 
+        # D9 poll thread options: running interval 1-5s (standby +1s)
+        d9_polling_options = {
+            "1": _translate("option_1s", "1s"),
+            "2": _translate("option_2s", "2s"),
+            "3": _translate("option_3s", "3s"),
+            "4": _translate("option_4s", "4s"),
+            "5": _translate("option_5s", "5s")
+        }
+
         for device in devices:
             device_id = device.get(CONF_DEVICE_ID)
             device_type_str = device.get(CONF_DEVICE_TYPE, "0")
@@ -1479,38 +1509,47 @@ class MideaSmartHomeOptionsFlowHandler(config_entries.OptionsFlow):
             category = device.get(CONF_CATEGORY, "")
 
             try:
-                device_type_int = int(device_type_str, 16) if isinstance(device_type_str, str) else 0
+                if isinstance(device_type_str, int):
+                    device_type_int = device_type_str
+                elif isinstance(device_type_str, str):
+                    device_type_int = int(device_type_str, 16)
+                else:
+                    device_type_int = 0
             except ValueError:
                 device_type_int = 0
 
             device_mapping = get_device_mapping(device_type_int, model, sn8, category)
             polling_query = device_mapping.get("polling_query")
-            # Check if device supports polling (based on existence of polling_query)
-            enable_polling = polling_query is not None and isinstance(polling_query, list) and len(polling_query) > 0
+            d9_polling = is_d9_polling_device(device_type_int, device_mapping)
+            # Check if device supports polling (based on existence of polling_query,
+            # or the dedicated poll thread for D9 polling devices)
+            enable_polling = (
+                polling_query is not None and isinstance(polling_query, list) and len(polling_query) > 0
+            ) or d9_polling
 
             if enable_polling:
                 device_name = device.get(CONF_DEVICE_NAME, f"Device {device_id}")
-                current_interval = device.get("polling_interval", 30)
+                current_interval = device.get("polling_interval", 1 if d9_polling else 30)
                 polling_enabled = device.get("polling_enabled", True)
+                device_options = d9_polling_options if d9_polling else polling_options
 
                 # Determine current selection based on enabled status and interval
                 if not polling_enabled:
                     current_selection = "disabled"
                 else:
                     current_selection = str(current_interval)
+                    if current_selection not in device_options:
+                        current_selection = "1" if d9_polling else "30"
 
                 configurable_devices.append({
                     "device_id": device_id,
                     "device_name": device_name,
                     "current_selection": current_selection,
+                    "options": device_options,
                 })
 
         if not configurable_devices:
-            return self.async_show_form(
-                step_id="configure_polling",
-                errors={"base": "no_configurable_devices"},
-                description_placeholders={"note": "No devices with polling attributes found"}
-            )
+            return self.async_abort(reason="no_configurable_devices")
 
         # Build form schema with Select dropdown for each device
         schema_dict = {}
@@ -1523,6 +1562,7 @@ class MideaSmartHomeOptionsFlowHandler(config_entries.OptionsFlow):
             device_id = device_info["device_id"]
             device_name = device_info["device_name"]
             current_selection = device_info["current_selection"]
+            device_options = device_info["options"]
 
             if device_name in device_name_count:
                 device_name_count[device_name] += 1
@@ -1532,7 +1572,18 @@ class MideaSmartHomeOptionsFlowHandler(config_entries.OptionsFlow):
                 base_key = device_name
 
             # Create a single Select dropdown instead of boolean + slider
-            schema_dict[vol.Optional(base_key, default=current_selection)] = vol.In(polling_options)
+            # Use SelectSelector to force dropdown rendering (vol.In renders as
+            # radio buttons when there are <= 5 options, e.g. D9 polling devices)
+            select_options = [
+                {"value": val, "label": label}
+                for val, label in device_options.items()
+            ]
+            schema_dict[vol.Optional(base_key, default=current_selection)] = SelectSelector(
+                SelectSelectorConfig(
+                    options=select_options,
+                    mode=SelectSelectorMode.DROPDOWN,
+                )
+            )
 
             if not hasattr(self, '_polling_device_mapping'):
                 self._polling_device_mapping = {}
@@ -1542,7 +1593,7 @@ class MideaSmartHomeOptionsFlowHandler(config_entries.OptionsFlow):
             }
 
             # Get display text for current selection
-            selection_text = polling_options.get(current_selection, current_selection)
+            selection_text = device_options.get(current_selection, current_selection)
             device_info_lines.append(f"{i}. {device_name} ({device_id}) - {selection_text}")
 
         device_info_text = "\n".join(device_info_lines)
@@ -1581,11 +1632,13 @@ class MideaSmartHomeOptionsFlowHandler(config_entries.OptionsFlow):
                             else:
                                 # Polling enabled with specific interval
                                 try:
-                                    interval = int(selected_value)
+                                    interval = float(selected_value)
+                                    if interval.is_integer():
+                                        interval = int(interval)
                                     device["polling_enabled"] = True
                                     device["polling_interval"] = interval
                                     _LOGGER.debug(
-                                        "Set polling interval for device %s (%s) to %d seconds",
+                                        "Set polling interval for device %s (%s) to %s seconds",
                                         device_info['device_name'],
                                         device_id,
                                         interval
@@ -1620,4 +1673,103 @@ class MideaSmartHomeOptionsFlowHandler(config_entries.OptionsFlow):
             data_schema=vol.Schema(schema_dict),
             description_placeholders=placeholders,
             last_step=False,
+        )
+
+    async def async_step_configure_notifications(
+        self, user_input: dict[str, Any] | None = None
+    ) -> FlowResult:
+        """Configure device online/offline notifications."""
+        current_data = dict(self._config_entry.data)
+        current_offline = current_data.get("notify_offline", True)
+        current_online = current_data.get("notify_online", True)
+
+        if user_input is not None:
+            new_data = {
+                **current_data,
+                "notify_offline": user_input.get("notify_offline", True),
+                "notify_online": user_input.get("notify_online", True),
+            }
+            self.hass.config_entries.async_update_entry(
+                self._config_entry,
+                data=new_data,
+            )
+            return self.async_create_entry(title="", data={})
+
+        return self.async_show_form(
+            step_id="configure_notifications",
+            data_schema=vol.Schema({
+                vol.Optional("notify_offline", default=current_offline): bool,
+                vol.Optional("notify_online", default=current_online): bool,
+            }),
+            description_placeholders={
+                "current_offline_status": "enabled" if current_offline else "disabled",
+                "current_online_status": "enabled" if current_online else "disabled",
+            },
+            last_step=True,
+        )
+
+    async def async_step_configure_update_check(
+        self, user_input: dict[str, Any] | None = None
+    ) -> FlowResult:
+        """Configure automatic update check interval."""
+        from homeassistant.helpers import translation as ha_translation
+        from .const import (
+            CONF_UPDATE_CHECK_INTERVAL,
+            UPDATE_CHECK_DEFAULT,
+            UPDATE_CHECK_OFF,
+            UPDATE_CHECK_12H,
+            UPDATE_CHECK_24H,
+        )
+
+        current_language = self.hass.config.language or "en"
+        translations = await ha_translation.async_get_translations(
+            self.hass, current_language, "options", {DOMAIN}
+        )
+
+        def _translate(key: str, default: str) -> str:
+            full_key = f"options.step.configure_update_check.data.{key}"
+            for k in [full_key, f"component.{DOMAIN}.{full_key}"]:
+                if k in translations:
+                    return translations[k]
+            return default
+
+        interval_options = {
+            UPDATE_CHECK_OFF: _translate("option_off", "off"),
+            UPDATE_CHECK_12H: _translate("option_12h", "12h"),
+            UPDATE_CHECK_24H: _translate("option_24h", "24h"),
+        }
+
+        current_data = dict(self._config_entry.data)
+        current_interval = current_data.get(CONF_UPDATE_CHECK_INTERVAL, UPDATE_CHECK_DEFAULT)
+
+        if user_input is not None:
+            new_data = {
+                **current_data,
+                CONF_UPDATE_CHECK_INTERVAL: user_input.get(CONF_UPDATE_CHECK_INTERVAL, UPDATE_CHECK_DEFAULT),
+            }
+            self.hass.config_entries.async_update_entry(
+                self._config_entry,
+                data=new_data,
+            )
+            # Update the periodic check schedule without reloading the whole
+            # integration (reloading disconnects and reconnects all devices).
+            update_entity = self.hass.data.get(DOMAIN, {}).get(
+                self._config_entry.entry_id, {}
+            ).get("update_entity")
+            if update_entity:
+                await update_entity.async_reschedule_check()
+            return self.async_create_entry(title="", data={})
+
+        return self.async_show_form(
+            step_id="configure_update_check",
+            data_schema=vol.Schema({
+                vol.Required(
+                    CONF_UPDATE_CHECK_INTERVAL,
+                    default=current_interval,
+                ): vol.In(interval_options),
+            }),
+            description_placeholders={
+                "current_interval": interval_options.get(current_interval, current_interval),
+            },
+            last_step=True,
         )

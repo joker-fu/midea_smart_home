@@ -50,10 +50,12 @@
         "data": {
           "account": "账号",
           "password": "密码",
-          "scan_address": "扫描地址"
+          "scan_address": "扫描地址",
+          "scan_mode": "扫描模式"
         },
         "data_description": {
-          "scan_address": "[1] 输入路由器地址（如 192.168.1.1）扫描整个网段\n[2] 输入设备 IP 扫描指定设备\n[3] 输入「auto」自动检测（默认）"
+          "scan_address": "[1] 输入路由器地址（如 192.168.1.1）扫描整个网段\n[2] 输入设备 IP 扫描指定设备\n[3] 输入「auto」自动检测（默认）",
+          "scan_mode": "说明：广播模式下，若多次出现搜索出的设备列表显示不全，请尝试使用单播模式 (该模式下扫描时间可能会延长，需耐心等待)。"
         },
         "description": "输入美的美居账号密码，下载必要的资源文件",
         "title": "Midea Smart Home 设置"
@@ -82,6 +84,9 @@
       },
       "current_radar_status": {
         "name": "雷达感应有人"
+      },
+      "db_detergent_needed_b": {
+        "name": "洗涤剂不足(下筒)"
       },
       "db_detergent_needed_l": {
         "name": "洗涤剂状态(左筒)"
@@ -116,11 +121,17 @@
       "flip_status": {
         "name": "马桶盖状态"
       },
+      "flowmeter_error": {
+        "name": "流量计错误"
+      },
       "freezer_door_open_overtime": {
         "name": "冷冻门打开超时"
       },
       "freezer_door_state": {
         "name": "冷冻门状态"
+      },
+      "freezing_all_ice_status": {
+        "name": "储冰盒满冰状态"
       },
       "heat_status": {
         "name": "加热状态"
@@ -146,6 +157,24 @@
       "lack_water": {
         "name": "缺水状态"
       },
+      "leak_water": {
+        "name": "漏水"
+      },
+      "low_battery": {
+        "name": "低电量"
+      },
+      "low_salt": {
+        "name": "盐量不足"
+      },
+      "maintenance_remind": {
+        "name": "维护提醒"
+      },
+      "micro_leak": {
+        "name": "微漏"
+      },
+      "no_salt": {
+        "name": "无盐"
+      },
       "oilcup_position": {
         "name": "油杯位置"
       },
@@ -161,8 +190,20 @@
       "pure_water_status": {
         "name": "纯水箱水位状态"
       },
+      "rsj_stand_by": {
+        "name": "软水机待机"
+      },
+      "rtc_error": {
+        "name": "RTC 错误"
+      },
+      "salt_level_sensor_error": {
+        "name": "盐位传感器错误"
+      },
       "screen_status": {
         "name": "屏幕状态"
+      },
+      "smelly_trigger": {
+        "name": "异味触发状态"
       },
       "softener_lack": {
         "name": "柔顺剂状态"
@@ -240,6 +281,15 @@
       "bath_heater": {
         "name": "温控器(浴霸)",
         "state_attributes": {
+          "fan_mode": {
+            "state": {
+              "silent": "静音",
+              "soft_wind": "柔风",
+              "standard": "标准",
+              "storm": "暴风",
+              "strong": "强劲"
+            }
+          },
           "preset_mode": {
             "state": {
               "bath": "沐浴",
@@ -247,6 +297,37 @@
               "close": "关闭",
               "drying": "干燥",
               "heating": "取暖",
+              "soft_wind": "柔风感",
+              "ventilation": "换气"
+            }
+          },
+          "swing_mode": {
+            "state": {
+              "60": "60°",
+              "70": "70°",
+              "80": "80°",
+              "90": "90°",
+              "100": "100°",
+              "110": "110°",
+              "120": "120°",
+              "swing": "摆动"
+            }
+          }
+        }
+      },
+      "cooling_fan": {
+        "name": "温控器(凉霸)",
+        "state_attributes": {
+          "fan_mode": {
+            "state": {
+              "soft_wind": "弱风",
+              "strong": "强风"
+            }
+          },
+          "preset_mode": {
+            "state": {
+              "blowing": "吹风",
+              "close": "关闭",
               "ventilation": "换气"
             }
           },
@@ -437,6 +518,12 @@
     "lock": {
       "child_lock": {
         "name": "童锁"
+      },
+      "db_baby_lock_b": {
+        "name": "童锁(下筒)"
+      },
+      "dc_baby_lock_t": {
+        "name": "童锁(上筒)"
       }
     },
     "number": {
@@ -445,6 +532,9 @@
       },
       "boiling_water_temperature": {
         "name": "沸水设定温度"
+      },
+      "clean_water_consumption": {
+        "name": "清洗间隔用水量"
       },
       "custom_height": {
         "name": "晾衣高度"
@@ -476,11 +566,17 @@
       "hosting_upper": {
         "name": "PM2.5上限(自动净化)"
       },
+      "leak_water_protection_value": {
+        "name": "漏水保护值"
+      },
       "lightness": {
         "name": "照明亮度"
       },
       "main_light_brightness": {
         "name": "主灯亮度"
+      },
+      "micro_leak_protection_value": {
+        "name": "微漏保护值"
       },
       "milk_temperature": {
         "name": "泡奶设定温度"
@@ -518,6 +614,12 @@
       "temperature": {
         "name": "设定温度"
       },
+      "timing_regeneration_hour": {
+        "name": "定时再生小时"
+      },
+      "timing_regeneration_min": {
+        "name": "定时再生分钟"
+      },
       "warm_water_temperature": {
         "name": "温水设定温度"
       },
@@ -529,6 +631,9 @@
       },
       "wash_time": {
         "name": "洗涤时间"
+      },
+      "water_hardness": {
+        "name": "进水硬度"
       },
       "weight": {
         "name": "重量"
@@ -636,6 +741,15 @@
           "light": "全亮"
         }
       },
+      "clean_interval": {
+        "name": "清洗间隔周期",
+        "state": {
+          "7_days": "7天",
+          "15_days": "15天",
+          "30_days": "30天",
+          "off": "关闭"
+        }
+      },
       "clean_mode": {
         "name": "清洗模式",
         "state": {
@@ -672,6 +786,24 @@
           "off_quantify": "关定量(连续出水)",
           "small_amount": "小量用水",
           "small_cup": "小杯"
+        }
+      },
+      "db_dehydration_speed_b": {
+        "name": "脱水转速(下筒)",
+        "state": {
+          "800rpm": "800转",
+          "1000rpm": "1000转",
+          "no_spin": "不脱水"
+        }
+      },
+      "db_detergent_b": {
+        "name": "洗衣液(下筒)",
+        "state": {
+          "l1": "1档",
+          "l2": "2档",
+          "l3": "3档",
+          "l4": "4档",
+          "off": "关闭"
         }
       },
       "db_dry": {
@@ -713,6 +845,80 @@
           "underpants": "内裤",
           "underwear": "文胸",
           "water_ssp": "深度洁筒"
+        }
+      },
+      "db_program_b": {
+        "name": "洗涤程序(下筒)",
+        "state": {
+          "baby_clothes": "婴儿服",
+          "big": "大件",
+          "cotton": "棉麻",
+          "down_jacket": "羽绒服",
+          "eco": "节能",
+          "enzyme": "加酶",
+          "fast_wash": "快洗",
+          "fast_wash_30": "快洗30",
+          "jean": "牛仔",
+          "mixed_wash": "混合洗",
+          "outdoor": "户外",
+          "remove_mite_wash": "除螨",
+          "rinsing_dehydration": "漂脱",
+          "shirt": "衬衫",
+          "single_dehytration": "单脱水",
+          "ssp": "深度洁筒",
+          "steam_sterilize_wash": "蒸汽除菌洗",
+          "steep": "浸泡洗",
+          "towel": "毛巾",
+          "wool": "羊毛"
+        }
+      },
+      "db_rinse_count_b": {
+        "name": "漂洗次数(下筒)",
+        "state": {
+          "1_time": "1次",
+          "2_times": "2次",
+          "3_times": "3次",
+          "4_times": "4次",
+          "5_times": "5次"
+        }
+      },
+      "db_temperature_b": {
+        "name": "洗涤温度(下筒)",
+        "state": {
+          "30c": "30°C",
+          "40c": "40°C",
+          "60c": "60°C",
+          "95c": "95°C",
+          "cold_water": "冷水"
+        }
+      },
+      "dc_intensity_t": {
+        "name": "干燥强度(上筒)",
+        "state": {
+          "iron_now": "即熨",
+          "store": "储存",
+          "wear_now": "即穿"
+        }
+      },
+      "dc_program_t": {
+        "name": "烘干程序(上筒)",
+        "state": {
+          "air_wash": "空气洗",
+          "baby_clothes": "婴儿服",
+          "big_dry": "大件烘",
+          "cotton": "棉麻",
+          "down_jacket": "羽绒服",
+          "fixed_time_dry": "定时烘",
+          "fresh_air": "清新空气",
+          "hot_wind_dry": "热风烘干",
+          "jean": "牛仔",
+          "mixed_dry": "混合烘",
+          "outdoor": "户外",
+          "quick_dry": "快烘",
+          "shirt": "衬衫",
+          "sterilize_dry": "除菌烘",
+          "towel": "毛巾",
+          "wool_care": "羊毛护理"
         }
       },
       "degerming": {
@@ -1570,6 +1776,47 @@
           "30": "30天"
         }
       },
+      "single_max_water_consumption": {
+        "name": "漏水保护流量设置",
+        "state": {
+          "500l": "500L",
+          "700l": "700L",
+          "900l": "900L",
+          "1500l": "1500L",
+          "2000l": "2000L",
+          "off": "关闭"
+        }
+      },
+      "single_max_water_time": {
+        "name": "漏水保护时间设置",
+        "state": {
+          "30min": "0.5小时",
+          "60min": "1小时",
+          "90min": "1.5小时",
+          "120min": "2小时",
+          "150min": "2.5小时",
+          "180min": "3小时",
+          "210min": "3.5小时",
+          "240min": "4小时",
+          "270min": "4.5小时",
+          "300min": "5小时",
+          "330min": "5.5小时",
+          "360min": "6小时",
+          "390min": "6.5小时",
+          "420min": "7小时",
+          "450min": "7.5小时",
+          "480min": "8小时",
+          "510min": "8.5小时",
+          "540min": "9小时",
+          "570min": "9.5小时",
+          "600min": "10小时",
+          "630min": "10.5小时",
+          "660min": "11小时",
+          "690min": "11.5小时",
+          "720min": "12小时",
+          "off": "关闭"
+        }
+      },
       "soak_count": {
         "name": "漂洗次数",
         "state": {
@@ -1750,6 +1997,15 @@
           "medium_high": "中高档",
           "medium_low": "中低档",
           "off": "空档"
+        }
+      },
+      "whirl_wind": {
+        "name": "旋流风",
+        "state": {
+          "left_right_whirl_wind": "左右旋流风",
+          "left_whirl_wind": "左旋流风",
+          "off": "关闭",
+          "right_whirl_wind": "右旋流风"
         }
       },
       "wind_around": {
@@ -1997,8 +2253,17 @@
       "battery_percent": {
         "name": "电池电量"
       },
+      "battery_voltage": {
+        "name": "电池电压"
+      },
       "bottom_temperature": {
         "name": "底部温度"
+      },
+      "clean_interval_next_days_remaining": {
+        "name": "距离下次冲洗剩余天数"
+      },
+      "clean_water_consumption_next_remaining": {
+        "name": "距离下次冲洗剩余用水量"
       },
       "cur_humidity": {
         "name": "当前湿度"
@@ -2021,11 +2286,34 @@
       "current_time_power": {
         "name": "实时功率"
       },
+      "days_since_last_regeneration": {
+        "name": "距上次再生天数"
+      },
+      "db_error_code_b": {
+        "name": "错误代码(下筒)"
+      },
       "db_error_code_l": {
         "name": "错误代码(左筒)"
       },
       "db_error_code_r": {
         "name": "错误代码(右筒)"
+      },
+      "db_progress_b": {
+        "name": "当前进程(下筒)",
+        "state": {
+          "anti-wrinkle": "防皱中",
+          "cold_air": "吹冷风中",
+          "dry": "烘干中",
+          "idle": "待机中",
+          "pre-wash": "预洗中",
+          "rinse": "漂洗中",
+          "soak": "浸泡中",
+          "spin": "脱水中",
+          "spin_high": "高速脱水中",
+          "unknown": "未知",
+          "wash": "洗涤中",
+          "weight": "称重中"
+        }
       },
       "db_progress_l": {
         "name": "当前进程(左筒)",
@@ -2061,6 +2349,9 @@
           "weight": "称重中"
         }
       },
+      "db_remain_time_b": {
+        "name": "剩余时间(下筒)"
+      },
       "db_remain_time_l": {
         "name": "剩余时间(左筒)"
       },
@@ -2070,11 +2361,36 @@
       "db_remain_time_r": {
         "name": "剩余时间(右筒)"
       },
+      "db_running_status_b": {
+        "name": "运行状态(下筒)"
+      },
       "db_running_status_l": {
         "name": "运行状态(左筒)"
       },
       "db_running_status_r": {
         "name": "运行状态(右筒)"
+      },
+      "dc_dry_status_t": {
+        "name": "烘干状态(上筒)",
+        "state": {
+          "anti-wrinkle": "防皱中",
+          "cold_air": "吹冷风中",
+          "dry": "烘干中",
+          "idle": "待机中",
+          "unknown": "未知"
+        }
+      },
+      "dc_dry_time_t": {
+        "name": "烘干时间(上筒)"
+      },
+      "dc_error_code_t": {
+        "name": "错误代码(上筒)"
+      },
+      "dc_remain_time_t": {
+        "name": "剩余时间(上筒)"
+      },
+      "dc_running_status_t": {
+        "name": "运行状态(上筒)"
       },
       "deep_filter_percent": {
         "name": "滤芯剩余寿命"
@@ -2152,6 +2468,9 @@
       "flexzone_temperature": {
         "name": "变温空间设定温度"
       },
+      "flushing_days": {
+        "name": "冲洗天数"
+      },
       "freezing_real_temperature": {
         "name": "冷冻实际温度"
       },
@@ -2194,14 +2513,26 @@
       "indoor_temperature": {
         "name": "室内温度"
       },
+      "input_pressure_sensing": {
+        "name": "进水压力"
+      },
+      "input_temperature_sensing": {
+        "name": "进水温度"
+      },
       "lan_ip": {
         "name": "局域网IP"
+      },
+      "left_salt": {
+        "name": "剩余盐量"
       },
       "life_pcb": {
         "name": "PCB滤芯剩余量"
       },
       "life_ro": {
         "name": "RO滤芯剩余量"
+      },
+      "location_status": {
+        "name": "当前位置"
       },
       "main_light_brightness": {
         "name": "主灯亮度"
@@ -2251,6 +2582,9 @@
       "power_statistics": {
         "name": "当前功率"
       },
+      "pre_regeneration_days": {
+        "name": "预再生天数"
+      },
       "progress": {
         "name": "当前进程",
         "state": {
@@ -2271,8 +2605,17 @@
       "refrigeration_real_temperature": {
         "name": "冷藏实际温度"
       },
+      "regeneration_count": {
+        "name": "再生次数"
+      },
+      "regeneration_left_seconds": {
+        "name": "再生剩余时间"
+      },
       "remain_time": {
         "name": "剩余时间"
+      },
+      "remind_maintenance_days": {
+        "name": "提醒维护天数"
       },
       "return_water_tem": {
         "name": "回水温度"
@@ -2283,14 +2626,29 @@
       "running_status": {
         "name": "运行状态"
       },
+      "salt_alarm_threshold": {
+        "name": "盐报警阈值"
+      },
       "set_time": {
         "name": "设定时间"
+      },
+      "smelly_level": {
+        "name": "异味水平"
+      },
+      "smelly_threshold": {
+        "name": "异味触发阈值"
+      },
+      "soft_available_big": {
+        "name": "剩余可软水量"
       },
       "storage_temperature": {
         "name": "冷藏设定温度"
       },
       "sub_work_status": {
         "name": "子工作状态"
+      },
+      "supply_voltage": {
+        "name": "供电电压"
       },
       "sweep_mop_mode": {
         "name": "扫拖模式"
@@ -2300,6 +2658,9 @@
       },
       "temp_set": {
         "name": "目标温度"
+      },
+      "today_water_consumption": {
+        "name": "今日用水量"
       },
       "top_temperature": {
         "name": "顶部温度"
@@ -2312,6 +2673,12 @@
       },
       "tvoc_density": {
         "name": "TVOC浓度"
+      },
+      "use_days": {
+        "name": "使用天数"
+      },
+      "velocity": {
+        "name": "流速"
       },
       "warming_time": {
         "name": "保温时间"
@@ -2330,14 +2697,26 @@
       "wash_time_value": {
         "name": "洗涤时间"
       },
+      "water_consumption_average": {
+        "name": "平均用水量"
+      },
+      "water_consumption_big": {
+        "name": "总用水量"
+      },
       "water_consumption_l": {
         "name": "总用水量"
       },
       "water_consumption_once": {
         "name": "本次用水量"
       },
+      "water_consumption_today": {
+        "name": "今日用水量"
+      },
       "water_feedback": {
         "name": "水位反馈"
+      },
+      "water_flow": {
+        "name": "水流量"
       },
       "water_full_level": {
         "name": "水箱水位"
@@ -2449,6 +2828,30 @@
       "damp_dry_signal": {
         "name": "潮湿干燥信号"
       },
+      "db_control_status_b": {
+        "name": "启停开关(下筒)"
+      },
+      "db_cycle_memory_b": {
+        "name": "记忆洗(下筒)"
+      },
+      "db_power_b": {
+        "name": "电源(下筒)"
+      },
+      "db_voice_not_disturb_switch_b": {
+        "name": "勿扰模式(下筒)"
+      },
+      "dc_control_status_t": {
+        "name": "启停开关(上筒)"
+      },
+      "dc_power_t": {
+        "name": "电源(上筒)"
+      },
+      "dc_prevent_wrinkle_t": {
+        "name": "防皱(上筒)"
+      },
+      "dc_sterilize_t": {
+        "name": "除菌(上筒)"
+      },
       "deep_cold_mode": {
         "name": "-30℃深冻(深冻锁鲜)"
       },
@@ -2512,6 +2915,9 @@
       "heat": {
         "name": "加热功能"
       },
+      "holiday_mode": {
+        "name": "假日模式"
+      },
       "human_sensing_switch": {
         "name": "感应亮屏"
       },
@@ -2536,6 +2942,9 @@
       "laundry": {
         "name": "一键晾衣"
       },
+      "leak_water_protection": {
+        "name": "漏水保护"
+      },
       "light": {
         "name": "灯光"
       },
@@ -2550,6 +2959,12 @@
       },
       "linkage_2": {
         "name": "一键好空气"
+      },
+      "maintenance_reminder_switch": {
+        "name": "维护提醒开关"
+      },
+      "micro_leak_protection": {
+        "name": "微漏保护"
       },
       "microbubble": {
         "name": "超微净泡"
@@ -2571,6 +2986,12 @@
       },
       "offline_voice_function": {
         "name": "离线语音"
+      },
+      "open_close_switch": {
+        "name": "全屋水开关"
+      },
+      "open_close_water_pressure": {
+        "name": "微漏检测"
       },
       "open_door_tips_switch": {
         "name": "开门提示音"
@@ -2605,6 +3026,9 @@
       "radar_induction_enable": {
         "name": "人感夜灯"
       },
+      "regeneration": {
+        "name": "再生"
+      },
       "remind_sound": {
         "name": "提醒声音"
       },
@@ -2628,6 +3052,15 @@
       },
       "smart_sterilize": {
         "name": "智能杀菌"
+      },
+      "smelly_enable": {
+        "name": "异味感应"
+      },
+      "soften": {
+        "name": "软水模式"
+      },
+      "start_clean": {
+        "name": "立即冲洗"
       },
       "steam": {
         "name": "蒸汽"
@@ -2703,6 +3136,11 @@
         "name": "工作时间"
       }
     },
+    "update": {
+      "check_for_updates": {
+        "name": "更新提示"
+      }
+    },
     "vacuum": {
       "vacuum": {
         "name": "扫地机器人",
@@ -2736,27 +3174,40 @@
     }
   },
   "options": {
+    "abort": {
+      "no_configurable_devices": "没有需要辅助轮询的设备"
+    },
     "error": {
       "all_devices_added": "所有发现的设备都已添加过了",
       "no_account_password": "请先配置账号密码",
-      "no_cache_found": "未发现本地缓存文件，无需清理",
+      "no_cache_found": "未发现本地配置文件，无需清理",
       "no_configurable_devices": "没有找到需要轮询的设备",
       "no_devices_found": "局域网中未发现新设备"
     },
     "step": {
       "add_device": {
         "data": {
-          "scan_address": "扫描地址"
+          "scan_address": "扫描地址",
+          "scan_mode": "扫描模式"
         },
         "data_description": {
-          "scan_address": "[1] 输入路由器地址扫描整个网段\n[2] 输入设备 IP 扫描指定设备\n[3] 输入「auto」自动检测（默认）"
+          "scan_address": "[1] 输入路由器地址扫描整个网段\n[2] 输入设备 IP 扫描指定设备\n[3] 输入「auto」自动检测（默认）",
+          "scan_mode": "说明：广播模式下，若多次出现搜索出的设备列表显示不全，请尝试使用单播模式 (该模式下扫描时间可能会延长，需耐心等待)。"
         },
         "description": "搜索局域网中的新设备（已添加的设备将自动过滤）",
         "title": "添加新设备"
       },
       "clear_cache": {
-        "description": "清理本地缓存文件：\n\n    📁 当前缓存将备份到：.storage/midea_smart_home-backup\n\n    ⚠️ 点击提交执行清理",
-        "title": "清理本地缓存"
+        "description": "清理本地配置文件：\n\n    📁 本地lua及json配置文件将被清理，另存为：.storage/midea_smart_home-backup\n\n    ⚠️ 请注意：本操作会彻底移除配置文件，除非完全重新配置集成，否则勿动",
+        "title": "清理配置文件"
+      },
+      "configure_notifications": {
+        "data": {
+          "notify_offline": "设备离线时发送通知",
+          "notify_online": "设备上线时发送通知"
+        },
+        "description": "配置设备上下线时是否在 Home Assistant 中发送持久通知。",
+        "title": "配置上下线通知"
       },
       "configure_polling": {
         "data": {
@@ -2768,6 +3219,16 @@
         },
         "description": "⚠️ 以下设备个别属性状态推送有延迟，请配置辅助轮询以获取实时状态更新数据：\n\n{device_info}\n\n💡 提示：选择「off」将完全禁用该设备的轮询（不影响设备主动上报）",
         "title": "配置轮询间隔时间"
+      },
+      "configure_update_check": {
+        "data": {
+          "update_check_interval": "更新检查频率",
+          "option_off": "关闭",
+          "option_12h": "每 12 小时",
+          "option_24h": "每 24 小时"
+        },
+        "description": "配置是否定期检查集成是否有新版本。\n\n💡 每次重启 Home Assistant 时都会自动检查一次（无论此设置如何）。\n\n当前设置: {current_interval}",
+        "title": "配置集成更新检查"
       },
       "get_token_option": {
         "data": {
@@ -2786,8 +3247,10 @@
       "init": {
         "menu_options": {
           "add_device": "➕ 继续添加其他设备",
-          "clear_cache": "🗑️ 清理本地缓存文件",
+          "clear_cache": "🗑️ 清理本地配置文件",
+          "configure_notifications": "🔔 配置设备上下线通知",
           "configure_polling": "⏱️ 配置轮询间隔时间",
+          "configure_update_check": "🔄 配置集成更新检查",
           "sync_cloud": "☁️ 同步云端设备名称",
           "update_account": "🔑 更新美的账号密码"
         },
@@ -2822,6 +3285,14 @@
           "password": "美的美居密码"
         },
         "title": "更新账号密码"
+      }
+    }
+  },
+  "selector": {
+    "scan_mode": {
+      "options": {
+        "broadcast": "广播",
+        "unicast": "单播"
       }
     }
   }

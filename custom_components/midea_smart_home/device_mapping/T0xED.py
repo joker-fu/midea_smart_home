@@ -1,4 +1,5 @@
-from homeassistant.const import Platform, PERCENTAGE, UnitOfTemperature, UnitOfTime, UnitOfVolume, CONCENTRATION_PARTS_PER_MILLION
+from homeassistant.const import Platform, PERCENTAGE, UnitOfElectricPotential, UnitOfPressure, UnitOfRatio,\
+    UnitOfTemperature, UnitOfTime, UnitOfVolume, UnitOfVolumeFlowRate
 from homeassistant.components.sensor import SensorStateClass, SensorDeviceClass
 from homeassistant.components.switch import SwitchDeviceClass
 from homeassistant.components.binary_sensor import BinarySensorDeviceClass
@@ -167,28 +168,31 @@ DEVICE_MAPPING = {
                     "min": 500,
                     "max": 5000,
                     "step": 500,
+                    "mode": "box",
                     "unit_of_measurement": "mL"
                 },
                 "quantify_22": {
                     "min": 500,
                     "max": 5000,
                     "step": 500,
+                    "mode": "box",
                     "unit_of_measurement": "mL"
                 },
                 "quantify_23": {
                     "min": 500,
                     "max": 5000,
                     "step": 500,
+                    "mode": "box",
                     "unit_of_measurement": "mL"
                 }
             },
             Platform.SENSOR: {
                 "in_tds": {
-                    "unit_of_measurement": CONCENTRATION_PARTS_PER_MILLION,
+                    "unit_of_measurement": UnitOfRatio.PARTS_PER_MILLION,
                     "state_class": SensorStateClass.MEASUREMENT
                 },
                 "out_tds": {
-                    "unit_of_measurement": CONCENTRATION_PARTS_PER_MILLION,
+                    "unit_of_measurement": UnitOfRatio.PARTS_PER_MILLION,
                     "state_class": SensorStateClass.MEASUREMENT
                 },
                 "life_1": {
@@ -322,28 +326,31 @@ DEVICE_MAPPING = {
                     "min": 500,
                     "max": 5000,
                     "step": 500,
+                    "mode": "box",
                     "unit_of_measurement": "mL"
                 },
                 "quantify_22": {
                     "min": 500,
                     "max": 5000,
                     "step": 500,
+                    "mode": "box",
                     "unit_of_measurement": "mL"
                 },
                 "quantify_23": {
                     "min": 500,
                     "max": 5000,
                     "step": 500,
+                    "mode": "box",
                     "unit_of_measurement": "mL"
                 }
             },
             Platform.SENSOR: {
                 "in_tds": {
-                    "unit_of_measurement": CONCENTRATION_PARTS_PER_MILLION,
+                    "unit_of_measurement": UnitOfRatio.PARTS_PER_MILLION,
                     "state_class": SensorStateClass.MEASUREMENT
                 },
                 "out_tds": {
-                    "unit_of_measurement": CONCENTRATION_PARTS_PER_MILLION,
+                    "unit_of_measurement": UnitOfRatio.PARTS_PER_MILLION,
                     "state_class": SensorStateClass.MEASUREMENT
                 },
                 "life_1": {
@@ -411,28 +418,31 @@ DEVICE_MAPPING = {
                     "min": 300,
                     "max": 500,
                     "step": 100,
+                    "mode": "box",
                     "unit_of_measurement": "mL"
                 },
                 "quantify_22": {
                     "min": 500,
                     "max": 1000,
                     "step": 100,
+                    "mode": "box",
                     "unit_of_measurement": "mL"
                 },
                 "quantify_23": {
                     "min": 1000,
                     "max": 1500,
                     "step": 100,
+                    "mode": "box",
                     "unit_of_measurement": "mL"
                 }
             },
             Platform.SENSOR: {
                 "in_tds": {
-                    "unit_of_measurement": CONCENTRATION_PARTS_PER_MILLION,
+                    "unit_of_measurement": UnitOfRatio.PARTS_PER_MILLION,
                     "state_class": SensorStateClass.MEASUREMENT
                 },
                 "out_tds": {
-                    "unit_of_measurement": CONCENTRATION_PARTS_PER_MILLION,
+                    "unit_of_measurement": UnitOfRatio.PARTS_PER_MILLION,
                     "state_class": SensorStateClass.MEASUREMENT
                 },
                 "life_1": {
@@ -498,28 +508,31 @@ DEVICE_MAPPING = {
                     "min": 300,
                     "max": 1000,
                     "step": 100,
+                    "mode": "box",
                     "unit_of_measurement": "mL"
                 },
                 "quantify_22": {
                     "min": 1100,
                     "max": 1900,
                     "step": 100,
+                    "mode": "box",
                     "unit_of_measurement": "mL"
                 },
                 "quantify_23": {
                     "min": 2000,
                     "max": 5000,
                     "step": 500,
+                    "mode": "box",
                     "unit_of_measurement": "mL"
                 }
             },
             Platform.SENSOR: {
                 "in_tds": {
-                    "unit_of_measurement": CONCENTRATION_PARTS_PER_MILLION,
+                    "unit_of_measurement": UnitOfRatio.PARTS_PER_MILLION,
                     "state_class": SensorStateClass.MEASUREMENT
                 },
                 "out_tds": {
-                    "unit_of_measurement": CONCENTRATION_PARTS_PER_MILLION,
+                    "unit_of_measurement": UnitOfRatio.PARTS_PER_MILLION,
                     "state_class": SensorStateClass.MEASUREMENT
                 },
                 "life_1": {
@@ -557,11 +570,11 @@ DEVICE_MAPPING = {
             },
             Platform.SENSOR: {
                 "in_tds": {
-                    "unit_of_measurement": CONCENTRATION_PARTS_PER_MILLION,
+                    "unit_of_measurement": UnitOfRatio.PARTS_PER_MILLION,
                     "state_class": SensorStateClass.MEASUREMENT
                 },
                 "out_tds": {
-                    "unit_of_measurement": CONCENTRATION_PARTS_PER_MILLION,
+                    "unit_of_measurement": UnitOfRatio.PARTS_PER_MILLION,
                     "state_class": SensorStateClass.MEASUREMENT
                 },
                 "life_1": {
@@ -672,6 +685,7 @@ DEVICE_MAPPING = {
                     "min": 35,
                     "max": 95,
                     "step": 5,
+                    "mode": "box",
                     "unit_of_measurement": UnitOfTemperature.CELSIUS
                 }
             },
@@ -761,24 +775,28 @@ DEVICE_MAPPING = {
                     "min": 45,
                     "max": 50,
                     "step": 1,
+                    "mode": "box",
                     "unit_of_measurement": UnitOfTemperature.CELSIUS
                 },
                 "honey_temperature": {
                     "min": 50,
                     "max": 70,
                     "step": 1,
+                    "mode": "box",
                     "unit_of_measurement": UnitOfTemperature.CELSIUS
                 },
                 "tea_temperature": {
                     "min": 71,
                     "max": 85,
                     "step": 1,
+                    "mode": "box",
                     "unit_of_measurement": UnitOfTemperature.CELSIUS
                 },
                 "custom_temperature_1": {
                     "min": 86,
                     "max": 100,
                     "step": 1,
+                    "mode": "box",
                     "unit_of_measurement": UnitOfTemperature.CELSIUS,
                     "translation_key": "boiling_water_temperature"
                 }
@@ -1034,6 +1052,7 @@ DEVICE_MAPPING = {
                     "min": 86,
                     "max": 98,
                     "step": 1,
+                    "mode": "box",
                     "unit_of_measurement": UnitOfTemperature.CELSIUS,
                     "translation_key": "boiling_water_temperature"
                 },
@@ -1041,6 +1060,7 @@ DEVICE_MAPPING = {
                     "min": 40,
                     "max": 85,
                     "step": 1,
+                    "mode": "box",
                     "unit_of_measurement": UnitOfTemperature.CELSIUS,
                     "translation_key": "warm_water_temperature"
                 }
@@ -1076,7 +1096,7 @@ DEVICE_MAPPING = {
             },
             Platform.SENSOR: {
                 "out_tds": {
-                    "unit_of_measurement": CONCENTRATION_PARTS_PER_MILLION,
+                    "unit_of_measurement": UnitOfRatio.PARTS_PER_MILLION,
                     "state_class": SensorStateClass.MEASUREMENT
                 },
                 "life_1": {
@@ -1102,6 +1122,455 @@ DEVICE_MAPPING = {
                 "autoclean_time_remainder": {
                     "device_class": SensorDeviceClass.DURATION,
                     "unit_of_measurement": UnitOfTime.MINUTES,
+                    "state_class": SensorStateClass.MEASUREMENT
+                },
+                "input_temperature_Sensing": {
+                    "device_class": SensorDeviceClass.TEMPERATURE,
+                    "unit_of_measurement": UnitOfTemperature.CELSIUS,
+                    "state_class": SensorStateClass.MEASUREMENT,
+                    "translation_key": "in_water_tem"
+                },
+                "env_temperature": {
+                    "device_class": SensorDeviceClass.TEMPERATURE,
+                    "unit_of_measurement": UnitOfTemperature.CELSIUS,
+                    "state_class": SensorStateClass.MEASUREMENT,
+                    "translation_key": "indoor_temperature"
+                }
+            }
+        }
+    },
+    "default_water_softener": {
+        "rationale": ["off", "on"],
+        "entities": {
+            Platform.SWITCH: {
+                "soften": {
+                    "device_class": SwitchDeviceClass.SWITCH
+                },
+                "regeneration": {
+                    "device_class": SwitchDeviceClass.SWITCH
+                },
+                "holiday_mode": {
+                    "device_class": SwitchDeviceClass.SWITCH
+                },
+                "leak_water_protection": {
+                    "device_class": SwitchDeviceClass.SWITCH
+                },
+                "micro_leak_protection": {
+                    "device_class": SwitchDeviceClass.SWITCH
+                },
+                "maintenance_reminder_switch": {
+                    "device_class": SwitchDeviceClass.SWITCH
+                }
+            },
+            Platform.BINARY_SENSOR: {
+                "rsj_stand_by": {
+                    "device_class": BinarySensorDeviceClass.RUNNING
+                },
+                "leak_water": {
+                    "device_class": BinarySensorDeviceClass.PROBLEM
+                },
+                "micro_leak": {
+                    "device_class": BinarySensorDeviceClass.PROBLEM
+                },
+                "low_salt": {
+                    "device_class": BinarySensorDeviceClass.PROBLEM
+                },
+                "no_salt": {
+                    "device_class": BinarySensorDeviceClass.PROBLEM
+                },
+                "salt_level_sensor_error": {
+                    "device_class": BinarySensorDeviceClass.PROBLEM
+                },
+                "flowmeter_error": {
+                    "device_class": BinarySensorDeviceClass.PROBLEM
+                },
+                "maintenance_remind": {
+                    "device_class": BinarySensorDeviceClass.PROBLEM
+                },
+                "low_battery": {
+                    "device_class": BinarySensorDeviceClass.BATTERY
+                },
+                "rtc_error": {
+                    "device_class": BinarySensorDeviceClass.PROBLEM
+                }
+            },
+            Platform.SENSOR: {
+                "velocity": {
+                    "device_class": SensorDeviceClass.VOLUME_FLOW_RATE,
+                    "unit_of_measurement": UnitOfVolumeFlowRate.LITERS_PER_MINUTE,
+                    "state_class": SensorStateClass.MEASUREMENT
+                },
+                "left_salt": {
+                    "device_class": SensorDeviceClass.BATTERY,
+                    "unit_of_measurement": PERCENTAGE,
+                    "state_class": SensorStateClass.MEASUREMENT
+                },
+                "water_consumption_big": {
+                    "device_class": SensorDeviceClass.VOLUME,
+                    "unit_of_measurement": UnitOfVolume.LITERS,
+                    "state_class": SensorStateClass.TOTAL_INCREASING
+                },
+                "water_consumption_today": {
+                    "device_class": SensorDeviceClass.VOLUME,
+                    "unit_of_measurement": UnitOfVolume.LITERS,
+                    "state_class": SensorStateClass.TOTAL_INCREASING
+                },
+                "water_consumption_average": {
+                    "device_class": SensorDeviceClass.VOLUME,
+                    "unit_of_measurement": UnitOfVolume.LITERS,
+                    "state_class": SensorStateClass.MEASUREMENT
+                },
+                "soft_available_big": {
+                    "device_class": SensorDeviceClass.VOLUME,
+                    "unit_of_measurement": UnitOfVolume.LITERS,
+                    "state_class": SensorStateClass.MEASUREMENT
+                },
+                "regeneration_count": {
+                    "state_class": SensorStateClass.TOTAL_INCREASING
+                },
+                "regeneration_left_seconds": {
+                    "device_class": SensorDeviceClass.DURATION,
+                    "unit_of_measurement": UnitOfTime.SECONDS,
+                    "state_class": SensorStateClass.MEASUREMENT
+                },
+                "days_since_last_regeneration": {
+                    "unit_of_measurement": UnitOfTime.DAYS,
+                    "state_class": SensorStateClass.MEASUREMENT
+                },
+                "pre_regeneration_days": {
+                    "unit_of_measurement": UnitOfTime.DAYS
+                },
+                "use_days": {
+                    "unit_of_measurement": UnitOfTime.DAYS
+                },
+                "flushing_days": {
+                    "unit_of_measurement": UnitOfTime.DAYS
+                },
+                "remind_maintenance_days": {
+                    "unit_of_measurement": UnitOfTime.DAYS
+                },
+                "salt_alarm_threshold": {
+                    "unit_of_measurement": PERCENTAGE
+                },
+                "battery_voltage": {
+                    "device_class": SensorDeviceClass.VOLTAGE,
+                    "unit_of_measurement": UnitOfElectricPotential.VOLT,
+                    "state_class": SensorStateClass.MEASUREMENT
+                },
+                "supply_voltage": {
+                    "device_class": SensorDeviceClass.VOLTAGE,
+                    "unit_of_measurement": UnitOfElectricPotential.VOLT,
+                    "state_class": SensorStateClass.MEASUREMENT
+                }
+            },
+            Platform.NUMBER: {
+                "water_hardness": {
+                    "min": 0,
+                    "max": 500,
+                    "step": 1,
+                    "mode": "box"
+                },
+                "timing_regeneration_hour": {
+                    "min": 0,
+                    "max": 23,
+                    "step": 1,
+                    "mode": "box",
+                    "unit_of_measurement": UnitOfTime.HOURS
+                },
+                "timing_regeneration_min": {
+                    "min": 0,
+                    "max": 59,
+                    "step": 1,
+                    "mode": "box",
+                    "unit_of_measurement": UnitOfTime.MINUTES
+                },
+                "leak_water_protection_value": {
+                    "min": 0,
+                    "max": 100,
+                    "step": 1,
+                    "mode": "box"
+                },
+                "micro_leak_protection_value": {
+                    "min": 0,
+                    "max": 100,
+                    "step": 1,
+                    "mode": "box"
+                }
+            }
+        }
+    },
+    "63600119": {
+        "rationale": ["off", "on"],
+        "entities": {
+            Platform.SWITCH: {
+                "soften": {
+                    "device_class": SwitchDeviceClass.SWITCH
+                },
+                "regeneration": {
+                    "device_class": SwitchDeviceClass.SWITCH
+                },
+                "holiday_mode": {
+                    "device_class": SwitchDeviceClass.SWITCH
+                },
+                "leak_water_protection": {
+                    "device_class": SwitchDeviceClass.SWITCH
+                },
+                "micro_leak_protection": {
+                    "device_class": SwitchDeviceClass.SWITCH
+                },
+                "maintenance_reminder_switch": {
+                    "device_class": SwitchDeviceClass.SWITCH
+                }
+            },
+            Platform.BINARY_SENSOR: {
+                "rsj_stand_by": {
+                    "device_class": BinarySensorDeviceClass.RUNNING
+                },
+                "leak_water": {
+                    "device_class": BinarySensorDeviceClass.PROBLEM
+                },
+                "micro_leak": {
+                    "device_class": BinarySensorDeviceClass.PROBLEM
+                },
+                "low_salt": {
+                    "device_class": BinarySensorDeviceClass.PROBLEM
+                },
+                "no_salt": {
+                    "device_class": BinarySensorDeviceClass.PROBLEM
+                },
+                "salt_level_sensor_error": {
+                    "device_class": BinarySensorDeviceClass.PROBLEM
+                },
+                "flowmeter_error": {
+                    "device_class": BinarySensorDeviceClass.PROBLEM
+                },
+                "maintenance_remind": {
+                    "device_class": BinarySensorDeviceClass.PROBLEM
+                },
+                "low_battery": {
+                    "device_class": BinarySensorDeviceClass.BATTERY
+                },
+                "rtc_error": {
+                    "device_class": BinarySensorDeviceClass.PROBLEM
+                }
+            },
+            Platform.SENSOR: {
+                "velocity": {
+                    "device_class": SensorDeviceClass.VOLUME_FLOW_RATE,
+                    "unit_of_measurement": UnitOfVolumeFlowRate.LITERS_PER_MINUTE,
+                    "state_class": SensorStateClass.MEASUREMENT
+                },
+                "left_salt": {
+                    "device_class": SensorDeviceClass.BATTERY,
+                    "unit_of_measurement": PERCENTAGE,
+                    "state_class": SensorStateClass.MEASUREMENT
+                },
+                "water_consumption_big": {
+                    "device_class": SensorDeviceClass.VOLUME,
+                    "unit_of_measurement": UnitOfVolume.LITERS,
+                    "state_class": SensorStateClass.TOTAL_INCREASING
+                },
+                "water_consumption_today": {
+                    "device_class": SensorDeviceClass.VOLUME,
+                    "unit_of_measurement": UnitOfVolume.LITERS,
+                    "state_class": SensorStateClass.TOTAL_INCREASING
+                },
+                "water_consumption_average": {
+                    "device_class": SensorDeviceClass.VOLUME,
+                    "unit_of_measurement": UnitOfVolume.LITERS,
+                    "state_class": SensorStateClass.MEASUREMENT
+                },
+                "soft_available_big": {
+                    "device_class": SensorDeviceClass.VOLUME,
+                    "unit_of_measurement": UnitOfVolume.LITERS,
+                    "state_class": SensorStateClass.MEASUREMENT
+                },
+                "regeneration_count": {
+                    "state_class": SensorStateClass.TOTAL_INCREASING
+                },
+                "regeneration_left_seconds": {
+                    "device_class": SensorDeviceClass.DURATION,
+                    "unit_of_measurement": UnitOfTime.SECONDS,
+                    "state_class": SensorStateClass.MEASUREMENT
+                },
+                "days_since_last_regeneration": {
+                    "unit_of_measurement": UnitOfTime.DAYS,
+                    "state_class": SensorStateClass.MEASUREMENT
+                },
+                "pre_regeneration_days": {
+                    "unit_of_measurement": UnitOfTime.DAYS
+                },
+                "use_days": {
+                    "unit_of_measurement": UnitOfTime.DAYS
+                },
+                "flushing_days": {
+                    "unit_of_measurement": UnitOfTime.DAYS
+                },
+                "remind_maintenance_days": {
+                    "unit_of_measurement": UnitOfTime.DAYS
+                },
+                "salt_alarm_threshold": {
+                    "unit_of_measurement": PERCENTAGE
+                },
+                "battery_voltage": {
+                    "device_class": SensorDeviceClass.VOLTAGE,
+                    "unit_of_measurement": UnitOfElectricPotential.VOLT,
+                    "state_class": SensorStateClass.MEASUREMENT
+                },
+                "supply_voltage": {
+                    "device_class": SensorDeviceClass.VOLTAGE,
+                    "unit_of_measurement": UnitOfElectricPotential.VOLT,
+                    "state_class": SensorStateClass.MEASUREMENT
+                }
+            },
+            Platform.NUMBER: {
+                "water_hardness": {
+                    "min": 0,
+                    "max": 500,
+                    "step": 1,
+                    "mode": "box"
+                },
+                "timing_regeneration_hour": {
+                    "min": 0,
+                    "max": 23,
+                    "step": 1,
+                    "mode": "box",
+                    "unit_of_measurement": UnitOfTime.HOURS
+                },
+                "timing_regeneration_min": {
+                    "min": 0,
+                    "max": 59,
+                    "step": 1,
+                    "mode": "box",
+                    "unit_of_measurement": UnitOfTime.MINUTES
+                },
+                "leak_water_protection_value": {
+                    "min": 0,
+                    "max": 100,
+                    "step": 1,
+                    "mode": "box"
+                },
+                "micro_leak_protection_value": {
+                    "min": 0,
+                    "max": 100,
+                    "step": 1,
+                    "mode": "box"
+                }
+            }
+        }
+    },
+    "63200854": {
+        "rationale": ["off", "on"],
+        "entities": {
+            Platform.SWITCH: {
+                "open_close_switch": {
+                    "device_class": SwitchDeviceClass.SWITCH
+                },
+                "leak_water_protect": {
+                    "device_class": SwitchDeviceClass.SWITCH,
+                    "translation_key": "leak_water_protection"
+                },
+                "start_clean": {
+                    "device_class": SwitchDeviceClass.SWITCH
+                },
+                "open_close_water_pressure": {
+                    "device_class": SwitchDeviceClass.SWITCH
+                }
+            },
+            Platform.SELECT: {
+                "clean_interval": {
+                    "options": {
+                        "off": {"clean_interval": "0"},
+                        "7_days": {"clean_interval": "7"},
+                        "15_days": {"clean_interval": "15"},
+                        "30_days": {"clean_interval": "30"}
+                    }
+                },
+                "single_max_water_time": {
+                    "options": {
+                        "off": {"single_max_water_time": "0"},
+                        "30min": {"single_max_water_time": "2"},
+                        "60min": {"single_max_water_time": "4"},
+                        "90min": {"single_max_water_time": "6"},
+                        "120min": {"single_max_water_time": "8"},
+                        "150min": {"single_max_water_time": "10"},
+                        "180min": {"single_max_water_time": "12"},
+                        "210min": {"single_max_water_time": "14"},
+                        "240min": {"single_max_water_time": "16"},
+                        "270min": {"single_max_water_time": "18"},
+                        "300min": {"single_max_water_time": "20"},
+                        "330min": {"single_max_water_time": "22"},
+                        "360min": {"single_max_water_time": "24"},
+                        "390min": {"single_max_water_time": "26"},
+                        "420min": {"single_max_water_time": "28"},
+                        "450min": {"single_max_water_time": "30"},
+                        "480min": {"single_max_water_time": "32"},
+                        "510min": {"single_max_water_time": "34"},
+                        "540min": {"single_max_water_time": "36"},
+                        "570min": {"single_max_water_time": "38"},
+                        "600min": {"single_max_water_time": "40"},
+                        "630min": {"single_max_water_time": "42"},
+                        "660min": {"single_max_water_time": "44"},
+                        "690min": {"single_max_water_time": "46"},
+                        "720min": {"single_max_water_time": "48"}
+                    }
+                },
+                "single_max_water_consumption": {
+                    "options": {
+                        "off": {"single_max_water_consumption": "0"},
+                        "500l": {"single_max_water_consumption": "10"},
+                        "700l": {"single_max_water_consumption": "14"},
+                        "900l": {"single_max_water_consumption": "18"},
+                        "1500l": {"single_max_water_consumption": "30"},
+                        "2000l": {"single_max_water_consumption": "40"}
+                    }
+                }
+            },
+            Platform.NUMBER: {
+                "clean_water_consumption": {
+                    "min": 0,
+                    "max": 60,
+                    "step": 1,
+                    "mode": "box",
+                    "unit_of_measurement": UnitOfVolume.CUBIC_METERS
+                }
+            },
+            Platform.SENSOR: {
+                "input_temperature_Sensing": {
+                    "device_class": SensorDeviceClass.TEMPERATURE,
+                    "unit_of_measurement": UnitOfTemperature.CELSIUS,
+                    "state_class": SensorStateClass.MEASUREMENT,
+                    "translation_key": "input_temperature_sensing"
+                },
+                "input_pressure_Sensing": {
+                    "device_class": SensorDeviceClass.PRESSURE,
+                    "unit_of_measurement": UnitOfPressure.KPA,
+                    "state_class": SensorStateClass.MEASUREMENT,
+                    "translation_key": "input_pressure_sensing"
+                },
+                "all_water_consumption": {
+                    "device_class": SensorDeviceClass.VOLUME,
+                    "unit_of_measurement": UnitOfVolume.LITERS,
+                    "state_class": SensorStateClass.TOTAL_INCREASING,
+                    "translation_key": "water_consumption_l"
+                },
+                "today_water_consumption": {
+                    "device_class": SensorDeviceClass.VOLUME,
+                    "unit_of_measurement": UnitOfVolume.LITERS,
+                    "state_class": SensorStateClass.TOTAL_INCREASING
+                },
+                "water_flow": {
+                    "device_class": SensorDeviceClass.VOLUME_FLOW_RATE,
+                    "unit_of_measurement": UnitOfVolumeFlowRate.LITERS_PER_MINUTE,
+                    "state_class": SensorStateClass.MEASUREMENT
+                },
+                "clean_water_consumption_next_remaining": {
+                    "device_class": SensorDeviceClass.VOLUME,
+                    "unit_of_measurement": UnitOfVolume.CUBIC_METERS
+                },
+                "clean_interval_next_days_remaining": {
+                    "device_class": SensorDeviceClass.DURATION,
+                    "unit_of_measurement": UnitOfTime.DAYS,
                     "state_class": SensorStateClass.MEASUREMENT
                 }
             }

@@ -36,7 +36,7 @@ from .config_flow import get_lua_custom_path, get_lua_file_path
 from .coordinator import MideaCoordinator
 from .midea_lib.device import MideaDevice
 from .midea_lib.lua import write_file, ensure_lua_files
-from .device_mapping import get_device_mapping
+from .device_mapping import get_device_mapping, is_d9_polling_device
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -85,7 +85,15 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         sn8 = device_data.get(CONF_SN8, "")
         model = device_data.get(CONF_PRODUCT_MODEL, "")
         device_type = device_data.get(CONF_DEVICE_TYPE)
-        device_type_int = int(device_type, 16) if isinstance(device_type, str) else 0
+        if isinstance(device_type, int):
+            device_type_int = device_type
+        elif isinstance(device_type, str):
+            try:
+                device_type_int = int(device_type, 16)
+            except ValueError:
+                device_type_int = 0
+        else:
+            device_type_int = 0
 
         # Priority: use custom Lua file from integration's lua folder if it exists,
         # otherwise fall back to the cloud-downloaded file (new name, then old name for compatibility)
@@ -142,15 +150,21 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         default_values = dict(device_mapping.get("default_values", {}))
         initial_query = device_mapping.get("initial_query")
         polling_query = device_mapping.get("polling_query")
-        # Check if polling is supported (based on existence of polling_query)
-        enable_polling = polling_query is not None and isinstance(polling_query, list) and len(polling_query) > 0
+        # Check if polling is supported (based on existence of polling_query,
+        # or the dedicated poll thread for D9 polling devices)
+        d9_polling = is_d9_polling_device(device_type_int, device_mapping)
+        enable_polling = (
+            polling_query is not None and isinstance(polling_query, list) and len(polling_query) > 0
+        ) or d9_polling
         # Get polling settings from device data (user configurable via Options)
         polling_enabled = device_data.get("polling_enabled", True)  # Default to enabled
-        polling_interval = device_data.get("polling_interval", 30)
+        # D9 polling devices: per-drum refresh interval defaults to 1s
+        # (standby +1s), others default to 30s
+        polling_interval = device_data.get("polling_interval", 1 if d9_polling else 30)
         # Only enable polling if both device_mapping supports it AND user has enabled it
         effective_polling = enable_polling and polling_enabled
         _LOGGER.debug(
-            "Device %s: polling_supported=%s, polling_interval=%d, polling_query=%s",
+            "Device %s: polling_supported=%s, polling_interval=%s, polling_query=%s",
             device_id,
             enable_polling,
             polling_interval,
@@ -212,6 +226,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
                 device,
                 device_name,
                 area,
+                config_entry=entry,
             )
 
             import asyncio
@@ -282,6 +297,9 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     if unload_ok := await hass.config_entries.async_unload_platforms(entry, PLATFORMS):
         entry_data = hass.data[DOMAIN].pop(entry.entry_id, {})
         for device_id_str, data in entry_data.items():
+            # Only device entries are dicts; skip non-dict values like "update_entity"
+            if not isinstance(data, dict):
+                continue
             coordinator = data.get("coordinator")
             if coordinator:
                 coordinator.deactivate()

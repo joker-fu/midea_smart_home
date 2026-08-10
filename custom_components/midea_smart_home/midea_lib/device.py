@@ -2,6 +2,7 @@
 
 import socket
 import json
+import struct
 import threading
 import logging
 import time
@@ -24,6 +25,7 @@ CONNECTION_TIMEOUT = 10
 SOCKET_TIMEOUT = 10
 HEARTBEAT_INTERVAL = 10
 MIN_MSG_LENGTH = 56
+_LINGER_TIMEOUT = 2
 _SKIP_KEYS = frozenset({'data_type', 'bucket', 'category', 'version'})
 
 
@@ -121,7 +123,17 @@ class DeviceController(threading.Thread):
         self._sock = None
         if sock:
             try:
+                # Enable linger so close() blocks briefly to ensure the
+                # TCP FIN packet is actually sent to the device.
+                linger = struct.pack('ii', 1, _LINGER_TIMEOUT)
+                sock.setsockopt(socket.SOL_SOCKET, socket.SO_LINGER, linger)
+            except OSError:
+                pass
+            try:
                 sock.shutdown(socket.SHUT_RDWR)
+            except OSError:
+                pass
+            try:
                 sock.close()
             except OSError:
                 pass
@@ -411,12 +423,18 @@ class MideaDevice:
         self._default_values = default_values or {}
         self._centralized = list(centralized) if isinstance(centralized, (list, tuple, set)) else []
         self._enable_polling = enable_polling
-        # Ensure polling_interval is between 1 and 30 seconds
-        self._polling_interval = max(1, min(30, int(polling_interval)))
+        if device_type == 0xD9:
+            # D9 poll thread: per-drum refresh interval between 1 and 5 seconds
+            self._polling_interval = max(1.0, min(5.0, float(polling_interval)))
+        else:
+            # Ensure polling_interval is between 1 and 30 seconds
+            self._polling_interval = max(1, min(30, int(polling_interval)))
         # Store initial_query for initial status queries
         self._initial_query = initial_query or []
         # Store polling_query for periodic polling
         self._polling_query = polling_query or []
+        # D9 polling device flag (only meaningful for T0xD9)
+        self._d9_polling_device = False
 
         # Initialize Logic Handler
         self._logic_handler = DeviceLogicHandler(device_type, device_name)
@@ -465,8 +483,18 @@ class MideaDevice:
         self._controller.register_update(self._on_device_update)
 
         if device_type == 0xD9:
-            self._controller.set_skip_initial_refresh(True)
-            self._start_poll_thread()
+            # Initial_query contains only one of da/db/dc) use the dedicated poll thread.
+            # two or more of da/db/dc) rely on push updates.
+            initial_keys = set()
+            for q in self._initial_query:
+                if isinstance(q, set):
+                    initial_keys |= q
+                elif isinstance(q, dict):
+                    initial_keys |= set(q.keys())
+            self._d9_polling_device = len(initial_keys) <= 1
+            if self._d9_polling_device:
+                self._controller.set_skip_initial_refresh(True)
+                self._start_poll_thread()
         elif self._enable_polling:
             self._start_attribute_poll_thread()
 
@@ -523,13 +551,19 @@ class MideaDevice:
         while self._poll_run:
             if self._controller.connected:
                 try:
-                    interval = 0.5 if self._data.get('db_power') else 1.0
+                    # Configured interval while running, +1 second in standby
+                    interval = float(self._polling_interval)
+                    if not self._data.get('db_power'):
+                        interval += 1.0
+                    # Two poll queries per cycle (location 1 and 2), so sleep
+                    # half the interval each to refresh every drum once per interval
+                    gap = interval / 2
                     self._controller.send_poll_query(1)
-                    time.sleep(interval)
+                    time.sleep(gap)
                     if not self._poll_run:
                         break
                     self._controller.send_poll_query(2)
-                    time.sleep(interval)
+                    time.sleep(gap)
                 except Exception as e:
                     _LOGGER.debug("[%s] Poll query error: %s", self._device_id, e)
             else:
@@ -670,43 +704,46 @@ class MideaDevice:
             self._available = True
 
         if self._device_type == 0xD9:
-            if poll_location is None:
+            # D9 push devices rely on push updates and fall through below.
+            if self._d9_polling_device:
+                # D9 polling devices use the dedicated poll thread.
+                if poll_location is None:
+                    return
+
+                data_type = status.get('data_type')
+                if data_type != '03db':
+                    return
+
+                db_location = status.get("db_location")
+                if db_location not in (1, 2) or db_location != poll_location:
+                    return
+
+                db_position = status.get('db_position')
+                suffix = "_l" if db_location == 1 else "_r"
+                poll_keys = (
+                    "db_detergent_needed", "db_remain_time", "db_progress",
+                    "db_running_status", "db_error_code"
+                )
+
+                new_data = self._data.copy()
+                updated_keys = []
+
+                if db_position == 1:
+                    for key, value in status.items():
+                        if key not in _SKIP_KEYS:
+                            new_data[key] = value
+                            updated_keys.append(key)
+
+                for key in poll_keys:
+                    if key in status:
+                        new_data[key + suffix] = status[key]
+                        updated_keys.append(key + suffix)
+
+                if self._logic_handler.apply_special_handling_for_poll(new_data, suffix, status):
+                    self._data = new_data
+                    if updated_keys:
+                        self._notify_update()
                 return
-
-            data_type = status.get('data_type')
-            if data_type != '03db':
-                return
-
-            db_location = status.get("db_location")
-            if db_location not in (1, 2) or db_location != poll_location:
-                return
-
-            db_position = status.get('db_position')
-            suffix = "_l" if db_location == 1 else "_r"
-            poll_keys = (
-                "db_detergent_needed", "db_remain_time", "db_progress",
-                "db_running_status", "db_error_code"
-            )
-
-            new_data = self._data.copy()
-            updated_keys = []
-
-            if db_position == 1:
-                for key, value in status.items():
-                    if key not in _SKIP_KEYS:
-                        new_data[key] = value
-                        updated_keys.append(key)
-
-            for key in poll_keys:
-                if key in status:
-                    new_data[key + suffix] = status[key]
-                    updated_keys.append(key + suffix)
-
-            if self._logic_handler.apply_special_handling_for_poll(new_data, suffix, status):
-                self._data = new_data
-                if updated_keys:
-                    self._notify_update()
-            return
 
         # Merge with existing data
         new_data = self._data.copy()
@@ -716,7 +753,8 @@ class MideaDevice:
         self._logic_handler.apply_special_handling(
             new_data,
             self._recent_controls,
-            self._control_timeout
+            self._control_timeout,
+            status=status
         )
 
         # Clean up expired recent controls
