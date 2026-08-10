@@ -12,10 +12,10 @@ Conflicts happen when two sides touch the same region of a file. They are almost
 
 ## What the fork's custom features are (derive fresh each time)
 
-Do not trust a hardcoded list — the fork evolves too. Before resolving, derive the authoritative list of the fork's additions from history:
+Do not trust a hardcoded list — the fork evolves too. Before resolving, derive the authoritative list of the fork's additions from history (`$UP` is the upstream remote name resolved in SKILL.md step 1):
 
 ```
-git log --oneline cy/staging..HEAD
+git log --oneline "$UP/staging"..HEAD
 ```
 
 Each commit there is a fork-only change whose intent must survive the merge. Read the commit messages and `git show --stat <commit>` to learn what each one touches and why. Keep this list in mind as you resolve conflicts.
@@ -26,7 +26,7 @@ As of the last sync the fork's additions were roughly: new device model mappings
 
 For each conflicted region:
 
-1. **Understand both sides.** What does the `<<<<<<< HEAD` (fork) side do, and what does `>>>>>>> cy/staging` (upstream) side do? Read enough surrounding code to know which feature each change belongs to. Don't just read the diff hunk — read the enclosing function/class so you understand intent.
+1. **Understand both sides.** What does the `<<<<<<< HEAD` (fork) side do, and what does `>>>>>>> "$UP/staging"` (upstream) side do? Read enough surrounding code to know which feature each change belongs to. Don't just read the diff hunk — read the enclosing function/class so you understand intent.
 
 2. **Classify the conflict:**
    - **Different features in the same spot** (most common here — e.g. fork added device model X, upstream added device model Y in the same mapping file): take the **union**, keep both. This is the default.
