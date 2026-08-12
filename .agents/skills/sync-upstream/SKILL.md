@@ -55,19 +55,25 @@ Group the `HEAD.."$UP/staging"` commits by theme (new devices, features, fixes, 
 
 **If `HEAD.."$UP/staging"` is empty**, staging is already up to date — report that and stop. No tag, no merge.
 
-### 4. Tag the pre-merge state (for rollback)
-Before merging, tag the current HEAD (= the pre-sync `<fork>/staging`) so the pre-sync state is always recoverable. The tag name is a local timestamp `YYYYMMDDHHMMSS`:
+### 4. Tag the pre-merge state (for rollback) — REQUIRED before EVERY merge
+**Hard rule: every `git merge` in step 5 MUST be preceded by a fresh tag on the current HEAD. Never reuse an existing tag — even if HEAD points to the same commit an older tag already marks.** Each merge gets its own dedicated rollback point, and all historical tags are retained, so every previous sync boundary stays recoverable (`git reset --hard <older-tag>`).
+
+The tag name is a local timestamp `YYYYMMDDHHMMSS`:
 ```
 TAG="$(date +%Y%m%d%H%M%S)"
 git tag -a "$TAG" -m "pre-sync-upstream snapshot before merging $UP/staging"
 ```
-Record `$TAG` — it is the rollback target for this sync. The tag is created locally here and pushed to the remote in step 8 alongside the branch. If a tag with that name somehow already exists, append `-2`, `-3`, … until `git tag` succeeds.
+Record `$TAG` — it is the rollback target for this merge. The tag is created locally here and pushed to the remote in step 8 alongside the branch. If a tag with that name already exists (e.g. two merges in the same second), append `-2`, `-3`, … until `git tag` succeeds.
+
+**Re-merge within the same run:** if you discover upstream advanced after a first merge attempt (re-running `git log --oneline HEAD.."$UP/staging"` is non-empty again) and you `git reset --hard` back to fold the new commits into a single fresh merge, you MUST create a **new** `$TAG` after the reset and before the re-merge — do not reuse the tag from the first attempt. Invariant: one fresh tag per merge attempt, all kept.
 
 ### 5. Merge
 ```
 git merge --no-ff --no-commit "$UP/staging"
 ```
 Expect conflicts (see next section). `--no-commit` lets you resolve and verify before committing.
+
+**Pre-condition:** a fresh tag from step 4 must exist on HEAD before running this. If you `git reset --hard` and re-run this step (re-merge), create a new tag first — see step 4's "Re-merge within the same run".
 
 ### 6. Resolve conflicts
 
@@ -85,21 +91,24 @@ Read `references/conflict-resolution.md` for the full policy and a worked exampl
 
 If any check fails, stop and report — do not commit.
 
-### 8. Commit, then STOP and ask before pushing
+### 8. Commit, then push (risk-tiered)
 Commit the merge:
 ```
 git commit --no-edit
 ```
 Default merge message is fine (git will write "Merge remote-tracking branch '<upstream-name>/staging' into staging").
 
-Then present to the user and **ask whether to push**: the new HEAD, how many commits ahead of `$OR/staging`, the pre-merge tag name (`$TAG`), the conflict-resolution summary, and the verification results. Do not push until the user confirms.
+**Push policy is tiered by whether step 6 resolved any conflicts:**
+- **Clean auto-merge (no conflicts in step 6) AND step 7 verification passed → push automatically, no confirmation.** Structural correctness is already verified and the rollback tag from step 4 covers the residual risk:
+  ```
+  git push "$OR" staging
+  git push "$OR" "$TAG"
+  ```
+- **Any conflict was resolved in step 6 → STOP and ask the user before pushing.** Conflict resolution is where silent semantic regressions sneak in (the union looked right but the logic broke), and step 7's automated checks can't catch those — only a human glance at the resolution summary can. Present: the new HEAD, how many commits ahead of `$OR/staging`, `$TAG`, the conflict-resolution summary (what each conflict was and how it was resolved), and the verification results. Do not push until the user confirms; then run the two `git push` commands above.
 
-If approved, push the branch **and** the rollback tag together:
-```
-git push "$OR" staging
-git push "$OR" "$TAG"
-```
-This is a normal (non-force) push.
+Either way this is a normal (non-force) push. **If step 7 verification failed**, do not commit and do not push — see Rollback.
+
+Regardless of path, report the outcome (see step 9 notification).
 
 ### 9. Review whether this skill needs updating
 After the sync is complete (committed, and the push decision resolved — pushed or not), check whether the skill files still match reality, and update them if they drifted:
@@ -118,3 +127,4 @@ The pre-merge tag (`$TAG` from step 4) is always the clean rollback target:
 - **Before pushing the merge:** `git reset --hard "$TAG"` restores the pre-sync state. (The remote `$OR/staging` is untouched at this point too.)
 - **After pushing:** the tagged commit is still reachable on the remote. Rollback options: `git revert -m 1 <merge-commit>` (safe, additive, recommended) or `git reset --hard "$TAG"` then force-push (only if you're certain no one else pulled — do not force-push shared history otherwise).
 - The tag also lets you browse or diff the pre-sync state anytime: `git log "$TAG"..HEAD`, `git diff "$TAG"`.
+- **Any prior sync's tag works too:** every sync keeps its own pre-merge tag (step 4 never reuses or deletes tags), so you can roll back across multiple syncs with `git reset --hard <older-tag>`, or compare two sync boundaries with `git diff <older-tag> <newer-tag>`.
