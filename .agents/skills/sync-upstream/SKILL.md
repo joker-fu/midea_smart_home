@@ -39,13 +39,23 @@ Run these steps in order. Stop and ask the user before `git push`.
   ```
   If either resolution fails (helper exits non-zero), the remote isn't configured on this clone — tell the user which one is missing (e.g. "no remote points at Cyborg2017/midea_smart_home; add one with `git remote add <name> <url>`") and stop. `$UP`/`$OR` are used in every later step.
 
-### 2. Fetch upstream
+### 2. Fetch both remotes
 ```
 git fetch "$UP"
+git fetch "$OR"
 ```
-Only updates `remotes/$UP/*` and `.git/objects`. Never touches the working tree or `staging`.
+Only updates remote-tracking refs and `.git/objects`; never touches the working tree or `staging`. Fetching the fork remote up front lets step 3 detect immediately whether another clone already pushed (including an equivalent upstream sync), so a push rejection is prevented rather than discovered at push time.
 
-### 3. Analyze the divergence (read-only)
+### 3. Align with the fork remote, then analyze the divergence
+
+**Align first** (before touching upstream), so you never build a merge on a stale base:
+```
+git log --oneline HEAD.."$OR/staging"                     # what the fork remote has that local lacks
+```
+- **Empty** → local staging is current with `$OR/staging`; continue below.
+- **Non-empty** → another clone pushed. Integrate it now: `git merge --ff-only "$OR/staging"` when local has no unique commits; if local also has unpushed commits, `git merge "$OR/staging"` and report (stop and ask if it conflicts). Then re-check: if `HEAD.."$UP/staging"` is now empty, that push WAS this upstream sync — report "already synced by another clone" and stop. No tag, no merge.
+
+Then analyze the upstream divergence:
 ```
 git merge-base HEAD "$UP/staging"                         # common ancestor
 git log --oneline HEAD.."$UP/staging"                     # what upstream has that we lack (upstream updates)
@@ -107,6 +117,8 @@ Default merge message is fine (git will write "Merge remote-tracking branch '<up
 - **Any conflict was resolved in step 6 → STOP and ask the user before pushing.** Conflict resolution is where silent semantic regressions sneak in (the union looked right but the logic broke), and step 7's automated checks can't catch those — only a human glance at the resolution summary can. Present: the new HEAD, how many commits ahead of `$OR/staging`, `$TAG`, the conflict-resolution summary (what each conflict was and how it was resolved), and the verification results. Do not push until the user confirms; then run the two `git push` commands above.
 
 Either way this is a normal (non-force) push. **If step 7 verification failed**, do not commit and do not push — see Rollback.
+
+**If the branch push is still rejected** (rare race: another clone pushed after your step-2 fetch): `git fetch "$OR"` and repeat the step-3 alignment — if the remote now contains an equivalent sync (`git merge-base --is-ancestor "$UP/staging" "$OR/staging"` succeeds AND `git diff HEAD "$OR/staging"` is empty), `git reset --hard "$OR/staging"` and push just the tag; otherwise `git merge "$OR/staging"`, re-run the step 7 checks, and report to the user before pushing. Never force-push.
 
 Regardless of path, report the outcome (see step 9 notification).
 
