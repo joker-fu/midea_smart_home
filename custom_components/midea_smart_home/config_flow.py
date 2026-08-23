@@ -12,7 +12,7 @@ from homeassistant import config_entries
 from homeassistant.core import callback
 from homeassistant.data_entry_flow import FlowResult
 import homeassistant.helpers.config_validation as cv
-from homeassistant.helpers.selector import SelectSelector, SelectSelectorConfig, SelectSelectorMode
+from homeassistant.helpers.selector import SelectSelector, SelectSelectorConfig, SelectSelectorMode, TextSelector, TextSelectorConfig, TextSelectorType
 
 from .const import (
     CONF_ACCOUNT,
@@ -31,6 +31,7 @@ from .const import (
     CONF_ROOM_NAME,
     CONF_SN,
     CONF_SN8,
+    CONF_UDPID,
     CONF_PRODUCT_MODEL,
     CONF_MODEL_NUMBER,
     CONF_TOKEN,
@@ -357,20 +358,62 @@ class MideaSmartHomeConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         return await self.hass.async_add_executor_job(_try_auth)
 
+    async def _load_cached_token_key(
+        self,
+        device_id: int,
+        device_type: int,
+        sn8: str = "",
+    ) -> tuple[str, str]:
+        """Load cached token/key from local JSON file.
+
+        Tries the sn8-suffixed path first, then falls back to the path without
+        sn8. Returns (token, key); values are empty strings if not found.
+        """
+        def _load():
+            candidate_paths = []
+            if sn8:
+                candidate_paths.append(get_device_json_path(
+                    self.hass.config.config_dir, device_id, device_type, sn8
+                ))
+            candidate_paths.append(get_device_json_path(
+                self.hass.config.config_dir, device_id, device_type, ""
+            ))
+            for json_path in candidate_paths:
+                if not json_path.exists():
+                    continue
+                try:
+                    with open(json_path, 'r', encoding='utf-8') as f:
+                        data = json.load(f)
+                    token = data.get(CONF_TOKEN, "") or ""
+                    key = data.get(CONF_KEY, "") or ""
+                    if token and key:
+                        _LOGGER.debug("[%d] Found cached token/key in %s", device_id, json_path)
+                        return token, key
+                except (json.JSONDecodeError, OSError) as e:
+                    _LOGGER.warning("Failed to read cached JSON %s: %s", json_path, e)
+            return "", ""
+
+        return await self.hass.async_add_executor_job(_load)
+
     async def _acquire_validated_token_key(
         self,
         device_id: int,
         ip_address: str,
         port: int,
         protocol: int,
+        udpid: str | None = None,
+        device_type: int | None = None,
+        sn8: str = "",
     ) -> tuple:
-        """Try preset accounts to get validated token/key for a device.
+        """Get validated token/key for a device.
 
-        Strategy (based on empirical testing, 18 devices in 16.7s):
-        - One login lets you get 3-5 devices' tokens before returning EMPTY.
-        - EMPTY means access_token needs refresh → re-login (same cloud instance).
-        - Login failure → wait 5s and retry once.
-        - Reuses a single cloud instance across all devices (preserves _security state).
+        Strategy:
+        - Prefer cached token/key from local JSON file (.storage/.../json_files)
+          and validate it via TCP handshake before reuse.
+        - Fall back to the user's own logged-in cloud (Meiju Cloud /v2, supports
+          the real udpid from the broadcast tail for 2023+ new modules).
+        - Fall back to preset accounts (NetHome Plus /v1) for older devices.
+        - Reuses cached cloud instances across devices (preserves _security state).
 
         Returns (token, key, source) or ("", "", "manual") on failure.
         """
@@ -378,6 +421,48 @@ class MideaSmartHomeConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         if not is_v3:
             return "", "", "not_needed"
 
+        # 0) Prefer cached token/key from local JSON file
+        if device_type is not None:
+            try:
+                cached_token, cached_key = await self._load_cached_token_key(
+                    device_id, device_type, sn8
+                )
+                if cached_token and cached_key:
+                    if await self._validate_token_key(
+                        device_id, ip_address, port, cached_token, cached_key
+                    ):
+                        _LOGGER.info(
+                            "[%d] Got token/key from local cache",
+                            device_id,
+                        )
+                        return cached_token, cached_key, "local_cache"
+                    _LOGGER.debug(
+                        "[%d] Local cached token/key failed TCP validation, fall back to cloud",
+                        device_id,
+                    )
+            except Exception as e:
+                _LOGGER.debug("[%d] Failed to load local cached token/key: %s", device_id, e)
+
+        # 1) Prefer the user's own cloud (Meiju Cloud /v2, supports real udpid for new modules)
+        if self._user_cloud is not None:
+            try:
+                keys = await self._user_cloud.get_cloud_keys(device_id, udpid)
+                for method, data in keys.items():
+                    token = data["token"]
+                    key = data["key"]
+                    if await self._validate_token_key(
+                        device_id, ip_address, port, token, key
+                    ):
+                        _LOGGER.info(
+                            "[%d][user:%s] Got token/key (method=%d)",
+                            device_id, self._account, method,
+                        )
+                        return token, key, f"user:{self._account}"
+                _LOGGER.debug("[%d] User cloud token/key failed TCP validation", device_id)
+            except Exception as e:
+                _LOGGER.debug("[%d] User cloud get token error: %s", device_id, e)
+
+        # 2) Fall back to preset accounts (NetHome Plus /v1)
         try:
             from .midea_lib.cloud import get_all_preset_accounts, get_midea_cloud
 
@@ -576,6 +661,9 @@ class MideaSmartHomeConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             ip_address = current_device[CONF_IP]
             token, key, key_source = await self._acquire_validated_token_key(
                 device_id, ip_address, DEFAULT_PORT, protocol,
+                udpid=current_device.get(CONF_UDPID),
+                device_type=current_device.get(CONF_DEVICE_TYPE),
+                sn8=current_device.get(CONF_SN8, ""),
             )
             if token and key:
                 _LOGGER.info("Using token/key from %s for device %s", key_source, device_id)
@@ -786,20 +874,62 @@ class MideaSmartHomeOptionsFlowHandler(config_entries.OptionsFlow):
 
         return await self.hass.async_add_executor_job(_try_auth)
 
+    async def _load_cached_token_key(
+        self,
+        device_id: int,
+        device_type: int,
+        sn8: str = "",
+    ) -> tuple[str, str]:
+        """Load cached token/key from local JSON file.
+
+        Tries the sn8-suffixed path first, then falls back to the path without
+        sn8. Returns (token, key); values are empty strings if not found.
+        """
+        def _load():
+            candidate_paths = []
+            if sn8:
+                candidate_paths.append(get_device_json_path(
+                    self.hass.config.config_dir, device_id, device_type, sn8
+                ))
+            candidate_paths.append(get_device_json_path(
+                self.hass.config.config_dir, device_id, device_type, ""
+            ))
+            for json_path in candidate_paths:
+                if not json_path.exists():
+                    continue
+                try:
+                    with open(json_path, 'r', encoding='utf-8') as f:
+                        data = json.load(f)
+                    token = data.get(CONF_TOKEN, "") or ""
+                    key = data.get(CONF_KEY, "") or ""
+                    if token and key:
+                        _LOGGER.debug("[%d] Found cached token/key in %s", device_id, json_path)
+                        return token, key
+                except (json.JSONDecodeError, OSError) as e:
+                    _LOGGER.warning("Failed to read cached JSON %s: %s", json_path, e)
+            return "", ""
+
+        return await self.hass.async_add_executor_job(_load)
+
     async def _acquire_validated_token_key(
         self,
         device_id: int,
         ip_address: str,
         port: int,
         protocol: int,
+        udpid: str | None = None,
+        device_type: int | None = None,
+        sn8: str = "",
     ) -> tuple:
-        """Try preset accounts to get validated token/key for a device.
+        """Get validated token/key for a device.
 
-        Strategy (based on empirical testing, 18 devices in 16.7s):
-        - One login lets you get 3-5 devices' tokens before returning EMPTY.
-        - EMPTY means access_token needs refresh → re-login (same cloud instance).
-        - Login failure → wait 5s and retry once.
-        - Reuses a single cloud instance across all devices (preserves _security state).
+        Strategy:
+        - Prefer cached token/key from local JSON file (.storage/.../json_files)
+          and validate it via TCP handshake before reuse.
+        - Fall back to the user's own logged-in cloud (Meiju Cloud /v2, supports
+          the real udpid from the broadcast tail for 2023+ new modules).
+        - Fall back to preset accounts (NetHome Plus /v1) for older devices.
+        - Reuses cached cloud instances across devices (preserves _security state).
 
         Returns (token, key, source) or ("", "", "manual") on failure.
         """
@@ -807,6 +937,48 @@ class MideaSmartHomeOptionsFlowHandler(config_entries.OptionsFlow):
         if not is_v3:
             return "", "", "not_needed"
 
+        # 0) Prefer cached token/key from local JSON file
+        if device_type is not None:
+            try:
+                cached_token, cached_key = await self._load_cached_token_key(
+                    device_id, device_type, sn8
+                )
+                if cached_token and cached_key:
+                    if await self._validate_token_key(
+                        device_id, ip_address, port, cached_token, cached_key
+                    ):
+                        _LOGGER.info(
+                            "[%d] Got token/key from local cache",
+                            device_id,
+                        )
+                        return cached_token, cached_key, "local_cache"
+                    _LOGGER.debug(
+                        "[%d] Local cached token/key failed TCP validation, fall back to cloud",
+                        device_id,
+                    )
+            except Exception as e:
+                _LOGGER.debug("[%d] Failed to load local cached token/key: %s", device_id, e)
+
+        # 1) Prefer the user's own cloud (Meiju Cloud /v2, supports real udpid for new modules)
+        if self._user_cloud is not None:
+            try:
+                keys = await self._user_cloud.get_cloud_keys(device_id, udpid)
+                for method, data in keys.items():
+                    token = data["token"]
+                    key = data["key"]
+                    if await self._validate_token_key(
+                        device_id, ip_address, port, token, key
+                    ):
+                        _LOGGER.info(
+                            "[%d][user:%s] Got token/key (method=%d)",
+                            device_id, self._account, method,
+                        )
+                        return token, key, f"user:{self._account}"
+                _LOGGER.debug("[%d] User cloud token/key failed TCP validation", device_id)
+            except Exception as e:
+                _LOGGER.debug("[%d] User cloud get token error: %s", device_id, e)
+
+        # 2) Fall back to preset accounts (NetHome Plus /v1)
         try:
             from .midea_lib.cloud import get_all_preset_accounts, get_midea_cloud
 
@@ -873,7 +1045,7 @@ class MideaSmartHomeOptionsFlowHandler(config_entries.OptionsFlow):
     ) -> FlowResult:
         return self.async_show_menu(
             step_id="init",
-            menu_options=["add_device", "update_account", "sync_cloud", "clear_cache", "configure_polling", "configure_notifications", "configure_update_check"],
+            menu_options=["add_device", "update_account", "sync_cloud", "backup_config", "clear_cache", "configure_polling", "configure_notifications", "configure_update_check"],
         )
 
     async def async_step_add_device(
@@ -1138,6 +1310,9 @@ class MideaSmartHomeOptionsFlowHandler(config_entries.OptionsFlow):
             ip_address = current_device[CONF_IP]
             token, key, key_source = await self._acquire_validated_token_key(
                 device_id, ip_address, DEFAULT_PORT, protocol,
+                udpid=current_device.get(CONF_UDPID),
+                device_type=current_device.get(CONF_DEVICE_TYPE),
+                sn8=current_device.get(CONF_SN8, ""),
             )
             if token and key:
                 _LOGGER.info("Using token/key from %s for device %s", key_source, device_id)
@@ -1378,6 +1553,77 @@ class MideaSmartHomeOptionsFlowHandler(config_entries.OptionsFlow):
 
         return self.async_show_form(
             step_id="sync_cloud",
+        )
+
+    async def async_step_backup_config(
+        self, user_input: dict[str, Any] | None = None
+    ) -> FlowResult:
+        """Build a zip of the local json_files and expose its download URL.
+
+        The zip is written under config/www so it is served as a static file
+        via the /local/ path. The fully-qualified absolute download URL is
+        displayed directly in the form so the user can copy it and paste it
+        into any browser tab to start the download.
+        """
+        if user_input is not None:
+            return self.async_create_entry(title="", data={})
+
+        # Build the archive and count files in the executor (blocking I/O must
+        # stay off the event loop)
+        from .backup import build_backup_archive, schedule_backup_cleanup
+        web_path, file_count = await self.hass.async_add_executor_job(
+            build_backup_archive, self.hass
+        )
+
+        if web_path:
+            schedule_backup_cleanup(self.hass, web_path)
+        else:
+            return self._show_backup_config_form(error="backup_build_failed")
+
+        # Build an absolute URL. We prefer the same origin the user is already
+        # on so pasting the URL into a new tab immediately reaches HA without
+        # extra auth.
+        download_url = web_path
+        from homeassistant.helpers.network import get_url
+        for candidate in (
+            lambda: get_url(self.hass, prefer_external=False),
+            lambda: self.hass.config.internal_url,
+            lambda: self.hass.config.external_url,
+        ):
+            try:
+                base = candidate()
+            except Exception:
+                base = None
+            if base:
+                download_url = base.rstrip("/") + web_path
+                break
+
+        return self._show_backup_config_form(
+            download_url=download_url, file_count=file_count
+        )
+
+    def _show_backup_config_form(
+        self,
+        download_url: str = "",
+        file_count: int = 0,
+        error: str = "",
+    ) -> FlowResult:
+        errors = {"base": error} if error else None
+        schema = {}
+        if download_url:
+            schema[vol.Optional(
+                "download_url",
+                default=download_url,
+                description={"suggested_value": download_url},
+            )] = str
+        return self.async_show_form(
+            step_id="backup_config",
+            data_schema=vol.Schema(schema),
+            description_placeholders={
+                "file_count": str(file_count),
+                "download_url": download_url,
+            },
+            errors=errors,
         )
 
     async def async_step_clear_cache(
