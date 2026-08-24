@@ -1674,6 +1674,7 @@ DEVICE_MAPPING = {
     },
     "38129929": {
         "rationale": ["off", "on"],
+        "initial_query": [{"protocol": "03db"}],
         "calculate": {
             "get": [
                 {
@@ -1896,18 +1897,9 @@ DEVICE_MAPPING = {
     },
     "385L0830": {
         "rationale": ["off", "on"],
-        "calculate": {
-            "get": [
-                {
-                    "lvalue": "[power_consumption_once]",
-                    "rvalue": "float([power_consumption] / 1000.0)"
-                },
-                {
-                    "lvalue": "[water_consumption_once]",
-                    "rvalue": "float([water_consumption] / 10.0)"
-                },
-            ],
-        },
+        # No voice-config (02ca) query or entities: verified on-site that the
+        # local link gets no response in either direction — cloud-only path.
+        # No 03db either: water/power registers return 0xFFFF (no metering).
         "entities": {
             Platform.BINARY_SENSOR: {
                 "door_opened": {
@@ -2101,18 +2093,6 @@ DEVICE_MAPPING = {
                     "device_class": SensorDeviceClass.DURATION,
                     "unit_of_measurement": UnitOfTime.MINUTES,
                     "state_class": SensorStateClass.MEASUREMENT
-                },
-                "water_consumption_once": {
-                    "device_class": SensorDeviceClass.VOLUME,
-                    "unit_of_measurement": UnitOfVolume.LITERS,
-                    "state_class": SensorStateClass.TOTAL,
-                    "suggested_display_precision": 1
-                },
-                "power_consumption_once": {
-                    "device_class": SensorDeviceClass.ENERGY,
-                    "unit_of_measurement": "kWh",
-                    "state_class": SensorStateClass.TOTAL_INCREASING,
-                    "suggested_display_precision": 3
                 }
             }
         }

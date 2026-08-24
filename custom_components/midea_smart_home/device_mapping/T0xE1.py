@@ -393,16 +393,19 @@ DEVICE_MAPPING = {
                     "device_class": BinarySensorDeviceClass.PROBLEM,
                     "on_value": [1],
                     "off_value": [0],
+                    "translation_key": "lack_water",
                 },
                 "bright_lack": {
                     "device_class": BinarySensorDeviceClass.PROBLEM,
                     "on_value": [1],
                     "off_value": [0],
+                    "translation_key": "bright_lack",
                 },
                 "softwater_lack": {
                     "device_class": BinarySensorDeviceClass.PROBLEM,
                     "on_value": [1],
                     "off_value": [0],
+                    "translation_key": "softwater_lack",
                 },
                 "doorswitch": {
                     "device_class": BinarySensorDeviceClass.OPENING,

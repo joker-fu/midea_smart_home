@@ -303,6 +303,12 @@ DEVICE_MAPPING = {
                     "translation_key": "door_opened"
                 }
             },
+            Platform.LOCK: {
+                "baby_lock": {
+                    "translation_key": "child_lock",
+                    "rationale": [0, 1],
+                }
+            },
             Platform.SELECT: {
                 "program": {
                     "options": {

@@ -40,10 +40,13 @@ async def async_setup_entry(
                 device_class = config.get("device_class")
                 translation_key = config.get("translation_key")
                 rationale = config.get("rationale", [])
+                on_value = config.get("on_value")
+                off_value = config.get("off_value")
                 entities.append(
                     MideaBinarySensorEntity(
                         coordinator, device_id, device_type, sn, sn8, device_name,
-                        sensor_id, device_class, translation_key, rationale, model
+                        sensor_id, device_class, translation_key, rationale, model,
+                        on_value=on_value, off_value=off_value
                     )
                 )
 
@@ -133,6 +136,8 @@ class MideaBinarySensorEntity(MideaBaseEntity, BinarySensorEntity):
         translation_key: str = None,
         rationale: list = None,
         model: str = None,
+        on_value: list = None,
+        off_value: list = None,
     ):
         config = {"translation_key": translation_key} if translation_key else {}
         super().__init__(
@@ -141,11 +146,18 @@ class MideaBinarySensorEntity(MideaBaseEntity, BinarySensorEntity):
         )
         self._sensor_id = sensor_id
         self._rationale = rationale or []
+        self._on_value = on_value
+        self._off_value = off_value
         if device_class:
             try:
                 self._attr_device_class = BinarySensorDeviceClass(device_class)
             except ValueError:
                 pass
+
+    @staticmethod
+    def _value_in(value, options: list) -> bool:
+        """Match value against configured options, tolerating int/str forms."""
+        return any(value == opt or str(value) == str(opt) for opt in options)
 
     @property
     def is_on(self) -> bool | None:
@@ -155,6 +167,11 @@ class MideaBinarySensorEntity(MideaBaseEntity, BinarySensorEntity):
 
         data = self.coordinator.data or {}
         value = data.get(self._sensor_id)
+
+        if self._on_value is not None and self._value_in(value, self._on_value):
+            return True
+        if self._off_value is not None and self._value_in(value, self._off_value):
+            return False
 
         if self._rationale and len(self._rationale) == 2:
             try:

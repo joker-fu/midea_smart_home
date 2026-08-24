@@ -233,7 +233,12 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
             if initial_query and isinstance(initial_query, list):
                 for item in initial_query:
                     if isinstance(item, dict):
-                        if len(item) == 0:
+                        if "protocol" in item:
+                            # Protocol-level queries (e.g. {"protocol": "03db"}) are
+                            # passed through as-is: Lua query branches match on
+                            # query["protocol"], not query_type.
+                            device.refresh_status(item)
+                        elif len(item) == 0:
                             device.refresh_status({})
                         elif len(item) == 1:
                             key = list(item.keys())[0]

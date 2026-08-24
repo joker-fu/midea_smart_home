@@ -615,7 +615,11 @@ class MideaDevice:
                         # Build query parameters based on config
                         query_params = {}
                         if isinstance(query_config, dict):
-                            if len(query_config) == 0:
+                            if "protocol" in query_config:
+                                # Protocol-level queries are passed through as-is;
+                                # Lua query branches match on query["protocol"]
+                                query_params = query_config
+                            elif len(query_config) == 0:
                                 # Empty dict means full status query
                                 query_params = {}
                             elif len(query_config) == 1:
@@ -746,6 +750,15 @@ class MideaDevice:
                 return
 
         # Merge with existing data
+        if self._device_type == 0xDB and str(status.get("data_type", "")).lower() in ("02db", "03db", "04db"):
+            # 02db/03db/04db responses reuse field names from the 0404 program
+            # frame but with incompatible shapes (numeric vs enum strings, hex
+            # vs decimal error codes, bitmask vs "on"/"off"). Only let the
+            # water/power metrics and metadata through so a full merge cannot
+            # corrupt the program status used for control round-trips.
+            status = {k: v for k, v in status.items()
+                      if k in ("water_consumption", "power_consumption", "clean_notification", "version", "data_type")}
+
         new_data = self._data.copy()
         new_data.update(status)
 
