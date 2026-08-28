@@ -136,8 +136,8 @@ class MideaBinarySensorEntity(MideaBaseEntity, BinarySensorEntity):
         translation_key: str = None,
         rationale: list = None,
         model: str = None,
-        on_value: list = None,
-        off_value: list = None,
+        on_value: list | None = None,
+        off_value: list | None = None,
     ):
         config = {"translation_key": translation_key} if translation_key else {}
         super().__init__(

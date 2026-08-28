@@ -23,6 +23,15 @@ _DISHWASHER_PENDING_KEYS = (
     "door_auto_open",
 )
 
+# 02db/03db/04db frames only contribute these keys to the merged state.
+_DB_METERING_PASS_KEYS = (
+    "water_consumption",
+    "power_consumption",
+    "clean_notification",
+    "version",
+    "data_type",
+)
+
 
 class DeviceLogicHandler:
     def __init__(self, device_type: int, device_name: str):
@@ -85,6 +94,17 @@ class DeviceLogicHandler:
         elif self._last_valid_humidity is not None:
             # Keep the last valid humidity value if new value is invalid
             data["indoor_humidity"] = self._last_valid_humidity
+
+    def filter_status(self, status: dict) -> dict:
+        """Filter a raw decoded status before it merges into device state."""
+        if self.device_type == 0xDB and str(status.get("data_type", "")).lower() in ("02db", "03db", "04db"):
+            # 02db/03db/04db responses reuse field names from the 0404 program
+            # frame but with incompatible shapes (numeric vs enum strings, hex
+            # vs decimal error codes, bitmask vs "on"/"off"). Only let the
+            # water/power metrics and metadata through so a full merge cannot
+            # corrupt the program status used for control round-trips.
+            return {k: v for k, v in status.items() if k in _DB_METERING_PASS_KEYS}
+        return status
 
     def apply_special_handling(
         self,
@@ -409,11 +429,7 @@ class DeviceLogicHandler:
         return prepared
 
     def _normalize_dishwasher_work_status(self, value: Any) -> str:
-        if value in {"cancel", "work", "order"}:
-            return value
-        if value in {"power_on", "power_off", "cancel_order"}:
-            return "cancel"
-        return "cancel"
+        return value if value in {"cancel", "work", "order"} else "cancel"
 
     def _normalize_dishwasher_mode(self, value: Any) -> str:
         if isinstance(value, str) and value:

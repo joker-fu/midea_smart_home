@@ -155,6 +155,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         default_values = dict(device_mapping.get("default_values", {}))
         initial_query = device_mapping.get("initial_query")
         polling_query = device_mapping.get("polling_query")
+        # How long a control value stays pinned against stale device reads
+        # (seconds); dishwashers need a longer window than the default.
+        control_timeout = device_mapping.get("control_timeout", 5.0)
         # Check if polling is supported (based on existence of polling_query,
         # or the dedicated poll thread for D9 polling devices)
         d9_polling = is_d9_polling_device(device_type_int, device_mapping)
@@ -211,6 +214,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
                 polling_interval=polling_interval,
                 initial_query=initial_query,
                 polling_query=polling_query,
+                control_timeout=control_timeout,
             )
             device.open()
             import time

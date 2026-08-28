@@ -2990,6 +2990,9 @@
       "linkage_2": {
         "name": "一键好空气"
       },
+      "low_temp_dry": {
+        "name": "低温烘干"
+      },
       "maintenance_reminder_switch": {
         "name": "维护提醒开关"
       },

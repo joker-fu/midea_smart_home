@@ -417,6 +417,7 @@ class MideaDevice:
         polling_interval: int = 30,
         initial_query: Optional[list] = None,
         polling_query: Optional[list] = None,
+        control_timeout: float = 5.0,
     ):
         self._device_id = device_id
         self._device_type = device_type
@@ -476,7 +477,7 @@ class MideaDevice:
         self._unavailable_delay = 5.0
         self._unavailable_timer: Optional[threading.Timer] = None
         self._recent_controls = {}  # {attr: (value, timestamp)}
-        self._control_timeout = 60.0 if device_type == 0xE1 else 5.0
+        self._control_timeout = control_timeout
         self._control_hold = 5.0 if self._centralized else 1.0
         self._callbacks = []
         self._poll_thread: Optional[threading.Thread] = None
@@ -767,14 +768,7 @@ class MideaDevice:
                 return
 
         # Merge with existing data
-        if self._device_type == 0xDB and str(status.get("data_type", "")).lower() in ("02db", "03db", "04db"):
-            # 02db/03db/04db responses reuse field names from the 0404 program
-            # frame but with incompatible shapes (numeric vs enum strings, hex
-            # vs decimal error codes, bitmask vs "on"/"off"). Only let the
-            # water/power metrics and metadata through so a full merge cannot
-            # corrupt the program status used for control round-trips.
-            status = {k: v for k, v in status.items()
-                      if k in ("water_consumption", "power_consumption", "clean_notification", "version", "data_type")}
+        status = self._logic_handler.filter_status(status)
 
         new_data = self._data.copy()
         new_data.update(status)

@@ -2990,6 +2990,9 @@
       "linkage_2": {
         "name": "One-Key Good Air"
       },
+      "low_temp_dry": {
+        "name": "Low Temp Dry"
+      },
       "maintenance_reminder_switch": {
         "name": "Maintenance Reminder Switch"
       },

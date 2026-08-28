@@ -6,6 +6,9 @@ from homeassistant.components.switch import SwitchDeviceClass
 DEVICE_MAPPING = {
     "default": {
         "rationale": ["off", "on"],
+        # Dishwasher program transitions echo back slowly; keep controls
+        # pinned longer than the generic 5s window.
+        "control_timeout": 60,
         "entities": {
             Platform.LOCK: {
                 "lock": {
@@ -385,6 +388,7 @@ DEVICE_MAPPING = {
     },
     "76006450": {
         "rationale": ["off", "on"],
+        "control_timeout": 60,
         "initial_query": [{}],
         "centralized": [],
         "entities": {

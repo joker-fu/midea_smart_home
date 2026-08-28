@@ -20,7 +20,7 @@ git log --oneline "$UP/staging"..HEAD
 
 Each commit there is a fork-only change whose intent must survive the merge. Read the commit messages and `git show --stat <commit>` to learn what each one touches and why. Keep this list in mind as you resolve conflicts.
 
-As of the last sync the fork's additions were roughly: new device model mappings (T0xDB/DC/E1洗衣/干衣/洗碗机), a dishwasher (0xE1) composite-key control handler in `extras.py`, `in`/`not_in` entity conditions in `entity.py`, `command_on`/`command_off` switches in `switch.py`, a 60s `control_timeout` for 0xE1 in `device.py`, and the removal of `.github/workflows/`. Treat this as a hint, then confirm against the actual `git log` output.
+As of the last sync the fork's additions were roughly: new device model mappings (T0xDB/DC/E1洗衣/干衣/洗碗机), a dishwasher (0xE1) composite-key control handler plus `filter_status` (T0xDB 02db/03db/04db response-field whitelisting) in `extras.py`, `in`/`not_in` entity conditions in `entity.py`, `command_on`/`command_off` switches in `switch.py`, a `control_only` option-payload marker expanded by `select.py`, binary_sensor `on_value`/`off_value` config, protocol-level query passthrough for Lua devices (`{"protocol": ...}` handled in `__init__.py`/`device.py`, e.g. 03db-on-connect for 38129929), a 60s `control_timeout` for 0xE1 declared per-mapping in `device_mapping/T0xE1.py` and wired through `__init__.py` into `MideaDevice`, and the removal of `.github/workflows/`. Treat this as a hint, then confirm against the actual `git log` output.
 
 ## Decision procedure for any conflict
 

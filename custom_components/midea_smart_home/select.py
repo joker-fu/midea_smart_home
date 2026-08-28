@@ -117,7 +117,8 @@ class MideaSelectEntity(MideaBaseEntity, SelectEntity):
         for mode, status in self._options_map.items():
             match = True
             for attr, value in status.items():
-                if attr == "useCycleValue":
+                if attr == "control_only":
+                    # Payload-only constants never appear in device status.
                     continue
                 state_value = self._get_nested_value(attr)
                 if state_value is None:
@@ -140,7 +141,9 @@ class MideaSelectEntity(MideaBaseEntity, SelectEntity):
         return None, False
 
     def _extract_deepest_value(self, config: dict) -> Any:
-        for value in config.values():
+        for key, value in config.items():
+            if key == "control_only":
+                continue
             if isinstance(value, dict):
                 return self._extract_deepest_value(value)
             return value
@@ -191,7 +194,12 @@ class MideaSelectEntity(MideaBaseEntity, SelectEntity):
         if isinstance(self._options_map, dict) and option in self._options_map:
             option_value = self._options_map[option]
             if isinstance(option_value, dict):
-                merged_command.update(option_value)
+                merged_command.update(
+                    {k: v for k, v in option_value.items() if k != "control_only"}
+                )
+                # "control_only" constants (e.g. useCycleValue for T0xDC) ride
+                # along in the control payload but never match device status.
+                merged_command.update(option_value.get("control_only") or {})
 
         if self._command and isinstance(self._command, dict):
             merged_command.update(self._command)
