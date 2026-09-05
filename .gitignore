@@ -78,3 +78,12 @@ Thumbs.db
 # Secrets
 secrets.yaml
 .secrets/
+
+# Reverse engineering: regenerable heavy artifacts (see reverse/README.md)
+reverse/apk/
+reverse/work/jadx-src/
+reverse/work/smali9/
+reverse/work/unzip/
+reverse/work/tools/
+reverse/work/all_dex_strings.txt
+reverse/work/lua_devices.zip
