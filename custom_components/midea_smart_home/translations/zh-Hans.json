@@ -222,6 +222,9 @@
       },
       "water_output_switch": {
         "name": "龙头出水"
+      },
+      "water_pump_running": {
+        "name": "水泵运行状态"
       }
     },
     "button": {
@@ -2295,6 +2298,21 @@
       "clean_water_consumption_next_remaining": {
         "name": "距离下次冲洗剩余用水量"
       },
+      "compressor_current": {
+        "name": "压缩机实时电流"
+      },
+      "compressor_frequency": {
+        "name": "压缩机实时频率"
+      },
+      "compressor_power": {
+        "name": "压缩机实时功率"
+      },
+      "compressor_voltage": {
+        "name": "压缩机实时电压"
+      },
+      "condenser_temperature": {
+        "name": "冷凝器温度"
+      },
       "cur_humidity": {
         "name": "当前湿度"
       },
@@ -2428,6 +2446,9 @@
       "dehydration_time_value": {
         "name": "脱水时间"
       },
+      "discharge_pipe_temperature": {
+        "name": "排气管温度"
+      },
       "dishwasher_mode": {
         "name": "当前模式",
         "state": {
@@ -2537,11 +2558,14 @@
       "indoor_co2": {
         "name": "CO2浓度"
       },
+      "indoor_fan_speed": {
+        "name": "室内机实时转速"
+      },
       "indoor_humidity": {
-        "name": "室内湿度"
+        "name": "室内环境湿度"
       },
       "indoor_temperature": {
-        "name": "室内温度"
+        "name": "室内环境温度"
       },
       "input_pressure_sensing": {
         "name": "进水压力"
@@ -2594,8 +2618,11 @@
       "out_water_tem": {
         "name": "出水温度"
       },
+      "outdoor_ambient_temperature": {
+        "name": "室外环境温度"
+      },
       "outdoor_temperature": {
-        "name": "室外温度"
+        "name": "室外机温度"
       },
       "pm1": {
         "name": "PM1浓度"
@@ -2683,8 +2710,17 @@
       "sweep_mop_mode": {
         "name": "扫拖模式"
       },
+      "t2_temp": {
+        "name": "蒸发器温度"
+      },
       "tank_status": {
         "name": "水箱状态"
+      },
+      "target_compressor_frequency": {
+        "name": "压缩机目标频率"
+      },
+      "target_indoor_fan_speed": {
+        "name": "室内机目标转速"
       },
       "temp_set": {
         "name": "目标温度"
