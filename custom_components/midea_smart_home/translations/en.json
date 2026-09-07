@@ -2618,9 +2618,6 @@
       "out_water_tem": {
         "name": "Outlet Water Temperature"
       },
-      "outdoor_ambient_temperature": {
-        "name": "Outdoor Ambient Temperature"
-      },
       "outdoor_temperature": {
         "name": "Outdoor Temperature"
       },
