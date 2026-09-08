@@ -3061,6 +3061,19 @@
       }
     }
   },
+  "issues": {
+    "restart_required": {
+      "fix_flow": {
+        "step": {
+          "confirm": {
+            "description": "Restart of Home Assistant is required to finish the update of Midea Smart Home, click submit to restart now.",
+            "title": "Restart required"
+          }
+        }
+      },
+      "title": "Restart required"
+    }
+  },
   "options": {
     "abort": {
       "no_configurable_devices": "No devices with polling attributes found"

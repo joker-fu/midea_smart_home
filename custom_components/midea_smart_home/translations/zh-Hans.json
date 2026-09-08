@@ -3061,6 +3061,19 @@
       }
     }
   },
+  "issues": {
+    "restart_required": {
+      "fix_flow": {
+        "step": {
+          "confirm": {
+            "description": "需要重启 Home Assistant 才能完成 Midea Smart Home 的更新，点击提交立即重启。",
+            "title": "需要重启"
+          }
+        }
+      },
+      "title": "需要重启"
+    }
+  },
   "options": {
     "abort": {
       "no_configurable_devices": "没有需要辅助轮询的设备"
