@@ -20,6 +20,7 @@ from homeassistant.components.update import (
 )
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers import issue_registry as ir
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.event import async_track_time_interval
@@ -208,6 +209,9 @@ class MideaUpdateEntity(UpdateEntity):
                     self._attr_release_summary = None
                     self._attr_release_url = None
                     self._release_notes = None
+                    # Clear a stale restart_required issue left over from a
+                    # previous update that has already been applied.
+                    ir.async_delete_issue(self._hass, DOMAIN, "restart_required")
                     _LOGGER.debug("Already up to date: %s", installed_version)
 
                 self.async_write_ha_state()
@@ -274,15 +278,19 @@ class MideaUpdateEntity(UpdateEntity):
                 self._attr_latest_version = version
                 self.async_write_ha_state()
 
-                _LOGGER.info("Update installed successfully: %s, restarting Home Assistant", version)
+                _LOGGER.info("Update installed successfully: %s, restart required", version)
 
-                # Schedule restart with a short delay so the websocket response
-                # can be sent back to the frontend before HA shuts down.
-                async def _async_restart() -> None:
-                    await asyncio.sleep(1)
-                    await self._hass.services.async_call("homeassistant", "restart")
-
-                self._hass.async_create_task(_async_restart())
+                # Create a repair issue like HACS does; the user can restart
+                # by clicking submit on the "Restart required" repair card.
+                ir.async_create_issue(
+                    self._hass,
+                    DOMAIN,
+                    "restart_required",
+                    is_fixable=True,
+                    severity=ir.IssueSeverity.WARNING,
+                    translation_key="restart_required",
+                    data={"confirm_only": True},
+                )
                 return
 
             except (aiohttp.ClientError, asyncio.TimeoutError, OSError) as e:
