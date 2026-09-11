@@ -16,20 +16,6 @@ DEVICE_MAPPING = {
             ],
         },
         "entities": {
-            Platform.BINARY_SENSOR: {
-                "door_opened": {
-                    "device_class": BinarySensorDeviceClass.OPENING,
-                },
-                "detergent_lack": {
-                    "device_class": BinarySensorDeviceClass.PROBLEM,
-                },
-                "bucket_water_overheating": {
-                    "device_class": BinarySensorDeviceClass.PROBLEM,
-                },
-                "down_light": {
-                    "device_class": BinarySensorDeviceClass.OPENING
-                }
-            },
             Platform.LOCK: {
                 "lock": {
                     "translation_key": "child_lock"
@@ -177,6 +163,20 @@ DEVICE_MAPPING = {
                         "8_hours": {"fresh_air_time": 8}
                     },
                     "command": {"protocol_v": 2}
+                }
+            },
+            Platform.BINARY_SENSOR: {
+                "door_opened": {
+                    "device_class": BinarySensorDeviceClass.OPENING,
+                },
+                "detergent_lack": {
+                    "device_class": BinarySensorDeviceClass.PROBLEM,
+                },
+                "bucket_water_overheating": {
+                    "device_class": BinarySensorDeviceClass.PROBLEM,
+                },
+                "down_light": {
+                    "device_class": BinarySensorDeviceClass.OPENING
                 }
             },
             Platform.SENSOR: {
@@ -234,20 +234,6 @@ DEVICE_MAPPING = {
             ],
         },
         "entities": {
-            Platform.BINARY_SENSOR: {
-                "door_opened": {
-                    "device_class": BinarySensorDeviceClass.OPENING,
-                },
-                "detergent_lack": {
-                    "device_class": BinarySensorDeviceClass.PROBLEM,
-                },
-                "bucket_water_overheating": {
-                    "device_class": BinarySensorDeviceClass.PROBLEM,
-                },
-                "down_light": {
-                    "device_class": BinarySensorDeviceClass.OPENING
-                }
-            },
             Platform.LOCK: {
                 "lock": {
                     "translation_key": "child_lock"
@@ -397,6 +383,20 @@ DEVICE_MAPPING = {
                     "command": {"protocol_v": 2}
                 }
             },
+            Platform.BINARY_SENSOR: {
+                "door_opened": {
+                    "device_class": BinarySensorDeviceClass.OPENING,
+                },
+                "detergent_lack": {
+                    "device_class": BinarySensorDeviceClass.PROBLEM,
+                },
+                "bucket_water_overheating": {
+                    "device_class": BinarySensorDeviceClass.PROBLEM,
+                },
+                "down_light": {
+                    "device_class": BinarySensorDeviceClass.OPENING
+                }
+            },
             Platform.SENSOR: {
                 "running_status": {
                     "device_class": SensorDeviceClass.ENUM
@@ -452,20 +452,6 @@ DEVICE_MAPPING = {
             ],
         },
         "entities": {
-            Platform.BINARY_SENSOR: {
-                "door_opened": {
-                    "device_class": BinarySensorDeviceClass.OPENING,
-                },
-                "detergent_lack": {
-                    "device_class": BinarySensorDeviceClass.PROBLEM,
-                },
-                "bucket_water_overheating": {
-                    "device_class": BinarySensorDeviceClass.PROBLEM,
-                },
-                "down_light": {
-                    "device_class": BinarySensorDeviceClass.OPENING
-                }
-            },
             Platform.LOCK: {
                 "lock": {
                     "translation_key": "child_lock"
@@ -613,6 +599,20 @@ DEVICE_MAPPING = {
                         "8_hours": {"fresh_air_time": 8}
                     },
                     "command": {"protocol_v": 2}
+                }
+            },
+            Platform.BINARY_SENSOR: {
+                "door_opened": {
+                    "device_class": BinarySensorDeviceClass.OPENING,
+                },
+                "detergent_lack": {
+                    "device_class": BinarySensorDeviceClass.PROBLEM,
+                },
+                "bucket_water_overheating": {
+                    "device_class": BinarySensorDeviceClass.PROBLEM,
+                },
+                "down_light": {
+                    "device_class": BinarySensorDeviceClass.OPENING
                 }
             },
             Platform.SENSOR: {
@@ -670,20 +670,6 @@ DEVICE_MAPPING = {
             ],
         },
         "entities": {
-            Platform.BINARY_SENSOR: {
-                "door_opened": {
-                    "device_class": BinarySensorDeviceClass.OPENING,
-                },
-                "detergent_lack": {
-                    "device_class": BinarySensorDeviceClass.PROBLEM,
-                },
-                "bucket_water_overheating": {
-                    "device_class": BinarySensorDeviceClass.PROBLEM,
-                },
-                "down_light": {
-                    "device_class": BinarySensorDeviceClass.OPENING
-                }
-            },
             Platform.LOCK: {
                 "lock": {
                     "translation_key": "child_lock"
@@ -819,6 +805,20 @@ DEVICE_MAPPING = {
                     "command": {"protocol_v": 2}
                 }
             },
+            Platform.BINARY_SENSOR: {
+                "door_opened": {
+                    "device_class": BinarySensorDeviceClass.OPENING,
+                },
+                "detergent_lack": {
+                    "device_class": BinarySensorDeviceClass.PROBLEM,
+                },
+                "bucket_water_overheating": {
+                    "device_class": BinarySensorDeviceClass.PROBLEM,
+                },
+                "down_light": {
+                    "device_class": BinarySensorDeviceClass.OPENING
+                }
+            },
             Platform.SENSOR: {
                 "running_status": {
                     "device_class": SensorDeviceClass.ENUM
@@ -874,20 +874,6 @@ DEVICE_MAPPING = {
             ],
         },
         "entities": {
-            Platform.BINARY_SENSOR: {
-                "door_opened": {
-                    "device_class": BinarySensorDeviceClass.OPENING,
-                },
-                "detergent_lack": {
-                    "device_class": BinarySensorDeviceClass.PROBLEM,
-                },
-                "bucket_water_overheating": {
-                    "device_class": BinarySensorDeviceClass.PROBLEM,
-                },
-                "down_light": {
-                    "device_class": BinarySensorDeviceClass.OPENING
-                }
-            },
             Platform.LOCK: {
                 "lock": {
                     "translation_key": "child_lock"
@@ -1037,6 +1023,20 @@ DEVICE_MAPPING = {
                     "command": {"protocol_v": 2}
                 }
             },
+            Platform.BINARY_SENSOR: {
+                "door_opened": {
+                    "device_class": BinarySensorDeviceClass.OPENING,
+                },
+                "detergent_lack": {
+                    "device_class": BinarySensorDeviceClass.PROBLEM,
+                },
+                "bucket_water_overheating": {
+                    "device_class": BinarySensorDeviceClass.PROBLEM,
+                },
+                "down_light": {
+                    "device_class": BinarySensorDeviceClass.OPENING
+                }
+            },
             Platform.SENSOR: {
                 "running_status": {
                     "device_class": SensorDeviceClass.ENUM
@@ -1092,17 +1092,6 @@ DEVICE_MAPPING = {
             ],
         },
         "entities": {
-            Platform.BINARY_SENSOR: {
-                "door_opened": {
-                    "device_class": BinarySensorDeviceClass.OPENING,
-                },
-                "detergent_lack": {
-                    "device_class": BinarySensorDeviceClass.PROBLEM,
-                },
-                "down_light": {
-                    "device_class": BinarySensorDeviceClass.OPENING
-                }
-            },
             Platform.LOCK: {
                 "lock": {
                     "translation_key": "child_lock"
@@ -1217,6 +1206,17 @@ DEVICE_MAPPING = {
                     "command": {"protocol_v": 2}
                 }
             },
+            Platform.BINARY_SENSOR: {
+                "door_opened": {
+                    "device_class": BinarySensorDeviceClass.OPENING,
+                },
+                "detergent_lack": {
+                    "device_class": BinarySensorDeviceClass.PROBLEM,
+                },
+                "down_light": {
+                    "device_class": BinarySensorDeviceClass.OPENING
+                }
+            },
             Platform.SENSOR: {
                 "running_status": {
                     "device_class": SensorDeviceClass.ENUM
@@ -1272,20 +1272,6 @@ DEVICE_MAPPING = {
             ],
         },
         "entities": {
-            Platform.BINARY_SENSOR: {
-                "door_opened": {
-                    "device_class": BinarySensorDeviceClass.OPENING,
-                },
-                "detergent_lack": {
-                    "device_class": BinarySensorDeviceClass.PROBLEM,
-                },
-                "bucket_water_overheating": {
-                    "device_class": BinarySensorDeviceClass.PROBLEM,
-                },
-                "down_light": {
-                    "device_class": BinarySensorDeviceClass.OPENING
-                }
-            },
             Platform.LOCK: {
                 "lock": {
                     "translation_key": "child_lock"
@@ -1428,6 +1414,20 @@ DEVICE_MAPPING = {
                     "command": {"protocol_v": 2}
                 }
             },
+            Platform.BINARY_SENSOR: {
+                "door_opened": {
+                    "device_class": BinarySensorDeviceClass.OPENING,
+                },
+                "detergent_lack": {
+                    "device_class": BinarySensorDeviceClass.PROBLEM,
+                },
+                "bucket_water_overheating": {
+                    "device_class": BinarySensorDeviceClass.PROBLEM,
+                },
+                "down_light": {
+                    "device_class": BinarySensorDeviceClass.OPENING
+                }
+            },
             Platform.SENSOR: {
                 "running_status": {
                     "device_class": SensorDeviceClass.ENUM
@@ -1483,23 +1483,6 @@ DEVICE_MAPPING = {
             ],
         },
         "entities": {
-            Platform.BINARY_SENSOR: {
-                "door_opened": {
-                    "device_class": BinarySensorDeviceClass.OPENING,
-                },
-                "detergent_lack": {
-                    "device_class": BinarySensorDeviceClass.PROBLEM,
-                },
-                "softener_lack": {
-                    "device_class": BinarySensorDeviceClass.PROBLEM,
-                },
-                "bucket_water_overheating": {
-                    "device_class": BinarySensorDeviceClass.PROBLEM,
-                },
-                "down_light": {
-                    "device_class": BinarySensorDeviceClass.OPENING
-                }
-            },
             Platform.LOCK: {
                 "lock": {
                     "translation_key": "child_lock"
@@ -1629,6 +1612,23 @@ DEVICE_MAPPING = {
                     "command": {"protocol_v": 2}
                 }
             },
+            Platform.BINARY_SENSOR: {
+                "door_opened": {
+                    "device_class": BinarySensorDeviceClass.OPENING,
+                },
+                "detergent_lack": {
+                    "device_class": BinarySensorDeviceClass.PROBLEM,
+                },
+                "softener_lack": {
+                    "device_class": BinarySensorDeviceClass.PROBLEM,
+                },
+                "bucket_water_overheating": {
+                    "device_class": BinarySensorDeviceClass.PROBLEM,
+                },
+                "down_light": {
+                    "device_class": BinarySensorDeviceClass.OPENING
+                }
+            },
             Platform.SENSOR: {
                 "running_status": {
                     "device_class": SensorDeviceClass.ENUM
@@ -1685,23 +1685,6 @@ DEVICE_MAPPING = {
             ],
         },
         "entities": {
-            Platform.BINARY_SENSOR: {
-                "door_opened": {
-                    "device_class": BinarySensorDeviceClass.OPENING,
-                },
-                "detergent_lack": {
-                    "device_class": BinarySensorDeviceClass.PROBLEM,
-                },
-                "softener_lack": {
-                    "device_class": BinarySensorDeviceClass.PROBLEM,
-                },
-                "bucket_water_overheating": {
-                    "device_class": BinarySensorDeviceClass.PROBLEM,
-                },
-                "down_light": {
-                    "device_class": BinarySensorDeviceClass.OPENING
-                }
-            },
             Platform.LOCK: {
                 "lock": {
                     "translation_key": "child_lock"
@@ -1852,6 +1835,23 @@ DEVICE_MAPPING = {
                     "command": {"protocol_v": 2}
                 }
             },
+            Platform.BINARY_SENSOR: {
+                "door_opened": {
+                    "device_class": BinarySensorDeviceClass.OPENING,
+                },
+                "detergent_lack": {
+                    "device_class": BinarySensorDeviceClass.PROBLEM,
+                },
+                "softener_lack": {
+                    "device_class": BinarySensorDeviceClass.PROBLEM,
+                },
+                "bucket_water_overheating": {
+                    "device_class": BinarySensorDeviceClass.PROBLEM,
+                },
+                "down_light": {
+                    "device_class": BinarySensorDeviceClass.OPENING
+                }
+            },
             Platform.SENSOR: {
                 "running_status": {
                     "device_class": SensorDeviceClass.ENUM
@@ -1898,17 +1898,6 @@ DEVICE_MAPPING = {
         # local link gets no response in either direction — cloud-only path.
         # No 03db either: water/power registers return 0xFFFF (no metering).
         "entities": {
-            Platform.BINARY_SENSOR: {
-                "door_opened": {
-                    "device_class": BinarySensorDeviceClass.OPENING,
-                },
-                "detergent_lack": {
-                    "device_class": BinarySensorDeviceClass.PROBLEM,
-                },
-                "bucket_water_overheating": {
-                    "device_class": BinarySensorDeviceClass.PROBLEM
-                }
-            },
             Platform.LOCK: {
                 "lock": {
                     "translation_key": "child_lock"
@@ -2064,6 +2053,17 @@ DEVICE_MAPPING = {
                         "8_hours": {"fresh_air_time": 8}
                     },
                     "command": {"protocol_v": 2}
+                }
+            },
+            Platform.BINARY_SENSOR: {
+                "door_opened": {
+                    "device_class": BinarySensorDeviceClass.OPENING,
+                },
+                "detergent_lack": {
+                    "device_class": BinarySensorDeviceClass.PROBLEM,
+                },
+                "bucket_water_overheating": {
+                    "device_class": BinarySensorDeviceClass.PROBLEM
                 }
             },
             Platform.SENSOR: {

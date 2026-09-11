@@ -20,12 +20,6 @@ DEVICE_MAPPING = {
                     "rationale": [0, 1]
                 },
             },
-            Platform.BINARY_SENSOR: {
-                "door_warn": {
-                    "device_class": BinarySensorDeviceClass.OPENING,
-                    "translation_key": "door_opened"
-                }
-            },
             Platform.SELECT: {
                 "program": {
                     "options": {
@@ -55,6 +49,12 @@ DEVICE_MAPPING = {
                         "30": {"intensity": "4"},
                         "40": {"intensity": "5"}
                     }
+                }
+            },
+            Platform.BINARY_SENSOR: {
+                "door_warn": {
+                    "device_class": BinarySensorDeviceClass.OPENING,
+                    "translation_key": "door_opened"
                 }
             },
             Platform.SENSOR: {
@@ -99,12 +99,6 @@ DEVICE_MAPPING = {
                     "rationale": [0, 1]
                 },
             },
-            Platform.BINARY_SENSOR: {
-                "door_warn": {
-                    "device_class": BinarySensorDeviceClass.OPENING,
-                    "translation_key": "door_opened"
-                }
-            },
             Platform.SELECT: {
                 "program": {
                     "options": {
@@ -134,6 +128,12 @@ DEVICE_MAPPING = {
                         "30": {"intensity": "4"},
                         "40": {"intensity": "5"}
                     }
+                }
+            },
+            Platform.BINARY_SENSOR: {
+                "door_warn": {
+                    "device_class": BinarySensorDeviceClass.OPENING,
+                    "translation_key": "door_opened"
                 }
             },
             Platform.SENSOR: {
@@ -183,12 +183,6 @@ DEVICE_MAPPING = {
                     "translation_key": "nightly"
                 }
             },
-            Platform.BINARY_SENSOR: {
-                "door_warn": {
-                    "device_class": BinarySensorDeviceClass.OPENING,
-                    "translation_key": "door_opened"
-                }
-            },
             Platform.SELECT: {
                 "program": {
                     "options": {
@@ -223,6 +217,12 @@ DEVICE_MAPPING = {
                     }
                 }
             },
+            Platform.BINARY_SENSOR: {
+                "door_warn": {
+                    "device_class": BinarySensorDeviceClass.OPENING,
+                    "translation_key": "door_opened"
+                }
+            },
             Platform.SENSOR: {
                 "running_status": {
                     "device_class": SensorDeviceClass.ENUM
@@ -249,6 +249,12 @@ DEVICE_MAPPING = {
     "38207821": {
         "rationale": ["off", "on"],
         "entities": {
+            Platform.LOCK: {
+                "baby_lock": {
+                    "translation_key": "child_lock",
+                    "rationale": [0, 1],
+                }
+            },
             Platform.SWITCH: {
                 "power": {
                     "device_class": SwitchDeviceClass.SWITCH
@@ -292,18 +298,6 @@ DEVICE_MAPPING = {
                     "device_class": SwitchDeviceClass.SWITCH,
                     "rationale": [0, 1],
                     "translation_key": "nightly"
-                }
-            },
-            Platform.BINARY_SENSOR: {
-                "door_warn": {
-                    "device_class": BinarySensorDeviceClass.OPENING,
-                    "translation_key": "door_opened"
-                }
-            },
-            Platform.LOCK: {
-                "baby_lock": {
-                    "translation_key": "child_lock",
-                    "rationale": [0, 1],
                 }
             },
             Platform.SELECT: {
@@ -364,6 +358,12 @@ DEVICE_MAPPING = {
                         "6h": {"forget_no_worry_time": 6},
                         "8h": {"forget_no_worry_time": 8}
                     }
+                }
+            },
+            Platform.BINARY_SENSOR: {
+                "door_warn": {
+                    "device_class": BinarySensorDeviceClass.OPENING,
+                    "translation_key": "door_opened"
                 }
             },
             Platform.SENSOR: {

@@ -12,6 +12,15 @@ DEVICE_MAPPING = {
                     "translation_key": "child_lock"
                 }
             },
+            Platform.NUMBER: {
+                "air_set_hour": {
+                    "min": 0,
+                    "max": 72,
+                    "step": 1,
+                    "mode": "box",
+                    "unit_of_measurement": UnitOfTime.HOURS
+                },
+            },
             Platform.SWITCH: {
                 "dryswitch": {
                     "device_class": SwitchDeviceClass.SWITCH,
@@ -33,35 +42,6 @@ DEVICE_MAPPING = {
                     "device_class": SwitchDeviceClass.SWITCH,
                     "rationale": [0, 1]
                 }
-            },
-            Platform.BINARY_SENSOR: {
-                "doorswitch": {
-                    "device_class": BinarySensorDeviceClass.OPENING,
-                    "rationale": [1, 0],
-                    "translation_key": "door_opened"
-                },
-                "water_lack": {
-                    "device_class": BinarySensorDeviceClass.PROBLEM,
-                    "translation_key": "lack_water"
-                },
-                "softwater_lack": {
-                    "device_class": BinarySensorDeviceClass.PROBLEM
-                },
-                "bright_lack": {
-                    "device_class": BinarySensorDeviceClass.PROBLEM
-                },
-                "air_status": {
-                    "device_class": BinarySensorDeviceClass.RUNNING
-                }
-            },
-            Platform.NUMBER: {
-                "air_set_hour": {
-                    "min": 0,
-                    "max": 72,
-                    "step": 1,
-                    "mode": "box",
-                    "unit_of_measurement": UnitOfTime.HOURS
-                },
             },
             Platform.SELECT: {
                 "work_status": {
@@ -108,6 +88,26 @@ DEVICE_MAPPING = {
                         "4": {"bright": 4},
                         "5": {"bright": 5}
                     }
+                }
+            },
+            Platform.BINARY_SENSOR: {
+                "doorswitch": {
+                    "device_class": BinarySensorDeviceClass.OPENING,
+                    "rationale": [1, 0],
+                    "translation_key": "door_opened"
+                },
+                "water_lack": {
+                    "device_class": BinarySensorDeviceClass.PROBLEM,
+                    "translation_key": "lack_water"
+                },
+                "softwater_lack": {
+                    "device_class": BinarySensorDeviceClass.PROBLEM
+                },
+                "bright_lack": {
+                    "device_class": BinarySensorDeviceClass.PROBLEM
+                },
+                "air_status": {
+                    "device_class": BinarySensorDeviceClass.RUNNING
                 }
             },
             Platform.SENSOR: {
@@ -145,6 +145,15 @@ DEVICE_MAPPING = {
                     "translation_key": "child_lock"
                 }
             },
+            Platform.NUMBER: {
+                "air_set_hour": {
+                    "min": 0,
+                    "max": 72,
+                    "step": 1,
+                    "mode": "box",
+                    "unit_of_measurement": UnitOfTime.HOURS
+                },
+            },
             Platform.SWITCH: {
                 "dryswitch": {
                     "device_class": SwitchDeviceClass.SWITCH,
@@ -166,35 +175,6 @@ DEVICE_MAPPING = {
                     "device_class": SwitchDeviceClass.SWITCH,
                     "rationale": [0, 1]
                 }
-            },
-            Platform.BINARY_SENSOR: {
-                "doorswitch": {
-                    "device_class": BinarySensorDeviceClass.OPENING,
-                    "rationale": [1, 0],
-                    "translation_key": "door_opened"
-                },
-                "water_lack": {
-                    "device_class": BinarySensorDeviceClass.PROBLEM,
-                    "translation_key": "lack_water"
-                },
-                "softwater_lack": {
-                    "device_class": BinarySensorDeviceClass.PROBLEM
-                },
-                "bright_lack": {
-                    "device_class": BinarySensorDeviceClass.PROBLEM
-                },
-                "air_status": {
-                    "device_class": BinarySensorDeviceClass.RUNNING
-                }
-            },
-            Platform.NUMBER: {
-                "air_set_hour": {
-                    "min": 0,
-                    "max": 72,
-                    "step": 1,
-                    "mode": "box",
-                    "unit_of_measurement": UnitOfTime.HOURS
-                },
             },
             Platform.SELECT: {
                 "work_status": {
@@ -241,6 +221,26 @@ DEVICE_MAPPING = {
                         "4": {"bright": 4},
                         "5": {"bright": 5}
                     }
+                }
+            },
+            Platform.BINARY_SENSOR: {
+                "doorswitch": {
+                    "device_class": BinarySensorDeviceClass.OPENING,
+                    "rationale": [1, 0],
+                    "translation_key": "door_opened"
+                },
+                "water_lack": {
+                    "device_class": BinarySensorDeviceClass.PROBLEM,
+                    "translation_key": "lack_water"
+                },
+                "softwater_lack": {
+                    "device_class": BinarySensorDeviceClass.PROBLEM
+                },
+                "bright_lack": {
+                    "device_class": BinarySensorDeviceClass.PROBLEM
+                },
+                "air_status": {
+                    "device_class": BinarySensorDeviceClass.RUNNING
                 }
             },
             Platform.SENSOR: {
@@ -278,28 +278,6 @@ DEVICE_MAPPING = {
                     "translation_key": "child_lock"
                 }
             },
-            Platform.SWITCH: {
-                "airswitch": {
-                    "device_class": SwitchDeviceClass.SWITCH,
-                    "rationale": [0, 1]
-                }
-            },
-            Platform.BINARY_SENSOR: {
-                "doorswitch": {
-                    "device_class": BinarySensorDeviceClass.OPENING,
-                    "rationale": [1, 0],
-                    "translation_key": "door_opened"
-                },
-                "softwater_lack": {
-                    "device_class": BinarySensorDeviceClass.PROBLEM
-                },
-                "bright_lack": {
-                    "device_class": BinarySensorDeviceClass.PROBLEM
-                },
-                "air_status": {
-                    "device_class": BinarySensorDeviceClass.RUNNING
-                }
-            },
             Platform.NUMBER: {
                 "air_set_hour": {
                     "min": 0,
@@ -307,6 +285,12 @@ DEVICE_MAPPING = {
                     "step": 1,
                     "mode": "box",
                     "unit_of_measurement": UnitOfTime.HOURS
+                }
+            },
+            Platform.SWITCH: {
+                "airswitch": {
+                    "device_class": SwitchDeviceClass.SWITCH,
+                    "rationale": [0, 1]
                 }
             },
             Platform.SELECT: {
@@ -356,6 +340,22 @@ DEVICE_MAPPING = {
                     }
                 }
             },
+            Platform.BINARY_SENSOR: {
+                "doorswitch": {
+                    "device_class": BinarySensorDeviceClass.OPENING,
+                    "rationale": [1, 0],
+                    "translation_key": "door_opened"
+                },
+                "softwater_lack": {
+                    "device_class": BinarySensorDeviceClass.PROBLEM
+                },
+                "bright_lack": {
+                    "device_class": BinarySensorDeviceClass.PROBLEM
+                },
+                "air_status": {
+                    "device_class": BinarySensorDeviceClass.RUNNING
+                }
+            },
             Platform.SENSOR: {
                 "error_code": {
                     "device_class": SensorDeviceClass.ENUM
@@ -389,38 +389,21 @@ DEVICE_MAPPING = {
         "initial_query": [{}],
         "centralized": [],
         "entities": {
-            Platform.BINARY_SENSOR: {
-                "water_lack": {
-                    "device_class": BinarySensorDeviceClass.PROBLEM,
-                    "on_value": [1],
-                    "off_value": [0],
-                    "translation_key": "lack_water",
-                },
-                "bright_lack": {
-                    "device_class": BinarySensorDeviceClass.PROBLEM,
-                    "on_value": [1],
-                    "off_value": [0],
-                    "translation_key": "bright_lack",
-                },
-                "softwater_lack": {
-                    "device_class": BinarySensorDeviceClass.PROBLEM,
-                    "on_value": [1],
-                    "off_value": [0],
-                    "translation_key": "softwater_lack",
-                },
-                "doorswitch": {
-                    "device_class": BinarySensorDeviceClass.OPENING,
-                    "rationale": [1, 0],
-                    "translation_key": "door_opened"
-                },
-                "air_status": {
-                    "device_class": BinarySensorDeviceClass.RUNNING
-                }
-            },
             Platform.LOCK: {
                 "lock": {
                     "translation_key": "child_lock"
                 }
+            },
+            Platform.NUMBER: {
+                "air_set_hour": {
+                    "translation_key": "dishwasher_storage_duration",
+                    "min": 0,
+                    "max": 168,
+                    "step": 1,
+                    "unit_of_measurement": UnitOfTime.HOURS,
+                    "mode": "box",
+                    "condition": {"not_in": ["mode", ["soak_wash", "fast_wash"]]},
+                },
             },
             Platform.SWITCH: {
                 "work_status": {
@@ -528,16 +511,33 @@ DEVICE_MAPPING = {
                     }
                 }
             },
-            Platform.NUMBER: {
-                "air_set_hour": {
-                    "translation_key": "dishwasher_storage_duration",
-                    "min": 0,
-                    "max": 168,
-                    "step": 1,
-                    "unit_of_measurement": UnitOfTime.HOURS,
-                    "mode": "box",
-                    "condition": {"not_in": ["mode", ["soak_wash", "fast_wash"]]},
+            Platform.BINARY_SENSOR: {
+                "water_lack": {
+                    "device_class": BinarySensorDeviceClass.PROBLEM,
+                    "on_value": [1],
+                    "off_value": [0],
+                    "translation_key": "lack_water",
                 },
+                "bright_lack": {
+                    "device_class": BinarySensorDeviceClass.PROBLEM,
+                    "on_value": [1],
+                    "off_value": [0],
+                    "translation_key": "bright_lack",
+                },
+                "softwater_lack": {
+                    "device_class": BinarySensorDeviceClass.PROBLEM,
+                    "on_value": [1],
+                    "off_value": [0],
+                    "translation_key": "softwater_lack",
+                },
+                "doorswitch": {
+                    "device_class": BinarySensorDeviceClass.OPENING,
+                    "rationale": [1, 0],
+                    "translation_key": "door_opened"
+                },
+                "air_status": {
+                    "device_class": BinarySensorDeviceClass.RUNNING
+                }
             },
             Platform.SENSOR: {
                 "work_status": {
