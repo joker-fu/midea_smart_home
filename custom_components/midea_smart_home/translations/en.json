@@ -100,6 +100,9 @@
       "device_status": {
         "name": "Device Status"
       },
+      "door_open": {
+        "name": "Oven Door Status"
+      },
       "door_opened": {
         "name": "Door Status"
       },
@@ -1544,13 +1547,6 @@
           "off": "Off Timer"
         }
       },
-      "pre_heat": {
-        "name": "Preheat",
-        "state": {
-          "off": "Off",
-          "on": "On"
-        }
-      },
       "prevent_straight_wind": {
         "name": "Prevent Straight Wind",
         "state": {
@@ -1900,6 +1896,23 @@
           "wine": "Wine Stain"
         }
       },
+      "steam_oven_mode": {
+        "name": "Cooking Mode",
+        "state": {
+          "above_inside_outside_tube": "Double Upper Tube",
+          "above_inside_outside_tube_fan": "Thin-layer Quick Roast",
+          "above_inside_tube": "Infrared Grill",
+          "double_tube": "Upper & Lower Grill",
+          "double_tube_fan": "3D Roast",
+          "hot_wind_tube_fan": "Hot Air Convection",
+          "none": "None",
+          "pure_steam": "Steam/Sterilize",
+          "scale_clean": "Descaling",
+          "steam_hot_wind_tube_fan": "Steam Hot Air",
+          "underside_tube": "Bottom Grill",
+          "zymosis": "Fermentation"
+        }
+      },
       "steam_quantity": {
         "name": "Steam Level",
         "state": {
@@ -2173,7 +2186,9 @@
           "pause": "Pause",
           "power_off": "Power Off",
           "power_on": "Power On",
-          "resume": "Resume"
+          "resume": "Resume",
+          "standby": "Standby",
+          "work": "Work"
         }
       }
     },
@@ -2501,6 +2516,25 @@
       "error_code": {
         "name": "Error Code"
       },
+      "execute": {
+        "name": "Command Result",
+        "state": {
+          "change_water_notice": "Change Water",
+          "device_fault": "Device Fault",
+          "door_open": "Oven Door Open",
+          "function_nonsupport": "Function Not Supported",
+          "high_temperature_nonsupport": "Not Supported at High Temperature",
+          "lack_box": "Water Tank Not Installed",
+          "lack_water": "Water Tank Empty",
+          "ok": "Success",
+          "param_range_error": "Parameter Out of Range",
+          "remote_control_closed": "Remote Control Disabled",
+          "save_power_nonsupport": "Not Supported in Power Save",
+          "status_nonsupport": "Status Not Supported",
+          "unknown": "Unknown",
+          "working_control_nonsupport": "Control Not Supported While Running"
+        }
+      },
       "fan_output": {
         "name": "Fan Status"
       },
@@ -2695,6 +2729,9 @@
       "soft_available_big": {
         "name": "Soft Water Remaining"
       },
+      "stepnum": {
+        "name": "Current Step"
+      },
       "storage_temperature": {
         "name": "Refrigerator Set Temperature"
       },
@@ -2733,6 +2770,9 @@
       },
       "total_working_time": {
         "name": "Total Working Time"
+      },
+      "totalstep": {
+        "name": "Total Steps"
       },
       "tvoc_density": {
         "name": "TVOC Density"
@@ -2786,6 +2826,15 @@
       },
       "water_gage_bar": {
         "name": "Water Pressure"
+      },
+      "water_status": {
+        "name": "Water Tank Status",
+        "state": {
+          "change_water": "Change Water",
+          "lack_box": "Tank Missing",
+          "lack_water": "Water Shortage",
+          "normal": "Normal"
+        }
       },
       "water_volume": {
         "name": "Outlet Water Flow Rate"
@@ -3067,6 +3116,9 @@
       },
       "power_saving": {
         "name": "Power Saving"
+      },
+      "pre_heat": {
+        "name": "Preheat"
       },
       "preservation_mode": {
         "name": "Light Quantum Preservation"
