@@ -100,14 +100,26 @@
       "device_status": {
         "name": "Device Status"
       },
+      "door_downstair": {
+        "name": "Lower Door"
+      },
       "door_open": {
         "name": "Oven Door Status"
       },
       "door_opened": {
         "name": "Door Status"
       },
+      "door_upstair": {
+        "name": "Upper Door"
+      },
       "down_light": {
         "name": "Down Light Status"
+      },
+      "downstair_iscooling": {
+        "name": "Lower Cooling"
+      },
+      "downstair_ispreheat": {
+        "name": "Lower Preheating"
       },
       "drying_tunnel_overheating": {
         "name": "Drying Tunnel Overheating"
@@ -156,6 +168,9 @@
       },
       "ice_status": {
         "name": "Ice Making Status"
+      },
+      "is_error": {
+        "name": "Fault"
       },
       "lack_water": {
         "name": "Water Shortage Status"
@@ -222,6 +237,12 @@
       },
       "storage_door_state": {
         "name": "Refrigerator Door State"
+      },
+      "upstair_iscooling": {
+        "name": "Upper Cooling"
+      },
+      "upstair_ispreheat": {
+        "name": "Upper Preheating"
       },
       "water_output_switch": {
         "name": "Tap Water"
@@ -1032,6 +1053,16 @@
           "power_off": "Power Off",
           "power_on": "Power On",
           "resume": "Resume"
+        }
+      },
+      "downstair_mode": {
+        "name": "Lower Mode",
+        "state": {
+          "dry": "Drying",
+          "off": "Off",
+          "standby": "Standby",
+          "sterilize": "High-Temp Sterilization",
+          "storage": "Long-Term Storage"
         }
       },
       "dry_gear": {
@@ -1902,14 +1933,28 @@
           "above_inside_outside_tube": "Double Upper Tube",
           "above_inside_outside_tube_fan": "Thin-layer Quick Roast",
           "above_inside_tube": "Infrared Grill",
+          "auto_menu": "PVL",
           "double_tube": "Upper & Lower Grill",
+          "double_tube_1": "Baking",
           "double_tube_fan": "3D Roast",
+          "eco": "Eco Baking",
           "hot_wind_tube_fan": "Hot Air Convection",
+          "hot_wind_tube_fan_1": "Hot Air Baking",
+          "hot_wind_tube_fan_3": "Drying",
           "none": "None",
+          "pure_preheat": "Quick Preheat",
           "pure_steam": "Steam/Sterilize",
+          "pure_steam_3": "Steam Sterilization",
           "scale_clean": "Descaling",
+          "steam_above_inside_outside_tube_fan": "Thin-layer Steam Roast",
+          "steam_above_inside_tube_fan": "Browning Steam Roast",
+          "steam_double_tube": "Steam Baking",
+          "steam_double_tube_fan": "3D Steam Roast",
+          "steam_hot_wind_tube": "Hot Air Steam",
           "steam_hot_wind_tube_fan": "Steam Hot Air",
+          "steam_underside_tube": "Gentle Steam Roast",
           "underside_tube": "Bottom Grill",
+          "underside_tube_1": "Gentle Baking",
           "zymosis": "Fermentation"
         }
       },
@@ -1970,6 +2015,15 @@
           "down": "Down",
           "pause": "Pause",
           "up": "Up"
+        }
+      },
+      "upstair_mode": {
+        "name": "Upper Mode",
+        "state": {
+          "clean": "Clean",
+          "off": "Off",
+          "standby": "Standby",
+          "storage": "Long-Term Storage"
         }
       },
       "warm_water_temperature": {
@@ -2504,6 +2558,22 @@
           "work": "Running"
         }
       },
+      "downstair_remain_time": {
+        "name": "Lower Remaining Time"
+      },
+      "downstair_temp": {
+        "name": "Lower Temperature"
+      },
+      "downstair_work_status": {
+        "name": "Lower Status",
+        "state": {
+          "finish": "Finished",
+          "order": "Scheduled",
+          "power_off": "Power Off",
+          "power_on": "Power On",
+          "working": "Working"
+        }
+      },
       "dry_set_min": {
         "name": "Dry Time Setting"
       },
@@ -2524,8 +2594,8 @@
           "door_open": "Oven Door Open",
           "function_nonsupport": "Function Not Supported",
           "high_temperature_nonsupport": "Not Supported at High Temperature",
-          "lack_box": "Water Tank Not Installed",
-          "lack_water": "Water Tank Empty",
+          "lack_box": "Water Box Not Installed",
+          "lack_water": "Water Box Empty",
           "ok": "Success",
           "param_range_error": "Parameter Out of Range",
           "remote_control_closed": "Remote Control Disabled",
@@ -2777,6 +2847,22 @@
       "tvoc_density": {
         "name": "TVOC Density"
       },
+      "upstair_remain_time": {
+        "name": "Upper Remaining Time"
+      },
+      "upstair_temp": {
+        "name": "Upper Temperature"
+      },
+      "upstair_work_status": {
+        "name": "Upper Status",
+        "state": {
+          "finish": "Finished",
+          "order": "Scheduled",
+          "power_off": "Power Off",
+          "power_on": "Power On",
+          "working": "Working"
+        }
+      },
       "use_days": {
         "name": "Days In Use"
       },
@@ -2828,10 +2914,10 @@
         "name": "Water Pressure"
       },
       "water_status": {
-        "name": "Water Tank Status",
+        "name": "Water Box Status",
         "state": {
           "change_water": "Change Water",
-          "lack_box": "Tank Missing",
+          "lack_box": "Box Missing",
           "lack_water": "Water Shortage",
           "normal": "Normal"
         }
@@ -3017,6 +3103,9 @@
       },
       "fresh_air_remove_odor": {
         "name": "Fresh Air Remove Odor"
+      },
+      "furnace_light": {
+        "name": "Furnace Light"
       },
       "germicidal": {
         "name": "High Temperature Sterilization"

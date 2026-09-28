@@ -100,14 +100,26 @@
       "device_status": {
         "name": "设备状态"
       },
+      "door_downstair": {
+        "name": "下层柜门"
+      },
       "door_open": {
         "name": "炉门状态"
       },
       "door_opened": {
         "name": "门状态"
       },
+      "door_upstair": {
+        "name": "上层柜门"
+      },
       "down_light": {
         "name": "筒灯状态"
+      },
+      "downstair_iscooling": {
+        "name": "下层冷却"
+      },
+      "downstair_ispreheat": {
+        "name": "下层预热"
       },
       "drying_tunnel_overheating": {
         "name": "烘干通道过热"
@@ -156,6 +168,9 @@
       },
       "ice_status": {
         "name": "制冰状态"
+      },
+      "is_error": {
+        "name": "故障"
       },
       "lack_water": {
         "name": "缺水状态"
@@ -222,6 +237,12 @@
       },
       "storage_door_state": {
         "name": "冷藏门状态"
+      },
+      "upstair_iscooling": {
+        "name": "上层冷却"
+      },
+      "upstair_ispreheat": {
+        "name": "上层预热"
       },
       "water_output_switch": {
         "name": "龙头出水"
@@ -1032,6 +1053,16 @@
           "power_off": "关机",
           "power_on": "开机",
           "resume": "继续"
+        }
+      },
+      "downstair_mode": {
+        "name": "下层模式",
+        "state": {
+          "dry": "烘干",
+          "off": "关机",
+          "standby": "待机",
+          "sterilize": "高温消毒",
+          "storage": "长效存储"
         }
       },
       "dry_gear": {
@@ -1902,14 +1933,28 @@
           "above_inside_outside_tube": "双上管",
           "above_inside_outside_tube_fan": "薄层快烤",
           "above_inside_tube": "红外烧烤",
+          "auto_menu": "PVL",
           "double_tube": "上下烧烤",
+          "double_tube_1": "烘焙烤",
           "double_tube_fan": "立体烤",
+          "eco": "节能烘烤",
           "hot_wind_tube_fan": "热风对流",
+          "hot_wind_tube_fan_1": "热风烘烤",
+          "hot_wind_tube_fan_3": "烘干",
           "none": "无",
+          "pure_preheat": "速热",
           "pure_steam": "蒸汽/杀菌",
+          "pure_steam_3": "蒸汽杀菌",
           "scale_clean": "除垢",
+          "steam_above_inside_outside_tube_fan": "薄层蒸烤",
+          "steam_above_inside_tube_fan": "上色蒸烤",
+          "steam_double_tube": "烘焙蒸烤",
+          "steam_double_tube_fan": "立体蒸烤",
+          "steam_hot_wind_tube": "热风蒸烤",
           "steam_hot_wind_tube_fan": "蒸汽热风",
+          "steam_underside_tube": "温和蒸烤",
           "underside_tube": "底部烤",
+          "underside_tube_1": "温和烤",
           "zymosis": "发酵"
         }
       },
@@ -1970,6 +2015,15 @@
           "down": "下降",
           "pause": "暂停",
           "up": "上升"
+        }
+      },
+      "upstair_mode": {
+        "name": "上层模式",
+        "state": {
+          "clean": "保洁",
+          "off": "关机",
+          "standby": "待机",
+          "storage": "长效存储"
         }
       },
       "warm_water_temperature": {
@@ -2504,6 +2558,22 @@
           "work": "运行中"
         }
       },
+      "downstair_remain_time": {
+        "name": "下层剩余时间"
+      },
+      "downstair_temp": {
+        "name": "下层温度"
+      },
+      "downstair_work_status": {
+        "name": "下层状态",
+        "state": {
+          "finish": "已完成",
+          "order": "预约中",
+          "power_off": "关机",
+          "power_on": "开机",
+          "working": "运行中"
+        }
+      },
       "dry_set_min": {
         "name": "烘干设定时间"
       },
@@ -2524,8 +2594,8 @@
           "door_open": "炉门未关闭",
           "function_nonsupport": "功能不支持",
           "high_temperature_nonsupport": "高温下不支持",
-          "lack_box": "水箱未安装",
-          "lack_water": "水箱缺水",
+          "lack_box": "水盒未安装",
+          "lack_water": "水盒缺水",
           "ok": "执行成功",
           "param_range_error": "参数超出范围",
           "remote_control_closed": "远程控制已关闭",
@@ -2777,6 +2847,22 @@
       "tvoc_density": {
         "name": "TVOC浓度"
       },
+      "upstair_remain_time": {
+        "name": "上层剩余时间"
+      },
+      "upstair_temp": {
+        "name": "上层温度"
+      },
+      "upstair_work_status": {
+        "name": "上层状态",
+        "state": {
+          "finish": "已完成",
+          "order": "预约中",
+          "power_off": "关机",
+          "power_on": "开机",
+          "working": "运行中"
+        }
+      },
       "use_days": {
         "name": "使用天数"
       },
@@ -2828,10 +2914,10 @@
         "name": "水压"
       },
       "water_status": {
-        "name": "水箱状态",
+        "name": "水盒状态",
         "state": {
           "change_water": "需要换水",
-          "lack_box": "水箱缺失",
+          "lack_box": "水盒缺失",
           "lack_water": "缺水",
           "normal": "正常"
         }
@@ -3017,6 +3103,9 @@
       },
       "fresh_air_remove_odor": {
         "name": "新风除菌"
+      },
+      "furnace_light": {
+        "name": "炉灯"
       },
       "germicidal": {
         "name": "高温杀菌"
