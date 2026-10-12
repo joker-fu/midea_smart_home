@@ -1,5 +1,6 @@
 """Midea Smart Home Cloud API client."""
 
+import asyncio
 import hashlib
 import hmac
 import json
@@ -12,7 +13,11 @@ from typing import Any, cast
 
 from aiohttp import ClientConnectionError, ClientSession, ClientTimeout
 
-from .exceptions import ElementMissing
+from .exceptions import (
+    TRANSIENT_CLOUD_ERROR_CODES,
+    CloudLoginError,
+    ElementMissing,
+)
 from .security import CloudSecurity, MeijuCloudSecurity, MideaAirSecurity
 
 SN8_MIN_SERIAL_LENGTH = 17
@@ -74,6 +79,8 @@ class MideaCloud:
         self._access_token: str | None = None
         self._uid: str | None = None
         self._login_id = ""
+        # (code, msg) of the last non-zero cloud response, None on success
+        self._last_error: tuple[int, str] | None = None
 
     def _make_general_data(self) -> dict[str, Any]:
         return {}
@@ -108,7 +115,7 @@ class MideaCloud:
         if self._access_token is not None:
             header.update({"accessToken": self._access_token})
         response: dict = {"code": -1}
-        for _ in range(3):
+        for attempt in range(3):
             try:
                 with self._api_lock:
                     r = await self._session.request(
@@ -120,11 +127,27 @@ class MideaCloud:
                     )
                     raw = await r.read()
                     response = json.loads(raw)
+                    code = int(response.get("code", -1))
+                    if code in TRANSIENT_CLOUD_ERROR_CODES and attempt < 2:
+                        _LOGGER.debug(
+                            "[cloud] transient error, retrying: endpoint=%s code=%s",
+                            endpoint, code,
+                        )
+                        await asyncio.sleep(1.0 * (attempt + 1))
+                        continue
                     break
             except (TimeoutError, ClientConnectionError, json.JSONDecodeError) as e:
-                _LOGGER.warning("Midea cloud API error, url: %s, error: %s", url, repr(e))
-        if int(response["code"]) == 0 and "data" in response:
+                _LOGGER.warning("[cloud] request failed: endpoint=%s error=%s", endpoint, repr(e))
+        code = int(response.get("code", -1))
+        if code == 0 and "data" in response:
+            self._last_error = None
             return cast(dict, response["data"])
+        if code != -1:
+            msg = str(response.get("msg") or "")
+            self._last_error = (code, msg)
+            _LOGGER.warning(
+                "[cloud] API error: endpoint=%s code=%s msg=%s", endpoint, code, msg
+            )
         return None
 
     async def _get_login_id(self) -> str | None:
@@ -248,7 +271,9 @@ class MeijuCloud(MideaCloud):
                     b"0",
                 )
                 return True
-        _LOGGER.warning("Meiju Cloud login failed for device %s", self._device_id)
+        if self._last_error:
+            raise CloudLoginError(self._last_error[0], self._last_error[1])
+        _LOGGER.warning("[cloud] login failed: account=%s device_id=%s", self._account, self._device_id)
         return False
 
     async def list_appliances(
@@ -409,7 +434,7 @@ class MideaAirCloud(MideaCloud):
         if self._access_token is not None:
             header.update({"accessToken": self._access_token})
         response: dict = {"errorCode": -1}
-        for _ in range(3):
+        for attempt in range(3):
             try:
                 with self._api_lock:
                     r = await self._session.request(
@@ -421,11 +446,27 @@ class MideaAirCloud(MideaCloud):
                     )
                     raw = await r.read()
                     response = json.loads(raw)
+                    code = int(response.get("errorCode", -1))
+                    if code in TRANSIENT_CLOUD_ERROR_CODES and attempt < 2:
+                        _LOGGER.debug(
+                            "[cloud] transient error, retrying: endpoint=%s code=%s",
+                            endpoint, code,
+                        )
+                        await asyncio.sleep(1.0 * (attempt + 1))
+                        continue
                     break
             except (TimeoutError, ClientConnectionError, json.JSONDecodeError) as e:
-                _LOGGER.warning("Midea cloud API error, url: %s, error: %s", url, repr(e))
-        if int(response["errorCode"]) == 0 and "result" in response:
+                _LOGGER.warning("[cloud] request failed: endpoint=%s error=%s", endpoint, repr(e))
+        code = int(response.get("errorCode", -1))
+        if code == 0 and "result" in response:
+            self._last_error = None
             return cast(dict[str, Any], response["result"])
+        if code != -1:
+            msg = str(response.get("msg") or "")
+            self._last_error = (code, msg)
+            _LOGGER.warning(
+                "[cloud] API error: endpoint=%s code=%s msg=%s", endpoint, code, msg
+            )
         return None
 
     async def login(self) -> bool:
@@ -449,7 +490,9 @@ class MideaAirCloud(MideaCloud):
                 self._uid = response["userId"]
                 self._session_id = response["sessionId"]
                 return True
-        _LOGGER.warning("Midea Air Cloud login failed for device %s", self._device_id)
+        if self._last_error:
+            raise CloudLoginError(self._last_error[0], self._last_error[1])
+        _LOGGER.warning("[cloud] login failed: account=%s device_id=%s", self._account, self._device_id)
         return False
 
     async def list_appliances(
@@ -547,7 +590,7 @@ async def download_lua_file(hass, access_token: str, sn: str, device_type: int, 
     headers["random"] = random
     headers["sign"] = sign
 
-    _LOGGER.info("Lua download request data: %s", lua_data)
+    _LOGGER.debug("[cloud] lua download request: %s", lua_data)
 
     # Send request
     api_url = "https://mp-prod.smartmidea.net/mas/v5/app/proxy?alias=/v1/appliance/protocol/lua/luaGet"
@@ -557,7 +600,7 @@ async def download_lua_file(hass, access_token: str, sn: str, device_type: int, 
             async with session.post(api_url, headers=headers, data=json_data, timeout=30) as response:
                 result = await response.json()
 
-                _LOGGER.info("Lua download response: %s", result)
+                _LOGGER.debug("[cloud] lua download response: %s", result)
 
                 if str(result.get("code")) == "0" and "data" in result:
                     data_section = result["data"]
@@ -685,12 +728,12 @@ async def download_lua_file(hass, access_token: str, sn: str, device_type: int, 
                                 modified = modified.replace("\r\n", "\n")
                                 return True, modified
                             else:
-                                _LOGGER.error("Failed to download Lua file from URL: %s", lua_response.status)
+                                _LOGGER.error("[cloud] lua file download failed: HTTP %s", lua_response.status)
                     else:
-                        _LOGGER.error("No URL in Lua download response")
+                        _LOGGER.error("[cloud] lua download: no URL in response")
                 else:
-                    _LOGGER.error("Lua download API failed: %s", result)
+                    _LOGGER.error("[cloud] lua download API failed: %s", result)
     except Exception as e:
-        _LOGGER.error("Lua download exception: %s", e)
+        _LOGGER.error("[cloud] lua download error: %s", e)
 
     return False, ""
