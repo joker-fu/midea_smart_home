@@ -14,6 +14,7 @@ DEVICE_MAPPING = {
             "work_second",
             "weight"
         ],
+        "initial_control": [{"lock": "on"}, {"lock": "off"}],
         "calculate": {
             "get": [
                 {
@@ -29,6 +30,11 @@ DEVICE_MAPPING = {
             ]
         },
         "entities": {
+            Platform.LOCK: {
+                "lock": {
+                    "translation_key": "child_lock"
+                }
+            },
             Platform.NUMBER: {
                 "temperature": {
                     "min": 0,
@@ -183,6 +189,7 @@ DEVICE_MAPPING = {
             "work_second",
             "weight"
         ],
+        "initial_control": [{"lock": "on"}, {"lock": "off"}],
         "calculate": {
             "get": [
                 {
@@ -198,6 +205,11 @@ DEVICE_MAPPING = {
             ]
         },
         "entities": {
+            Platform.LOCK: {
+                "lock": {
+                    "translation_key": "child_lock"
+                }
+            },
             Platform.NUMBER: {
                 "temperature": {
                     "min": 0,

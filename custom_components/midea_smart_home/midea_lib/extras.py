@@ -435,7 +435,7 @@ class DeviceLogicHandler:
                     control["db_location"] = current_data["db_location"]
         elif self.device_type == 0xE1:
             control = self._prepare_dishwasher_control(control, current_data)
-        elif self.device_type == 0x9B:
+        elif self.device_type in (0x9B, 0xBF):
             # Cooking parameters are only bundled with a cooking-start
             # command (work_mode); lock and work_status controls must stay
             # single-purpose and must not carry them.
@@ -447,8 +447,11 @@ class DeviceLogicHandler:
                     recent = (recent_controls or {}).get(key)
                     if recent and now - recent[1] < control_timeout:
                         control[key] = recent[0]
-                    elif current_data and key in current_data:
+                    elif current_data and key in current_data and current_data[key] != "ff":
                         control[key] = current_data[key]
+            # Filter "ff" string values (protocol sentinel for "no value")
+            # to prevent Lua arithmetic errors (e.g., weight="ff").
+            control = {k: v for k, v in control.items() if k == "work_mode" or v != "ff"}
         return control
 
     def _prepare_dishwasher_control(
