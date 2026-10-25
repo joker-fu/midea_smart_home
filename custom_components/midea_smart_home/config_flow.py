@@ -1021,9 +1021,12 @@ class MideaSmartHomeConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         port: int,
         token: str,
         key: str,
+        label: str = "",
     ) -> bool:
         """Validate token/key by attempting V3 authentication handshake.
 
+        ``label`` identifies the token source (e.g. local_cache / cloud_method1)
+        so repeated failures can be told apart in the logs.
         Returns True if authentication succeeds.
         """
         if not token or not key:
@@ -1042,17 +1045,17 @@ class MideaSmartHomeConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 sock.close()
                 if len(response) < 72:
                     _LOGGER.debug(
-                        "[config_flow] token/key validation failed: device_id=%s "
+                        "[config_flow] token/key validation failed: device_id=%s label=%s "
                         "reason=response_too_short bytes=%d response=%s",
-                        device_id, len(response), response.hex(),
+                        device_id, label, len(response), response.hex(),
                     )
                     return False
                 auth_data = response[8:72]
                 security.tcp_key(auth_data, bytes.fromhex(key))
-                _LOGGER.debug("[config_flow] token/key validation passed: device_id=%s", device_id)
+                _LOGGER.debug("[config_flow] token/key validation passed: device_id=%s label=%s", device_id, label)
                 return True
             except Exception as e:
-                _LOGGER.debug("[config_flow] token/key validation error: device_id=%s error=%s", device_id, e)
+                _LOGGER.debug("[config_flow] token/key validation error: device_id=%s label=%s error=%s", device_id, label, e)
                 return False
 
         return await self.hass.async_add_executor_job(_try_auth)
@@ -1127,7 +1130,7 @@ class MideaSmartHomeConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 )
                 if cached_token and cached_key:
                     if await self._validate_token_key(
-                        device_id, ip_address, port, cached_token, cached_key
+                        device_id, ip_address, port, cached_token, cached_key, "local_cache"
                     ):
                         _LOGGER.info(
                             "[config_flow] got token/key from local cache: device_id=%s",
@@ -1145,12 +1148,18 @@ class MideaSmartHomeConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         # Prefer the user's own cloud (Meiju Cloud /v2, supports real udpid for new modules)
         if self._user_cloud is not None:
             try:
+                _LOGGER.debug(
+                    "[config_flow] acquiring cloud token: device_id=%s "
+                    "udpid=%s source=%s",
+                    device_id, udpid or "(derived)",
+                    "real_broadcast" if udpid else "derived_fallback",
+                )
                 keys = await self._user_cloud.get_cloud_keys(device_id, udpid)
                 for method, data in keys.items():
                     token = data["token"]
                     key = data["key"]
                     if await self._validate_token_key(
-                        device_id, ip_address, port, token, key
+                        device_id, ip_address, port, token, key, f"cloud_method{method}"
                     ):
                         _LOGGER.info(
                             "[config_flow] got token/key from user cloud: "
@@ -1483,9 +1492,12 @@ class MideaSmartHomeOptionsFlowHandler(config_entries.OptionsFlow):
         port: int,
         token: str,
         key: str,
+        label: str = "",
     ) -> bool:
         """Validate token/key by attempting V3 authentication handshake.
 
+        ``label`` identifies the token source (e.g. local_cache / cloud_method1)
+        so repeated failures can be told apart in the logs.
         Returns True if authentication succeeds.
         """
         if not token or not key:
@@ -1504,17 +1516,17 @@ class MideaSmartHomeOptionsFlowHandler(config_entries.OptionsFlow):
                 sock.close()
                 if len(response) < 72:
                     _LOGGER.debug(
-                        "[config_flow] token/key validation failed: device_id=%s "
+                        "[config_flow] token/key validation failed: device_id=%s label=%s "
                         "reason=response_too_short bytes=%d response=%s",
-                        device_id, len(response), response.hex(),
+                        device_id, label, len(response), response.hex(),
                     )
                     return False
                 auth_data = response[8:72]
                 security.tcp_key(auth_data, bytes.fromhex(key))
-                _LOGGER.debug("[config_flow] token/key validation passed: device_id=%s", device_id)
+                _LOGGER.debug("[config_flow] token/key validation passed: device_id=%s label=%s", device_id, label)
                 return True
             except Exception as e:
-                _LOGGER.debug("[config_flow] token/key validation error: device_id=%s error=%s", device_id, e)
+                _LOGGER.debug("[config_flow] token/key validation error: device_id=%s label=%s error=%s", device_id, label, e)
                 return False
 
         return await self.hass.async_add_executor_job(_try_auth)
@@ -1589,7 +1601,7 @@ class MideaSmartHomeOptionsFlowHandler(config_entries.OptionsFlow):
                 )
                 if cached_token and cached_key:
                     if await self._validate_token_key(
-                        device_id, ip_address, port, cached_token, cached_key
+                        device_id, ip_address, port, cached_token, cached_key, "local_cache"
                     ):
                         _LOGGER.info(
                             "[config_flow] got token/key from local cache: device_id=%s",
@@ -1607,12 +1619,18 @@ class MideaSmartHomeOptionsFlowHandler(config_entries.OptionsFlow):
         # Prefer the user's own cloud (Meiju Cloud /v2, supports real udpid for new modules)
         if self._user_cloud is not None:
             try:
+                _LOGGER.debug(
+                    "[config_flow] acquiring cloud token: device_id=%s "
+                    "udpid=%s source=%s",
+                    device_id, udpid or "(derived)",
+                    "real_broadcast" if udpid else "derived_fallback",
+                )
                 keys = await self._user_cloud.get_cloud_keys(device_id, udpid)
                 for method, data in keys.items():
                     token = data["token"]
                     key = data["key"]
                     if await self._validate_token_key(
-                        device_id, ip_address, port, token, key
+                        device_id, ip_address, port, token, key, f"cloud_method{method}"
                     ):
                         _LOGGER.info(
                             "[config_flow] got token/key from user cloud: "
