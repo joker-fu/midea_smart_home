@@ -191,6 +191,9 @@ class DeviceLogicHandler:
                 self.adjust_ac_humidity(data, status)
                 self.adjust_ac_compressor_current(data, status)
 
+        elif self.device_type in (0x9B, 0xBF):
+            self.adjust_set_time_without_work_mode(data)
+
         elif self.device_type == 0x9C:
             self.adjust_b3_function_control(data)
 
@@ -224,21 +227,21 @@ class DeviceLogicHandler:
 
         running_status = data[status_key]
 
-        if running_status == "end" and not self._validate_end_status(raw_status):
-            return False
-
         # When db is powered off, the device may keep reporting a stale
-        # running status for a drum. Force this bucket to standby so that the
-        # running status, control status, progress and remain time are all
-        # reset consistently below.
+        # running status for a drum (including 'end'). Handle power-off before
+        # the end validation below so a stale 'end' cannot abort the update and
+        # leave the entity stuck. Also reset the shared db_running_status here
+        # so it stays consistent regardless of db_position.
         if data.get("db_power") in ("off", 0):
             running_status = "standby"
             data[status_key] = running_status
+            self._d9_polling_device_running_status_for_power_off(data)
             self.adjust_control_status(data, running_status, prefix="db")
+        elif running_status == "end" and not self._validate_end_status(raw_status):
+            return False
 
         # Handle common (non-suffixed) fields from the first poll response
         if raw_status and raw_status.get('db_position') == 1:
-            self._d9_polling_device_running_status_for_power_off(data)
             if "db_running_status" in data:
                 self.adjust_control_status(data, data["db_running_status"], prefix="db")
             self.process_progress(data, "db_running_status", "db_progress")
@@ -557,6 +560,21 @@ class DeviceLogicHandler:
                 continue
 
             data[key] = value
+
+    def adjust_set_time_without_work_mode(self, data: dict) -> None:
+        """For T0x9B/T0xBF devices, zero the set time when no work mode is active.
+
+        When work_mode carries the "ff" sentinel (no mode selected), the device
+        may still report stale hour_set/minute_set/second_set values. Force
+        these keys to 0 so the derived set_time and the cooking time number
+        entities stay consistent with an idle device.
+        """
+        if data.get("work_mode") != "ff":
+            return
+
+        for key in ("hour_set", "minute_set", "second_set"):
+            if key in data:
+                data[key] = 0
 
     def adjust_b3_function_control(self, data: dict) -> None:
         """For T0x9C devices, map b3_upstair_status to b3_function_control."""

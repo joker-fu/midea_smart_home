@@ -1056,6 +1056,7 @@
       "cur_quantify": {
         "name": "Quantitative Water",
         "state": {
+          "extra_cup": "Extra Cup",
           "large_amount": "Large Amount",
           "large_cup": "Large Cup",
           "medium_cup": "Medium Cup",
@@ -1428,6 +1429,11 @@
           "50": "50%",
           "80": "80%",
           "100": "100%",
+          "high": "High",
+          "low": "Low",
+          "medium": "Medium",
+          "medium_high": "Medium High",
+          "medium_low": "Medium Low",
           "none": "None"
         }
       },
@@ -1728,6 +1734,8 @@
       "mouthfeel": {
         "name": "Mouthfeel",
         "state": {
+          "crisp": "Crispy",
+          "fresh": "Tender",
           "hard": "Hard",
           "middle": "Middle",
           "soft": "Soft"
@@ -2058,9 +2066,28 @@
           "700": "700mL"
         }
       },
+      "quantify_extra_cup": {
+        "name": "Extra Cup Volume",
+        "state": {
+          "500": "500mL",
+          "550": "550mL",
+          "600": "600mL",
+          "650": "650mL",
+          "700": "700mL",
+          "750": "750mL",
+          "800": "800mL",
+          "850": "850mL",
+          "900": "900mL",
+          "950": "950mL"
+        }
+      },
       "quantify_large_cup": {
         "name": "Large Cup Volume",
         "state": {
+          "300": "300mL",
+          "350": "350mL",
+          "400": "400mL",
+          "450": "450mL",
           "500": "500mL",
           "550": "550mL",
           "600": "600mL"
@@ -2069,6 +2096,9 @@
       "quantify_medium_cup": {
         "name": "Medium Cup Volume",
         "state": {
+          "150": "150mL",
+          "200": "200mL",
+          "250": "250mL",
           "300": "300mL",
           "350": "350mL",
           "400": "400mL",
@@ -2533,21 +2563,30 @@
         "state": {
           "above_inside_outside_tube": "Double Upper Tube",
           "above_inside_outside_tube_fan": "Double Upper Tube Fan",
+          "above_tube_fan_2": "Air Fry",
+          "clean": "Self Clean",
           "double_tube_1": "Bake & Grill",
+          "double_tube_8": "Dual Temp Bake",
           "double_tube_fan": "Upper & Lower Tube Fan",
           "double_tube_hot_wind_tube_fan_1": "Air Fry",
           "fast_unfreeze": "Quick Defrost",
           "hot_wind_tube_fan_1": "Hot Air",
+          "hot_wind_tube_fan_3": "Dry",
+          "hot_wind_tube_fan_4": "Keep Warm",
           "hot_wind_tube_fan_5": "Dried Fruit",
+          "humidity_control_roast": "Humidity Control Bake",
           "microwave_1": "Microwave Heating",
+          "microwave_steam_2": "Stew",
           "none": "None",
           "pause": "Pause",
           "pure_preheat": "Bake Preheat",
           "pure_preheat_2": "Air Fry",
           "pure_steam_1": "Pure Steam",
           "pure_steam_2": "Steam Preheat",
+          "pure_steam_3": "Steam Sterilize",
           "pure_steam_5": "Fermentation",
           "pure_steam_7": "Quick Steam",
+          "scale_clean": "Descaling",
           "steam_double_tube_1": "Low-cal Steam",
           "steam_double_tube_fan_1": "Low-fat Steam Bake",
           "steam_hot_wind_tube_fan_1": "Moist Roast",
@@ -2955,7 +2994,16 @@
         "name": "Filter Usage"
       },
       "fire_power": {
-        "name": "Microwave Power"
+        "name": "Microwave Power",
+        "state": {
+          "fire_power_0": "Off",
+          "fire_power_1": "Low",
+          "fire_power_2": "Medium Low",
+          "fire_power_5": "Medium",
+          "fire_power_8": "Medium High",
+          "fire_power_10": "High",
+          "none": "None"
+        }
       },
       "flexzone_real_temperature": {
         "name": "Flexzone Actual Temperature"
@@ -3022,6 +3070,9 @@
       },
       "left_salt": {
         "name": "Salt Remaining"
+      },
+      "life_fcb": {
+        "name": "FCB Filter Remaining Quantity"
       },
       "life_pcb": {
         "name": "PCB Filter Remaining Quantity"
@@ -3323,7 +3374,23 @@
         "name": "Work Mode"
       },
       "work_status": {
-        "name": "Work Status"
+        "name": "Work Status",
+        "state": {
+          "after_checking": "After Checking",
+          "demo": "Demo Mode",
+          "none": "None",
+          "order": "Scheduled",
+          "pause": "Paused",
+          "pause_c": "Pause Cancelled",
+          "query_version": "Querying Version",
+          "ramadan": "Ramadan Mode",
+          "save_power": "Save Power",
+          "self_inspection": "Self-Inspection",
+          "standby": "Standby",
+          "three": "Three-Stage Running",
+          "work": "Working",
+          "work_finish": "Finished"
+        }
       },
       "work_time": {
         "name": "Work Time"
