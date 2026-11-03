@@ -20,7 +20,7 @@ git log --oneline "$UP/staging"..HEAD
 
 Each commit there is a fork-only change whose intent must survive the merge. Read the commit messages and `git show --stat <commit>` to learn what each one touches and why. Keep this list in mind as you resolve conflicts.
 
-As of the last sync the fork's additions were roughly: new device model mappings (T0xDB/DC/E1洗衣/干衣/洗碗机), a dishwasher (0xE1) composite-key control handler plus `filter_status` (T0xDB 02db/03db/04db response-field whitelisting) in `extras.py`, `in`/`not_in` entity conditions in `entity.py`, `command_on`/`command_off` switches in `switch.py`, a `control_only` option-payload marker expanded by `select.py`, binary_sensor `on_value`/`off_value` config, protocol-level query passthrough for Lua devices (`{"protocol": ...}` handled in `__init__.py`/`device.py`, e.g. 03db-on-connect for 38129929), a 60s `control_timeout` for 0xE1 declared per-mapping in `device_mapping/T0xE1.py` and wired through `__init__.py` into `MideaDevice`, and the removal of `.github/workflows/`. Treat this as a hint, then confirm against the actual `git log` output.
+As of the last sync the fork's additions were roughly: new device model mappings (T0xDB/DC/E1洗衣/干衣/洗碗机), a dishwasher (0xE1) composite-key control handler plus `filter_status` (T0xDB 02db/03db/04db response-field whitelisting) in `midea_lib/extras.py`, `in`/`not_in` entity conditions in `entity.py`, `command_on`/`command_off` switches in `switch.py`, a `control_only` option-payload marker expanded by `select.py`, binary_sensor `on_value`/`off_value` config, protocol-level query passthrough for Lua devices (`{"protocol": ...}` handled in `__init__.py`/`device.py`, e.g. 03db-on-connect for 38129929), a 60s `control_timeout` for 0xE1 declared per-mapping in `device_mapping/T0xE1.py` and wired through `__init__.py` into `MideaDevice`, and the removal of `.github/workflows/`. Treat this as a hint, then confirm against the actual `git log` output.
 
 ## Decision procedure for any conflict
 
@@ -40,7 +40,7 @@ For each conflicted region:
 - **`.github/workflows/*.yml`** (`auto_prerelease.yml`, `auto_version_bump.yml`, `validate.yml`): the fork intentionally does not use GitHub Actions. These appear as `CONFLICT (modify/delete)`. **Always `git rm` them.** Never keep upstream's CI changes, never ask the user.
 - **Do not force-push.** This skill uses merge; rollback before pushing is `git reset --hard origin/staging`.
 
-## Worked example: `extras.py` `prepare_control_data`
+## Worked example: `midea_lib/extras.py` `prepare_control_data`
 
 This illustrates the decision procedure — it is **not** a template to paste verbatim. Upstream will change and the exact lines will differ; apply the reasoning, not the code.
 
@@ -54,7 +54,7 @@ This illustrates the decision procedure — it is **not** a template to paste ve
 
 ## Same principle applies elsewhere
 
-- **`extras.py` `apply_special_handling`**: upstream changed the signature (added `status=None`) and refactored the D9 branch; the fork added an `elif 0xE1:` arm. Usually auto-merges. If it conflicts, take upstream's signature + D9 changes, re-add the fork's 0xE1 `elif` arm in the same chain.
+- **`midea_lib/extras.py` `apply_special_handling`**: upstream changed the signature (added `status=None`) and refactored the D9 branch; the fork added an `elif 0xE1:` arm. Usually auto-merges. If it conflicts, take upstream's signature + D9 changes, re-add the fork's 0xE1 `elif` arm in the same chain.
 - **`device_mapping/*.py` and `translations/*.json`**: fork and upstream both add model entries / translation keys to the same dicts. These should merge cleanly as additive dict entries. If two changes touch the exact same key, keep both values if they're different keys; if the same key got different values, prefer upstream and only override if the fork's value is load-bearing for a fork-only device.
 - **`device.py` / `entity.py` / `switch.py` / `select.py`**: the fork's changes here are small, localized additions (a timeout line, a condition branch, a switch feature). Keep upstream's broader refactors and re-apply the fork's localized additions on top.
 

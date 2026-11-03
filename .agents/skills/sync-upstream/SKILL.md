@@ -129,7 +129,7 @@ After the sync is complete (committed, and the push decision resolved — pushed
 2. Look for these drift signals:
    - **Fork features changed:** did `git log "$UP/staging"..HEAD` (step 3) reveal fork-only commits the reference's "fork features hint" doesn't mention? If so, the hint is stale — update it to match the current set.
    - **New conflict pattern:** did a conflict appear that the decision procedure in the reference didn't cleanly handle? Add it as a worked example, or refine the procedure.
-   - **Worked example drifted:** does the `extras.py` example in the reference still resemble the current code? If upstream changed that region again (or the fork's 0xE1 branch moved), update the example to current reality, or generalize it further. An example that contradicts the actual code misleads the next run.
+   - **Worked example drifted:** does the `midea_lib/extras.py` example in the reference still resemble the current code? If upstream changed that region again (or the fork's 0xE1 branch moved), update the example to current reality, or generalize it further. An example that contradicts the actual code misleads the next run.
    - **Hard rules moot:** did upstream stop shipping `.github/workflows/`? If the modify/delete conflict no longer occurs, note that in the reference.
 3. If anything drifted, **propose the specific edits and ask the user before applying them**. If nothing drifted, say so and finish. This keeps the skill honest across syncs without accumulating stale detail.
 
