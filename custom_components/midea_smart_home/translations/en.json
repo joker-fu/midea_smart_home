@@ -1299,6 +1299,16 @@
           "no_spin": "No Spin"
         }
       },
+      "dehydration_time": {
+        "name": "Dehydration Time Setting",
+        "state": {
+          "8_mins": "8 min",
+          "9_mins": "9 min",
+          "10_mins": "10 min",
+          "11_mins": "11 min",
+          "12_mins": "12 min"
+        }
+      },
       "detergent": {
         "name": "Detergent (Smart)",
         "state": {
@@ -1376,6 +1386,19 @@
           "low": "Low",
           "medium": "Medium",
           "off": "Off"
+        }
+      },
+      "dry_time": {
+        "name": "Dry Time Setting",
+        "state": {
+          "min_30": "30 min",
+          "min_60": "60 min",
+          "min_90": "90 min",
+          "min_120": "120 min",
+          "min_150": "150 min",
+          "off": "Off",
+          "smart_small": "Smart Dry (Small Load)",
+          "smart_standard": "Smart Dry (Standard)"
         }
       },
       "dryer": {
@@ -1936,6 +1959,7 @@
           "cold_wash": "Cold Wash",
           "cotton": "Cotton",
           "deep_ssp": "Deep Self-Clean",
+          "deep_tub_clean": "Deep Tub Clean",
           "dehumidification": "Dehumidification",
           "detergent_box_clean": "Detergent Box Clean",
           "down_jacket": "Down Jacket",
@@ -1952,11 +1976,13 @@
           "girl_underwear": "Teen Underwear",
           "hanfu_autumn_winter": "Hanfu Autumn/Winter",
           "hanfu_spring_summer": "Hanfu Spring/Summer",
+          "high_temp_wash": "High Temp Wash",
           "hot_air_dry": "Hot Air Dry",
           "hot_wind_dry": "Hot Wind Dry",
           "intelligent": "Intelligent",
           "jacket": "Jacket",
           "jacket_care": "Jacket Care",
+          "jacket_wash": "Jacket Fine Wash",
           "jean": "Jeans",
           "memory": "Memory",
           "mixed_dry": "Mixed Dry",
@@ -1970,6 +1996,7 @@
           "quick_dry": "Quick Dry",
           "quick_dry_3kg": "3kg Quick Dry",
           "quick_dry_20": "Quick Dry 20min",
+          "quick_wash": "Quick Wash",
           "refresh_deodorize": "Refresh & Deodorize",
           "remove_mite_wash": "Mite Removal",
           "rinsing_dehydration": "Rinse+Spin",
@@ -1981,6 +2008,7 @@
           "single_dehytration": "Spin Only",
           "single_drying": "Dry Only",
           "small_piece_dry": "Small Piece Dry",
+          "soak_stain": "Soak Stain Removal",
           "socks": "Socks",
           "socks_dry": "Socks Dry",
           "sport_clothes": "Sportswear",
@@ -2007,13 +2035,15 @@
           "underwear_dry": "Underwear Dry",
           "uniforms": "Uniforms",
           "warm_clothes": "Warm Clothes",
+          "wash_drying_60": "Wash+Dry 60min",
           "white_clothes_clean": "White Clothes Clean",
           "windbreaker": "Windbreaker",
           "windcoat": "Windcoat",
           "winter_wash": "Winter",
           "wool": "Wool",
           "wool_coat": "Wool Coat",
-          "woolen": "Woolen"
+          "woolen": "Woolen",
+          "yoga_clothes": "Yoga Clothes"
         }
       },
       "ptc": {
@@ -2416,6 +2446,16 @@
           "soak_wash": "Soak Wash",
           "standard_wash": "Standard Wash",
           "strong_wash": "Strong Wash"
+        }
+      },
+      "wash_time": {
+        "name": "Wash Level Setting",
+        "state": {
+          "l1": "L1",
+          "l2": "L2",
+          "l3": "L3",
+          "l4": "L4",
+          "l5": "L5"
         }
       },
       "water_gear": {
@@ -2861,13 +2901,40 @@
         "name": "Right Bucket Remaining Time"
       },
       "db_running_status_b": {
-        "name": "Bottom Drum Running Status"
+        "name": "Bottom Drum Running Status",
+        "state": {
+          "delay": "Delayed",
+          "end": "Finished",
+          "fault": "Fault",
+          "idle": "Idle",
+          "pause": "Paused",
+          "standby": "Standby",
+          "start": "Running"
+        }
       },
       "db_running_status_l": {
-        "name": "Left Bucket Running Status"
+        "name": "Left Bucket Running Status",
+        "state": {
+          "delay": "Delayed",
+          "end": "Finished",
+          "fault": "Fault",
+          "idle": "Idle",
+          "pause": "Paused",
+          "standby": "Standby",
+          "start": "Running"
+        }
       },
       "db_running_status_r": {
-        "name": "Right Bucket Running Status"
+        "name": "Right Bucket Running Status",
+        "state": {
+          "delay": "Delayed",
+          "end": "Finished",
+          "fault": "Fault",
+          "idle": "Idle",
+          "pause": "Paused",
+          "standby": "Standby",
+          "start": "Running"
+        }
       },
       "dc_dry_status_t": {
         "name": "Top Drum Dry Status",
@@ -2889,13 +2956,22 @@
         "name": "Top Drum Remaining Time"
       },
       "dc_running_status_t": {
-        "name": "Top Drum Running Status"
+        "name": "Top Drum Running Status",
+        "state": {
+          "delay": "Delayed",
+          "end": "Finished",
+          "fault": "Fault",
+          "idle": "Idle",
+          "pause": "Paused",
+          "standby": "Standby",
+          "start": "Running"
+        }
       },
       "deep_filter_percent": {
         "name": "Filter Life Remaining"
       },
       "dehydration_time_value": {
-        "name": "Dehydration Time"
+        "name": "Dehydration Time Value"
       },
       "discharge_pipe_temperature": {
         "name": "Discharge Pipe Temperature"
@@ -3212,7 +3288,16 @@
         "name": "Room Temperature (Zone 5)"
       },
       "running_status": {
-        "name": "Running Status"
+        "name": "Running Status",
+        "state": {
+          "delay": "Delayed",
+          "end": "Finished",
+          "fault": "Fault",
+          "idle": "Idle",
+          "pause": "Paused",
+          "standby": "Standby",
+          "start": "Running"
+        }
       },
       "salt_alarm_threshold": {
         "name": "Salt Alarm Threshold"
@@ -3329,7 +3414,7 @@
         }
       },
       "wash_time_value": {
-        "name": "Wash Time"
+        "name": "Wash Time Value"
       },
       "water_consumption_average": {
         "name": "Average Water Consumption"
