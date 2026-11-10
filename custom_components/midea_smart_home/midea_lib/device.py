@@ -434,6 +434,7 @@ class MideaDevice:
         polling_query: Optional[list] = None,
         control_timeout: float = 5.0,
         drum_locations: Optional[dict] = None,
+        control_type: Optional[str] = None,
     ):
         self._device_id = device_id
         self._device_type = device_type
@@ -468,7 +469,7 @@ class MideaDevice:
 
         # Initialize Logic Handler
         self._logic_handler = DeviceLogicHandler(
-            device_type, device_name, drum_locations=self._d9_drum_locations
+            device_type, device_name, drum_locations=self._d9_drum_locations, control_type=control_type
         )
 
         # Initialize Expression Evaluator

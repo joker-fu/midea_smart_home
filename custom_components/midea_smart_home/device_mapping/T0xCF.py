@@ -3,6 +3,7 @@ from custom_components.midea_smart_home.device_mapping._common import *
 DEVICE_MAPPING = {
     "default": {
         "rationale": ["off", "on"],
+        "control_type": "0x11",
         "initial_query": [{"0x11"}, {"0x12"}],
         "polling_query": [{"0x11"}, {"0x12"}],
         "entities": {
@@ -317,6 +318,53 @@ DEVICE_MAPPING = {
                     "state_class": SensorStateClass.MEASUREMENT
                 },
                 "temp_set5": {
+                    "device_class": SensorDeviceClass.TEMPERATURE,
+                    "unit_of_measurement": UnitOfTemperature.CELSIUS,
+                    "state_class": SensorStateClass.MEASUREMENT
+                },
+                "error_code": {
+                    "device_class": SensorDeviceClass.ENUM
+                }
+            }
+        }
+    },
+    "00000M33": {
+        "rationale": ["off", "on"],
+        "initial_query": [{}],
+        "polling_query": [{}],
+        "control_type": "1",
+        "entities": {
+            Platform.CLIMATE: {
+                "floor_heating": {
+                    "power": "power_state",
+                    "hvac_modes": {
+                        "off": {"power_state": "off"},
+                        "heat": {"power_state": "on", "run_mode": "heat"},
+                        "cool": {"power_state": "on", "run_mode": "cool"},
+                        "auto": {"power_state": "on", "run_mode": "auto"},
+                    },
+                    "target_temperature": "temp_set",
+                    "current_temperature": "cur_temp",
+                    "min_temp": 5,
+                    "max_temp": 55,
+                    "temperature_unit": UnitOfTemperature.CELSIUS,
+                    "precision": 1
+                }
+            },
+            Platform.SWITCH: {
+                "silence_set_state": {
+                    "control_key": "silence_function_state",
+                    "command": {"control_type": "5"},
+                }
+            },
+            Platform.SENSOR: {
+                "cur_temp": {
+                    "device_class": SensorDeviceClass.TEMPERATURE,
+                    "unit_of_measurement": UnitOfTemperature.CELSIUS,
+                    "state_class": SensorStateClass.MEASUREMENT,
+                    "translation_key": "cur_temperature"
+                },
+                "temp_set": {
                     "device_class": SensorDeviceClass.TEMPERATURE,
                     "unit_of_measurement": UnitOfTemperature.CELSIUS,
                     "state_class": SensorStateClass.MEASUREMENT

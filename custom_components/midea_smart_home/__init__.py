@@ -158,6 +158,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         # How long a control value stays pinned against stale device reads
         # (seconds); dishwashers need a longer window than the default.
         control_timeout = device_mapping.get("control_timeout", 5.0)
+        control_type = device_mapping.get("control_type")
         initial_control = device_mapping.get("initial_control")
         # D9 drum location ids (default: left=1/right=2; some models use 3/4)
         drum_locations = device_mapping.get("drum_locations")
@@ -219,6 +220,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
                 polling_query=polling_query,
                 control_timeout=control_timeout,
                 drum_locations=drum_locations,
+                control_type=control_type,
             )
             device.open()
             import time
