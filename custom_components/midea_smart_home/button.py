@@ -9,7 +9,10 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .coordinator import MideaCoordinator
 from .entity import MideaBaseEntity, iter_midea_device_configs
 
+from .midea_lib.logger import prefix_logger
+
 _LOGGER = logging.getLogger(__name__)
+_LOGGER = prefix_logger(_LOGGER, "[entity]")
 
 async def async_setup_entry(
     hass: HomeAssistant,
@@ -60,4 +63,4 @@ class MideaButtonEntity(MideaBaseEntity, ButtonEntity):
         if command and isinstance(command, dict):
             await self.coordinator.async_set_control(command)
         else:
-            _LOGGER.warning("[entity] button has no command: entity=%s", self._entity_key)
+            _LOGGER.warning("button has no command: entity=%s", self._entity_key)

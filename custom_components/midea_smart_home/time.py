@@ -11,7 +11,10 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .coordinator import MideaCoordinator
 from .entity import MideaBaseEntity, iter_midea_device_configs
 
+from .midea_lib.logger import prefix_logger
+
 _LOGGER = logging.getLogger(__name__)
+_LOGGER = prefix_logger(_LOGGER, "[entity]")
 
 async def async_setup_entry(
     hass: HomeAssistant,
@@ -98,7 +101,7 @@ class MideaTimeEntity(MideaBaseEntity, TimeEntity):
                     minutes = duration_minutes % 60
                     return time(hour=min(hours, 23), minute=min(minutes, 59))
             except (ValueError, TypeError):
-                _LOGGER.warning("[entity] duration conversion failed: entity=%s", self._entity_key)
+                _LOGGER.warning("duration conversion failed: entity=%s", self._entity_key)
                 return None
         else:
             # Separate hour/minute fields mode
@@ -128,7 +131,7 @@ class MideaTimeEntity(MideaBaseEntity, TimeEntity):
                     # User input 15:30 -> show 15:30 -> send 15:30 to device
                     return time(hour=min(hours, 23), minute=min(minutes, 59))
             except (ValueError, TypeError):
-                _LOGGER.warning("[entity] time conversion failed: entity=%s", self._entity_key)
+                _LOGGER.warning("time conversion failed: entity=%s", self._entity_key)
                 return None
 
     async def async_set_value(self, value: time) -> None:
@@ -142,7 +145,7 @@ class MideaTimeEntity(MideaBaseEntity, TimeEntity):
             if self._use_duration:
                 # Single duration field mode
                 if "duration" not in self._target_keys:
-                    _LOGGER.error("[entity] target_keys missing: key=duration entity=%s", self._entity_key)
+                    _LOGGER.error("target_keys missing: key=duration entity=%s", self._entity_key)
                     return
 
                 if self._time_mode == "convert":
@@ -172,7 +175,7 @@ class MideaTimeEntity(MideaBaseEntity, TimeEntity):
             else:
                 # Separate hour/minute fields mode
                 if "hour" not in self._target_keys or "minute" not in self._target_keys:
-                    _LOGGER.error("[entity] target_keys missing: key=hour/minute entity=%s", self._entity_key)
+                    _LOGGER.error("target_keys missing: key=hour/minute entity=%s", self._entity_key)
                     return
 
                 if self._time_mode == "convert":
@@ -206,5 +209,5 @@ class MideaTimeEntity(MideaBaseEntity, TimeEntity):
             await self.coordinator.async_set_control(command)
 
         except Exception as e:
-            _LOGGER.error("[entity] set time value failed: entity=%s error=%s", self._entity_key, str(e))
+            _LOGGER.error("set time value failed: entity=%s error=%s", self._entity_key, str(e))
             raise

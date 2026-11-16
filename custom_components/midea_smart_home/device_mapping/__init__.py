@@ -3,7 +3,10 @@ from pathlib import Path
 import logging
 import re
 
+from ..midea_lib.logger import prefix_logger
+
 _LOGGER = logging.getLogger(__name__)
+_LOGGER = prefix_logger(_LOGGER, "[mapping]")
 
 DEVICE_MAPPINGS = {}
 
@@ -29,7 +32,7 @@ def load_device_mappings():
     mapping_dir = Path(__file__).parent
 
     if not mapping_dir.exists():
-        _LOGGER.error("[mapping] mapping directory not found: path=%s", mapping_dir)
+        _LOGGER.error("mapping directory not found: path=%s", mapping_dir)
         return
 
     try:
@@ -45,13 +48,13 @@ def load_device_mappings():
                         device_type = int(file.stem.replace('T0x', ''), 16)
                         DEVICE_MAPPINGS[device_type] = module.DEVICE_MAPPING
                         _LOGGER.debug(
-                            "[mapping] loaded: file=%s device_type=0x%X",
+                            "loaded: file=%s device_type=0x%X",
                             file.stem, device_type
                         )
                 except (ImportError, ValueError, AttributeError) as e:
-                    _LOGGER.error("[mapping] load failed: file=%s error=%s", file.name, e)
+                    _LOGGER.error("load failed: file=%s error=%s", file.name, e)
     except OSError as e:
-        _LOGGER.error("[mapping] directory iterate failed: error=%s", e)
+        _LOGGER.error("directory iterate failed: error=%s", e)
 
 load_device_mappings()
 
@@ -131,8 +134,9 @@ def get_device_mapping(
 def is_d9_polling_device(device_type: int, device_mapping: dict) -> bool:
     """Check if a T0xD9 device uses the dedicated poll thread.
 
-    D9 devices whose initial_query contains only one drum key (da/db/dc)
-    are polled by a dedicated thread; multi-drum devices rely on push.
+    Only left/right layouts query a single drum key (da/db/dc) per cycle and
+    are driven by the dedicated poll thread; top/bottom layouts carry both
+    drums (db+dc) and rely on push.
     """
     if device_type != 0xD9:
         return False
@@ -142,4 +146,22 @@ def is_d9_polling_device(device_type: int, device_mapping: dict) -> bool:
             initial_keys |= query
         elif isinstance(query, dict):
             initial_keys |= set(query.keys())
-    return len(initial_keys) <= 1
+    return len(initial_keys) == 1 and initial_keys <= {"da", "db", "dc"}
+
+def d9_may_need_polling(device_type: int) -> bool:
+    """Whether a D9 device type has any polling-capable profile mapping.
+
+    Used by the options flow: an unmapped D9 unit is auto-detected at runtime
+    and may end up on the dedicated drum-polling thread, so the polling
+    interval must stay configurable even if the static default mapping looks
+    push-driven.
+    """
+    if device_type != 0xD9:
+        return False
+    mapping = DEVICE_MAPPINGS.get(device_type, {})
+    for key, profile in mapping.items():
+        if not key.startswith("default_"):
+            continue
+        if is_d9_polling_device(device_type, profile):
+            return True
+    return False
