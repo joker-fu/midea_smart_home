@@ -29,20 +29,21 @@
     "step": {
       "auto_add_device": {
         "data": {
-          "account": "Account",
-          "password": "Password",
+          "account": "Meiju Account",
+          "password": "Meiju Password",
           "scan_address": "Scan Address",
           "scan_mode": "Scan Mode"
         },
         "data_description": {
+          "account": "Same account as the Midea Meiju app (phone number or email)",
           "scan_address": "Enter router address (e.g., 192.168.1.1) to scan entire subnet, device IP to scan specific device, or 'auto' for automatic detection",
           "scan_mode": "Note: In broadcast mode, if the device list is repeatedly incomplete, try unicast mode (scanning may take longer in this mode; please wait patiently)."
         },
-        "description": "Enter your Midea Meiju account credentials to download necessary resource files",
-        "title": "Auto Add Devices (Account Login)"
+        "description": "Sign in with the Midea Meiju app credentials, download the required cloud resources, then probe each device in the order ☁️Cloud V2 → 🖥️Lan → ☁️Cloud V1.",
+        "title": "Hybrid Add Devices"
       },
       "discover": {
-        "description": "Searching for Midea devices on your local network...",
+        "description": "Scanning and probing devices, please wait...",
         "title": "Discovering Devices"
       },
       "get_token": {
@@ -56,8 +57,23 @@
           "lua_file": "Device protocol file path",
           "token": "{token_required}"
         },
-        "description": "Name: {device_name}\nModel: {device_model}\nID: {device_id}\nIP: {ip_address}\nSN: {sn}\nSN8: {sn8}\nProtocol: {protocol_version}\n{error}{unsupported_protocol}",
+        "description": "Name: {device_name}\nModel: {device_model}\nID: {device_id}\nIP: {ip_address}\nSN: {sn}\nSN8: {sn8}\nProtocol: {protocol_version}\nConnection: {connection_type}\n{error}{unsupported_protocol}",
         "title": "Device Authentication {progress}"
+      },
+      "local_add_device": {
+        "data": {
+          "account": "Meiju Account",
+          "password": "Meiju Password",
+          "scan_address": "Scan Address",
+          "scan_mode": "Scan Mode"
+        },
+        "data_description": {
+          "account": "Same account as the Midea Meiju app (phone number or email)",
+          "scan_address": "Enter router address (e.g., 192.168.1.1) to scan entire subnet, device IP to scan specific device, or 'auto' for automatic detection",
+          "scan_mode": "Note: In broadcast mode, if the device list is repeatedly incomplete, try unicast mode (scanning may take longer in this mode; please wait patiently)."
+        },
+        "description": "Sign in with the Midea Meiju app credentials to download the required resource files, then connect to devices over the local network only (no cloud probing).",
+        "title": "LAN Add Devices"
       },
       "manual_add_device": {
         "data": {
@@ -136,13 +152,14 @@
         "data": {
           "devices": "Devices"
         },
-        "description": "Select devices to add, where devices marked with ⏳ are new device types; contact the original author to request support.{unsupported_list}",
+        "description": "Select devices to add. The badge shows how each device is connected (🖥️Lan / ☁️Cloud V2 / ☁️Cloud V1).{pending_notice}{unsupported_list}",
         "title": "Select Devices"
       },
       "user": {
-        "description": "Choose how to add devices:",
+        "description": "Choose how to add devices. LAN mode connects locally only; hybrid mode probes ☁️Cloud V2 → 🖥️Lan → ☁️Cloud V1:",
         "menu_options": {
-          "auto_add_device": "🔎 Auto Add Devices (account login, LAN scan)",
+          "auto_add_device": "☁️ Hybrid Mode (cloud + LAN auto probe)",
+          "local_add_device": "🖥️ LAN Mode (local only, no cloud probing)",
           "manual_add_device": "✍️ Manual Add Device (no account, enter Token/Key and Lua file manually)"
         },
         "title": "Midea Smart Home Setup"
@@ -336,6 +353,9 @@
       },
       "water_pump_running": {
         "name": "Water Pump Running"
+      },
+      "water_temperature_state": {
+        "name": "Water Temperature Alert"
       }
     },
     "button": {
@@ -344,6 +364,9 @@
       },
       "left_stove_off": {
         "name": "Turn Off Left Stove"
+      },
+      "manual_feed": {
+        "name": "Manual Feed"
       },
       "right_stove_off": {
         "name": "Turn Off Right Stove"
@@ -742,6 +765,21 @@
       "common_light": {
         "name": "Light"
       },
+      "fish_light": {
+        "name": "Fish Tank Light",
+        "state_attributes": {
+          "effect": {
+            "state": {
+              "light_scene_0": "Dazzling Sun",
+              "light_scene_1": "Silver Screen",
+              "light_scene_2": "Antarctic Ocean",
+              "light_scene_3": "Deep-sea Vent",
+              "light_scene_4": "Photosynthesis",
+              "light_scene_5": "Rainbow Flow"
+            }
+          }
+        }
+      },
       "light": {
         "name": "Smart Light",
         "state_attributes": {
@@ -809,6 +847,9 @@
       },
       "dishwasher_storage_duration": {
         "name": "Antibacterial Storage"
+      },
+      "feed_cycle": {
+        "name": "Feeding Cycle"
       },
       "honey_temperature": {
         "name": "Honey Water Temperature"
@@ -896,6 +937,12 @@
       },
       "water_hardness": {
         "name": "Water Hardness"
+      },
+      "water_temperature_max": {
+        "name": "Maximum Water Temperature"
+      },
+      "water_temperature_min": {
+        "name": "Minimum Water Temperature"
       },
       "weight": {
         "name": "Weight"
@@ -1760,6 +1807,14 @@
           "off": "Off"
         }
       },
+      "motor_speed": {
+        "name": "Motor Speed",
+        "state": {
+          "motor_speed_fast": "Fast",
+          "motor_speed_medium": "Medium",
+          "motor_speed_silent": "Silent"
+        }
+      },
       "mouthfeel": {
         "name": "Mouthfeel",
         "state": {
@@ -2504,6 +2559,24 @@
           "off": "Off"
         }
       },
+      "water_pump_disconnect_delay_time": {
+        "name": "Water Pump Disconnect Delay",
+        "state": {
+          "delay_1min": "1 min",
+          "delay_5min": "5 min",
+          "delay_10s": "10 s",
+          "delay_30s": "30 s"
+        }
+      },
+      "water_pump_pause_time": {
+        "name": "Water Pump Pause Time",
+        "state": {
+          "pause_3min": "3 min",
+          "pause_5min": "5 min",
+          "pause_10min": "10 min",
+          "pause_15min": "15 min"
+        }
+      },
       "whirl_wind": {
         "name": "Whirl Wind",
         "state": {
@@ -2817,6 +2890,9 @@
       "current_time_power": {
         "name": "Real-time Power"
       },
+      "current_water_temperature": {
+        "name": "Current Water Temperature"
+      },
       "curtain_position": {
         "name": "Curtain Position"
       },
@@ -3066,11 +3142,35 @@
           "working_control_nonsupport": "Control Not Supported While Running"
         }
       },
+      "fan_cleanliness": {
+        "name": "Fan Cleanliness"
+      },
       "fan_output": {
         "name": "Fan Status"
       },
       "fan_type": {
         "name": "Fan Mode"
+      },
+      "filter_cleanliness": {
+        "name": "Filter Cleanliness"
+      },
+      "filter_install_time_slot1": {
+        "name": "Physical Filter Last Replacement Time"
+      },
+      "filter_install_time_slot2": {
+        "name": "Biological Filter Last Replacement Time"
+      },
+      "filter_remaining_days_slot1": {
+        "name": "Physical Filter Remaining Days"
+      },
+      "filter_remaining_days_slot2": {
+        "name": "Biological Filter Remaining Days"
+      },
+      "filter_remaining_percent_slot1": {
+        "name": "Physical Filter Remaining Percent"
+      },
+      "filter_remaining_percent_slot2": {
+        "name": "Biological Filter Remaining Percent"
       },
       "filter_use_per": {
         "name": "Filter Usage"
@@ -3192,6 +3292,15 @@
       "mode_set5": {
         "name": "Mode (Zone 5)"
       },
+      "monthly_energy_consumption": {
+        "name": "Monthly Energy Consumption"
+      },
+      "monthly_gas_consumption": {
+        "name": "Monthly Gas Consumption"
+      },
+      "monthly_water_consumption": {
+        "name": "Monthly Water Consumption"
+      },
       "mouthfeel": {
         "name": "Mouthfeel"
       },
@@ -3200,6 +3309,9 @@
       },
       "night_light_brightness": {
         "name": "Night Light Brightness"
+      },
+      "oil_box_cleanliness": {
+        "name": "Oil Box Cleanliness"
       },
       "order_time": {
         "name": "Order Remaining Time"
@@ -3365,6 +3477,18 @@
       "temperature_bottom": {
         "name": "Bottom Temperature"
       },
+      "today_energy_consumption": {
+        "name": "Today's Energy Consumption"
+      },
+      "today_feed_count": {
+        "name": "Today's Feed Count"
+      },
+      "today_gas_consumption": {
+        "name": "Today's Gas Consumption"
+      },
+      "today_water_consumption": {
+        "name": "Today's Water Consumption"
+      },
       "top_temperature": {
         "name": "Top Temperature"
       },
@@ -3458,6 +3582,12 @@
       "water_volume": {
         "name": "Outlet Water Flow Rate"
       },
+      "weekly_energy_consumption": {
+        "name": "This Week's Energy Consumption"
+      },
+      "weekly_water_consumption": {
+        "name": "This Week's Water Consumption"
+      },
       "wind_pressure": {
         "name": "Wind Pressure"
       },
@@ -3485,6 +3615,15 @@
       },
       "work_time": {
         "name": "Work Time"
+      },
+      "yearly_energy_consumption": {
+        "name": "Yearly Energy Consumption"
+      },
+      "yearly_water_consumption": {
+        "name": "Yearly Water Consumption"
+      },
+      "yesterday_energy_consumption": {
+        "name": "Yesterday Energy Consumption"
       }
     },
     "switch": {
@@ -3547,6 +3686,9 @@
       },
       "change_litre_switch": {
         "name": "Variable Liter"
+      },
+      "child_lock_switch": {
+        "name": "Child Lock"
       },
       "cold_water": {
         "name": "Zero Cold Water Single Cycle"
@@ -3644,6 +3786,9 @@
       "eplus": {
         "name": "Large Flow"
       },
+      "feed_protection_switch": {
+        "name": "Feed Protection"
+      },
       "fengguan_remove_odor": {
         "name": "Deodorization"
       },
@@ -3698,6 +3843,9 @@
       "ice": {
         "name": "Ice Making"
       },
+      "indicator_light_switch": {
+        "name": "Indicator Light"
+      },
       "indoor_humidity": {
         "name": "Indoor Humidity"
       },
@@ -3734,11 +3882,17 @@
       "maintenance_reminder_switch": {
         "name": "Maintenance Reminder Switch"
       },
+      "manual_pull_mode": {
+        "name": "Manual Pull"
+      },
       "micro_leak_protection": {
         "name": "Micro Leak Protection"
       },
       "microbubble": {
         "name": "Microbubble Soak"
+      },
+      "motor_reverse": {
+        "name": "Motor Reverse"
       },
       "move_clean": {
         "name": "Move Clean"
@@ -3827,6 +3981,9 @@
       "silent_mode": {
         "name": "Silent Mode"
       },
+      "silent_switch": {
+        "name": "Silent Mode"
+      },
       "sleep_state1": {
         "name": "Sleep State (Zone 1)"
       },
@@ -3905,6 +4062,12 @@
       "water_pump": {
         "name": "Water Pump"
       },
+      "water_pump_disconnect_alert_switch": {
+        "name": "Water Pump Disconnect Alert"
+      },
+      "water_pump_switch": {
+        "name": "Water Pump"
+      },
       "waterions": {
         "name": "Air Sterilization"
       },
@@ -3929,6 +4092,12 @@
       },
       "power_on_timer": {
         "name": "Power On Timer"
+      },
+      "silent_end_time": {
+        "name": "Silence End Time"
+      },
+      "silent_start_time": {
+        "name": "Silence Start Time"
       },
       "work_time": {
         "name": "Work Time"
@@ -4016,18 +4185,33 @@
     "step": {
       "add_device_auto": {
         "data": {
-          "account": "Account",
-          "password": "Password",
+          "account": "Meiju Account",
+          "password": "Meiju Password",
           "scan_address": "Scan Address",
           "scan_mode": "Scan Mode"
         },
         "data_description": {
-          "account": "The current Meiju Cloud account and password are verified before adding devices",
+          "account": "Same account as the Midea Meiju app (phone number or email)",
           "scan_address": "Enter router address to scan entire subnet, device IP to scan specific device, or 'auto' for automatic detection",
           "scan_mode": "Note: In broadcast mode, if the device list is repeatedly incomplete, try unicast mode (scanning may take longer in this mode; please wait patiently)."
         },
-        "description": "Search for new devices on local network (already added devices will be filtered out)",
-        "title": "Auto Add New Device"
+        "description": "Scan the local network and probe each device in the order ☁️Cloud V2 → 🖥️Lan → ☁️Cloud V1 (already added devices will be filtered out).",
+        "title": "Hybrid Add Device"
+      },
+      "add_device_local": {
+        "data": {
+          "account": "Meiju Account",
+          "password": "Meiju Password",
+          "scan_address": "Scan Address",
+          "scan_mode": "Scan Mode"
+        },
+        "data_description": {
+          "account": "Same account as the Midea Meiju app (phone number or email)",
+          "scan_address": "Enter router address to scan entire subnet, device IP to scan specific device, or 'auto' for automatic detection",
+          "scan_mode": "Note: In broadcast mode, if the device list is repeatedly incomplete, try unicast mode (scanning may take longer in this mode; please wait patiently)."
+        },
+        "description": "Connect to devices over the local network only, without cloud probing (already added devices will be filtered out).",
+        "title": "LAN Add Device"
       },
       "add_device_manual": {
         "data": {
@@ -4071,7 +4255,7 @@
           "polling_device_switch": "{name} - Polling",
           "polling_device_interval": "{name} - Polling Interval"
         },
-        "description": "⚠️ The following devices have delayed status updates for some attributes. Configure auxiliary polling for real-time status updates:\n\n{device_info}\n\n💡 Tip: Select \"off\" to completely disable polling (won't affect device-initiated status updates)",
+        "description": "⚠️ The following devices have delayed status updates for some attributes. Configure auxiliary polling for real-time status updates:\n\n{device_info}\n\n💡 Tip: Select \"off\" to completely disable polling (won't affect device-initiated status updates)\n\n☁️ Cloud devices: the interval controls how often the integration queries the cloud API for state updates",
         "title": "Configure Polling Interval"
       },
       "configure_update_check": {
@@ -4105,12 +4289,13 @@
           "lua_file": "Device protocol file path",
           "token": "{token_required}"
         },
-        "description": "Name: {device_name}\nModel: {device_model}\nID: {device_id}\nIP: {ip_address}\nSN: {sn}\nSN8: {sn8}\nProtocol: {protocol_version}\n{error}{unsupported_protocol}",
+        "description": "Name: {device_name}\nModel: {device_model}\nID: {device_id}\nIP: {ip_address}\nSN: {sn}\nSN8: {sn8}\nProtocol: {protocol_version}\nConnection: {connection_type}\n{error}{unsupported_protocol}",
         "title": "Device Authentication {progress}"
       },
       "init": {
         "menu_options": {
-          "add_device_auto": "🔎 Auto Add Device (LAN scan)",
+          "add_device_auto": "☁️ Hybrid Mode (cloud + LAN auto probe)",
+          "add_device_local": "🖥️ LAN Mode (local only)",
           "add_device_manual": "✍️ Manual Add Device (no account)",
           "backup_config": "📦 Backup & Download Local Configuration",
           "clear_cache": "🗑️ Clear local configuration files",
@@ -4180,7 +4365,7 @@
         "data": {
           "devices": "Devices"
         },
-        "description": "Select devices to add, where devices marked with ⏳ are new device types; contact the original author to request support.{unsupported_list}",
+        "description": "Select devices to add. The badge shows how each device is connected (🖥️Lan / ☁️Cloud V2 / ☁️Cloud V1).{pending_notice}{unsupported_list}",
         "title": "Select New Devices"
       },
       "select_device_option": {

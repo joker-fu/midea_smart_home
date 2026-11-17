@@ -29,20 +29,21 @@
     "step": {
       "auto_add_device": {
         "data": {
-          "account": "账号",
-          "password": "密码",
+          "account": "美居账号",
+          "password": "美居密码",
           "scan_address": "扫描地址",
           "scan_mode": "扫描模式"
         },
         "data_description": {
+          "account": "与美的美居 App 登录使用相同的账号（手机号或邮箱）",
           "scan_address": "[1] 输入路由器地址（如 192.168.1.1）扫描整个网段\n[2] 输入设备 IP 扫描指定设备\n[3] 输入「auto」自动检测（默认）",
           "scan_mode": "说明：广播模式下，若多次出现搜索出的设备列表显示不全，请尝试使用单播模式 (该模式下扫描时间可能会延长，需耐心等待)。"
         },
-        "description": "输入美的美居账号密码，下载必要的资源文件",
-        "title": "自动添加设备（账号登录）"
+        "description": "使用美的美居 App 的账号密码登录，下载必要的云端资源，再按 ☁️Cloud V2 → 🖥️Lan → ☁️Cloud V1 的优先级探测每台设备的可用接入方式。",
+        "title": "混合模式添加设备"
       },
       "discover": {
-        "description": "正在局域网中搜索美的设备...",
+        "description": "正在扫描并探测设备，请稍候...",
         "title": "发现设备"
       },
       "get_token": {
@@ -56,8 +57,23 @@
           "lua_file": "设备协议文件路径",
           "token": "{token_required}"
         },
-        "description": "名称: {device_name}\n型号: {device_model}\nID: {device_id}\nIP: {ip_address}\nSN: {sn}\nSN8: {sn8}\n协议: {protocol_version}\n{error}{unsupported_protocol}",
+        "description": "名称: {device_name}\n型号: {device_model}\nID: {device_id}\nIP: {ip_address}\nSN: {sn}\nSN8: {sn8}\n协议: {protocol_version}\n连接方式: {connection_type}\n{error}{unsupported_protocol}",
         "title": "设备认证 {progress}"
+      },
+      "local_add_device": {
+        "data": {
+          "account": "美居账号",
+          "password": "美居密码",
+          "scan_address": "扫描地址",
+          "scan_mode": "扫描模式"
+        },
+        "data_description": {
+          "account": "与美的美居 App 登录使用相同的账号（手机号或邮箱）",
+          "scan_address": "[1] 输入路由器地址（如 192.168.1.1）扫描整个网段\n[2] 输入设备 IP 扫描指定设备\n[3] 输入「auto」自动检测（默认）",
+          "scan_mode": "说明：广播模式下，若多次出现搜索出的设备列表显示不全，请尝试使用单播模式 (该模式下扫描时间可能会延长，需耐心等待)。"
+        },
+        "description": "使用美的美居 App 的账号密码登录并下载必要的资源文件，仅通过局域网直连设备，不探测云端。",
+        "title": "局域网模式添加设备"
       },
       "manual_add_device": {
         "data": {
@@ -136,13 +152,14 @@
         "data": {
           "devices": "设备"
         },
-        "description": "选择要添加的设备，其中带 ⏳ 标记为新类型设备，如需支持请联系原作者进行适配。{unsupported_list}",
+        "description": "选择要添加的设备，图标表示连接方式（🖥️Lan → 局域网 / ☁️Cloud V2 → 云端 v2 / ☁️Cloud V1 → 云端 v1）。{pending_notice}{unsupported_list}",
         "title": "选择设备"
       },
       "user": {
-        "description": "请选择添加设备的方式：",
+        "description": "请选择添加设备的方式。局域网模式仅本地直连；混合模式按 ☁️Cloud V2 → 🖥️Lan → ☁️Cloud V1 的优先级探测：",
         "menu_options": {
-          "auto_add_device": "🔎 自动添加设备（登录账号，扫描局域网）",
+          "auto_add_device": "☁️ 混合模式（云端 + 局域网自动探测）",
+          "local_add_device": "🖥️ 局域网模式（仅本地直连，不探测云端）",
           "manual_add_device": "✍️ 手动添加设备（无需账号，手动输入 Token/Key 及 Lua 文件）"
         },
         "title": "Midea Smart Home 设置"
@@ -336,6 +353,9 @@
       },
       "water_pump_running": {
         "name": "水泵运行状态"
+      },
+      "water_temperature_state": {
+        "name": "水温异常"
       }
     },
     "button": {
@@ -344,6 +364,9 @@
       },
       "left_stove_off": {
         "name": "关闭左灶"
+      },
+      "manual_feed": {
+        "name": "手动投喂"
       },
       "right_stove_off": {
         "name": "关闭右灶"
@@ -742,6 +765,21 @@
       "common_light": {
         "name": "照明"
       },
+      "fish_light": {
+        "name": "鱼缸灯",
+        "state_attributes": {
+          "effect": {
+            "state": {
+              "light_scene_0": "熔光炫日",
+              "light_scene_1": "银幕白璧",
+              "light_scene_2": "南极冰海",
+              "light_scene_3": "深海热泉",
+              "light_scene_4": "光合作用",
+              "light_scene_5": "彩虹流光"
+            }
+          }
+        }
+      },
       "light": {
         "name": "智能灯",
         "state_attributes": {
@@ -809,6 +847,9 @@
       },
       "dishwasher_storage_duration": {
         "name": "抑菌存储"
+      },
+      "feed_cycle": {
+        "name": "断网喂养周期"
       },
       "honey_temperature": {
         "name": "蜂蜜水设定温度"
@@ -896,6 +937,12 @@
       },
       "water_hardness": {
         "name": "进水硬度"
+      },
+      "water_temperature_max": {
+        "name": "水温上限"
+      },
+      "water_temperature_min": {
+        "name": "水温下限"
       },
       "weight": {
         "name": "重量"
@@ -1760,6 +1807,14 @@
           "off": "关闭"
         }
       },
+      "motor_speed": {
+        "name": "电机速度",
+        "state": {
+          "motor_speed_fast": "快速",
+          "motor_speed_medium": "中速",
+          "motor_speed_silent": "静音"
+        }
+      },
       "mouthfeel": {
         "name": "口感",
         "state": {
@@ -2504,6 +2559,24 @@
           "off": "空档"
         }
       },
+      "water_pump_disconnect_delay_time": {
+        "name": "水泵断连延时",
+        "state": {
+          "delay_1min": "1 分钟",
+          "delay_5min": "5 分钟",
+          "delay_10s": "10 秒",
+          "delay_30s": "30 秒"
+        }
+      },
+      "water_pump_pause_time": {
+        "name": "喂食保护时间",
+        "state": {
+          "pause_3min": "3 分钟",
+          "pause_5min": "5 分钟",
+          "pause_10min": "10 分钟",
+          "pause_15min": "15 分钟"
+        }
+      },
       "whirl_wind": {
         "name": "旋流风",
         "state": {
@@ -2817,6 +2890,9 @@
       "current_time_power": {
         "name": "实时功率"
       },
+      "current_water_temperature": {
+        "name": "当前水温"
+      },
       "curtain_position": {
         "name": "窗帘开合度"
       },
@@ -3066,11 +3142,35 @@
           "working_control_nonsupport": "工作中不支持控制"
         }
       },
+      "fan_cleanliness": {
+        "name": "风机洁净度"
+      },
       "fan_output": {
         "name": "风机状态"
       },
       "fan_type": {
         "name": "风机模式"
+      },
+      "filter_cleanliness": {
+        "name": "滤网洁净度"
+      },
+      "filter_install_time_slot1": {
+        "name": "物理滤材最近更换时间"
+      },
+      "filter_install_time_slot2": {
+        "name": "生化滤材最近更换时间"
+      },
+      "filter_remaining_days_slot1": {
+        "name": "物理滤材剩余天数"
+      },
+      "filter_remaining_days_slot2": {
+        "name": "生化滤材剩余天数"
+      },
+      "filter_remaining_percent_slot1": {
+        "name": "物理滤材剩余比例"
+      },
+      "filter_remaining_percent_slot2": {
+        "name": "生化滤材剩余比例"
       },
       "filter_use_per": {
         "name": "滤芯使用率"
@@ -3192,6 +3292,15 @@
       "mode_set5": {
         "name": "模式(子设备5)"
       },
+      "monthly_energy_consumption": {
+        "name": "月度用电量"
+      },
+      "monthly_gas_consumption": {
+        "name": "月度用气量"
+      },
+      "monthly_water_consumption": {
+        "name": "月度用水量"
+      },
       "mouthfeel": {
         "name": "口感"
       },
@@ -3200,6 +3309,9 @@
       },
       "night_light_brightness": {
         "name": "夜灯亮度"
+      },
+      "oil_box_cleanliness": {
+        "name": "油盒洁净度"
       },
       "order_time": {
         "name": "预约剩余时间"
@@ -3365,6 +3477,18 @@
       "temperature_bottom": {
         "name": "底部温度"
       },
+      "today_energy_consumption": {
+        "name": "今日用电量"
+      },
+      "today_feed_count": {
+        "name": "今日投喂次数"
+      },
+      "today_gas_consumption": {
+        "name": "今日用气量"
+      },
+      "today_water_consumption": {
+        "name": "今日用水量"
+      },
       "top_temperature": {
         "name": "顶部温度"
       },
@@ -3458,6 +3582,12 @@
       "water_volume": {
         "name": "出水流量"
       },
+      "weekly_energy_consumption": {
+        "name": "本周用电量"
+      },
+      "weekly_water_consumption": {
+        "name": "本周用水量"
+      },
       "wind_pressure": {
         "name": "风压"
       },
@@ -3485,6 +3615,15 @@
       },
       "work_time": {
         "name": "工作时间"
+      },
+      "yearly_energy_consumption": {
+        "name": "年度用电量"
+      },
+      "yearly_water_consumption": {
+        "name": "年度用水量"
+      },
+      "yesterday_energy_consumption": {
+        "name": "昨日用电量"
       }
     },
     "switch": {
@@ -3547,6 +3686,9 @@
       },
       "change_litre_switch": {
         "name": "智能变频"
+      },
+      "child_lock_switch": {
+        "name": "童锁"
       },
       "cold_water": {
         "name": "零冷水单次循环"
@@ -3644,6 +3786,9 @@
       "eplus": {
         "name": "大水量"
       },
+      "feed_protection_switch": {
+        "name": "喂食保护"
+      },
       "fengguan_remove_odor": {
         "name": "除菌"
       },
@@ -3698,6 +3843,9 @@
       "ice": {
         "name": "制冰"
       },
+      "indicator_light_switch": {
+        "name": "指示灯"
+      },
       "indoor_humidity": {
         "name": "室内湿度"
       },
@@ -3734,11 +3882,17 @@
       "maintenance_reminder_switch": {
         "name": "维护提醒开关"
       },
+      "manual_pull_mode": {
+        "name": "手动拉帘"
+      },
       "micro_leak_protection": {
         "name": "微漏保护"
       },
       "microbubble": {
         "name": "超微净泡"
+      },
+      "motor_reverse": {
+        "name": "电机反转"
       },
       "move_clean": {
         "name": "移动清洗"
@@ -3827,6 +3981,9 @@
       "silent_mode": {
         "name": "超智能降噪"
       },
+      "silent_switch": {
+        "name": "免打扰模式"
+      },
       "sleep_state1": {
         "name": "睡眠状态(子设备1)"
       },
@@ -3905,6 +4062,12 @@
       "water_pump": {
         "name": "水泵开关"
       },
+      "water_pump_disconnect_alert_switch": {
+        "name": "水泵断连提醒"
+      },
+      "water_pump_switch": {
+        "name": "水泵"
+      },
       "waterions": {
         "name": "空气杀菌"
       },
@@ -3929,6 +4092,12 @@
       },
       "power_on_timer": {
         "name": "定时开机"
+      },
+      "silent_end_time": {
+        "name": "免打扰结束时间"
+      },
+      "silent_start_time": {
+        "name": "免打扰开始时间"
       },
       "work_time": {
         "name": "工作时间"
@@ -4016,18 +4185,33 @@
     "step": {
       "add_device_auto": {
         "data": {
-          "account": "账号",
-          "password": "密码",
+          "account": "美居账号",
+          "password": "美居密码",
           "scan_address": "扫描地址",
           "scan_mode": "扫描模式"
         },
         "data_description": {
-          "account": "自动添加设备前会先校验当前美的美居账号密码",
+          "account": "与美的美居 App 登录使用相同的账号（手机号或邮箱）",
           "scan_address": "[1] 输入路由器地址扫描整个网段\n[2] 输入设备 IP 扫描指定设备\n[3] 输入「auto」自动检测（默认）",
           "scan_mode": "说明：广播模式下，若多次出现搜索出的设备列表显示不全，请尝试使用单播模式 (该模式下扫描时间可能会延长，需耐心等待)。"
         },
-        "description": "搜索局域网中的新设备（已添加的设备将自动过滤）",
-        "title": "自动添加新设备"
+        "description": "扫描局域网，并按 ☁️Cloud V2 → 🖥️Lan → ☁️Cloud V1 的优先级探测每台设备的可用接入方式；已添加的设备将自动过滤。",
+        "title": "混合模式添加设备"
+      },
+      "add_device_local": {
+        "data": {
+          "account": "美居账号",
+          "password": "美居密码",
+          "scan_address": "扫描地址",
+          "scan_mode": "扫描模式"
+        },
+        "data_description": {
+          "account": "与美的美居 App 登录使用相同的账号（手机号或邮箱）",
+          "scan_address": "[1] 输入路由器地址扫描整个网段\n[2] 输入设备 IP 扫描指定设备\n[3] 输入「auto」自动检测（默认）",
+          "scan_mode": "说明：广播模式下，若多次出现搜索出的设备列表显示不全，请尝试使用单播模式 (该模式下扫描时间可能会延长，需耐心等待)。"
+        },
+        "description": "仅通过局域网直连设备，不探测云端（沿用原有接入方式）；已添加的设备将自动过滤。",
+        "title": "局域网模式添加设备"
       },
       "add_device_manual": {
         "data": {
@@ -4071,7 +4255,7 @@
           "polling_device_switch": "{name} - 轮询开关",
           "polling_device_interval": "{name} - 轮询间隔时间"
         },
-        "description": "⚠️ 以下设备个别属性状态推送有延迟，请配置辅助轮询以获取实时状态更新数据：\n\n{device_info}\n\n💡 提示：选择「off」将完全禁用该设备的轮询（不影响设备主动上报）",
+        "description": "⚠️ 以下设备个别属性状态推送有延迟，请配置辅助轮询以获取实时状态更新数据：\n\n{device_info}\n\n💡 提示：选择「off」将完全禁用该设备的轮询（不影响设备主动上报）\n\n☁️ 云端设备：此间隔为集成向云端查询设备状态的刷新频率",
         "title": "配置轮询间隔时间"
       },
       "configure_update_check": {
@@ -4105,12 +4289,13 @@
           "lua_file": "设备协议文件路径",
           "token": "{token_required}"
         },
-        "description": "名称: {device_name}\n型号: {device_model}\nID: {device_id}\nIP: {ip_address}\nSN: {sn}\nSN8: {sn8}\n协议: {protocol_version}\n{error}{unsupported_protocol}",
+        "description": "名称: {device_name}\n型号: {device_model}\nID: {device_id}\nIP: {ip_address}\nSN: {sn}\nSN8: {sn8}\n协议: {protocol_version}\n连接方式: {connection_type}\n{error}{unsupported_protocol}",
         "title": "设备认证 {progress}"
       },
       "init": {
         "menu_options": {
-          "add_device_auto": "🔎 自动添加设备（扫描局域网）",
+          "add_device_auto": "☁️ 混合模式添加设备（云端 + 局域网自动探测）",
+          "add_device_local": "🖥️ 局域网模式添加设备（仅本地直连）",
           "add_device_manual": "✍️ 手动添加设备（无需账号）",
           "backup_config": "📦 备份本地配置文件",
           "clear_cache": "🗑️ 清理本地配置文件",
@@ -4180,7 +4365,7 @@
         "data": {
           "devices": "设备"
         },
-        "description": "选择要添加的设备，其中带 ⏳ 标记为新类型设备，如需支持请联系原作者进行适配。{unsupported_list}",
+        "description": "选择要添加的设备，图标表示连接方式（🖥️Lan → 局域网 / ☁️Cloud V2 → 云端 v2 / ☁️Cloud V1 → 云端 v1）。{pending_notice}{unsupported_list}",
         "title": "选择新设备"
       },
       "select_device_option": {

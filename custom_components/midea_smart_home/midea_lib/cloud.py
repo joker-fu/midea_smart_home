@@ -8,8 +8,8 @@ import logging
 import time
 from datetime import UTC, datetime
 from secrets import token_hex
-from threading import Lock
 from typing import Any, cast
+from uuid import uuid4
 
 from aiohttp import ClientConnectionError, ClientSession, ClientTimeout
 
@@ -21,6 +21,14 @@ from .exceptions import (
 from .security import CloudSecurity, MeijuCloudSecurity, MideaAirSecurity
 
 SN8_MIN_SERIAL_LENGTH = 17
+# Max automatic relogin attempts after a token-invalid response (40002 etc.)
+TOKEN_INVALID_RELOGIN_LIMIT = 3
+# Minimum seconds between automatic relogins. Every successful login makes the
+# Midea app notify the user about a new signed-in device, so relogin storms must
+# never be allowed to repeat more often than this.
+LOGIN_MIN_INTERVAL = 30
+
+from .logger import prefix_logger
 
 from .logger import prefix_logger
 
@@ -73,7 +81,7 @@ class MideaCloud:
         self._device_id = CloudSecurity.get_deviceid(account)
         self._session = session
         self._security = security
-        self._api_lock = Lock()
+        self._api_lock = asyncio.Lock()
         self._app_id = app_id
         self._app_key = app_key
         self._account = account
@@ -81,18 +89,70 @@ class MideaCloud:
         self._api_url = api_url
         self._access_token: str | None = None
         self._uid: str | None = None
+        # Numeric IoT user id, used by H5/plugin endpoints that identify the
+        # user by this value instead of the (GUID) account uid.
+        self._iot_user_id: str | None = None
         self._login_id = ""
         # (code, msg) of the last non-zero cloud response, None on success
         self._last_error: tuple[int, str] | None = None
+        # Consecutive automatic relogins triggered by token-invalid responses
+        self._token_invalid_retry_count = 0
+        # Monotonic timestamp of the last login attempt (rate limiting)
+        self._last_login_at = 0.0
 
     def _make_general_data(self) -> dict[str, Any]:
         return {}
+
+    @property
+    def uid(self) -> str | None:
+        """Return the account uid of the logged-in user."""
+        return self._uid
+
+    @property
+    def iot_user_id(self) -> str | None:
+        """Return the numeric IoT user id of the logged-in user."""
+        return self._iot_user_id
+
+    @staticmethod
+    def _is_login_endpoint(endpoint: str) -> bool:
+        """Check whether an endpoint belongs to the login flow (no relogin retry)."""
+        return "/user/login" in endpoint or "/unitcenter/router/" in endpoint
+
+    @staticmethod
+    def _is_token_invalid_response(response: dict) -> bool:
+        """Check whether a cloud response indicates an invalid access token."""
+        try:
+            code = int(response.get("code", -1))
+        except (TypeError, ValueError):
+            code = -1
+        if code == 40002:
+            return True
+        msg = str(response.get("msg") or response.get("message") or "")
+        msg_lower = msg.lower()
+        return (
+            "user token not exist" in msg_lower
+            or ("token" in msg_lower and "not exist" in msg_lower)
+            or "token校验不通过" in msg
+        )
+
+    def _relogin_allowed(self) -> bool:
+        """Rate-limit automatic relogins so the cloud/app is not spammed."""
+        elapsed = time.monotonic() - self._last_login_at
+        if elapsed < LOGIN_MIN_INTERVAL:
+            _LOGGER.warning(
+                "skip auto relogin: last login %.0fs ago (min interval %ss)",
+                elapsed,
+                LOGIN_MIN_INTERVAL,
+            )
+            return False
+        return True
 
     async def _api_request(
         self,
         endpoint: str,
         data: dict[str, Any],
         header: dict[str, Any] | None = None,
+        _retried_after_login: bool = False,
     ) -> dict | None:
         header = header or {}
         if not data.get("reqId"):
@@ -120,7 +180,7 @@ class MideaCloud:
         response: dict = {"code": -1}
         for attempt in range(3):
             try:
-                with self._api_lock:
+                async with self._api_lock:
                     r = await self._session.request(
                         "POST",
                         url,
@@ -144,7 +204,42 @@ class MideaCloud:
         code = int(response.get("code", -1))
         if code == 0 and "data" in response:
             self._last_error = None
+            if _retried_after_login or not self._is_login_endpoint(endpoint):
+                self._token_invalid_retry_count = 0
             return cast(dict, response["data"])
+        if (
+            not _retried_after_login
+            and not self._is_login_endpoint(endpoint)
+            and self._is_token_invalid_response(response)
+        ):
+            if self._token_invalid_retry_count >= TOKEN_INVALID_RELOGIN_LIMIT:
+                _LOGGER.warning(
+                    "token invalid relogin retries exhausted: endpoint=%s retry_count=%s",
+                    endpoint,
+                    self._token_invalid_retry_count,
+                )
+                return None
+            if not self._relogin_allowed():
+                return None
+            self._token_invalid_retry_count += 1
+            _LOGGER.warning(
+                "token invalid, relogin and retry: endpoint=%s retry_count=%s",
+                endpoint,
+                self._token_invalid_retry_count,
+            )
+            self._access_token = None
+            try:
+                if await self.login():
+                    return await self._api_request(
+                        endpoint=endpoint,
+                        data=data,
+                        header=header,
+                        _retried_after_login=True,
+                    )
+            except CloudLoginError as e:
+                _LOGGER.warning(
+                    "relogin failed: endpoint=%s error=%s", endpoint, e
+                )
         if code != -1:
             msg = str(response.get("msg") or "")
             self._last_error = (code, msg)
@@ -192,6 +287,10 @@ class MideaCloud:
         home_id: str | None,
     ) -> dict[int, dict[str, Any]] | None:
         raise NotImplementedError
+
+    async def get_device_ip(self, appliance_id: int) -> str | None:
+        """Return the LAN IP the appliance currently reports to the cloud."""
+        return None
 
 
 class MeijuCloud(MideaCloud):
@@ -269,11 +368,20 @@ class MeijuCloud(MideaCloud):
             ):
                 self._access_token = response["mdata"]["accessToken"]
                 self._uid = (response["mdata"].get("userInfo") or {}).get("uid")
+                self._iot_user_id = str(
+                    response.get("iotUserId")
+                    or (response["mdata"].get("userInfo") or {}).get("userId")
+                    or ""
+                ) or None
+                self._last_login_at = time.monotonic()
                 self._security.set_aes_keys(
                     self._security.aes_decrypt_with_fixed_key(response["key"]),
                     b"0",
                 )
                 return True
+        # Count failed attempts as well, otherwise a rejected login would be
+        # retried on every poll and keep triggering app alerts.
+        self._last_login_at = time.monotonic()
         if self._last_error:
             raise CloudLoginError(self._last_error[0], self._last_error[1])
         _LOGGER.warning("login failed: account=%s device_id=%s", self._account, self._device_id)
@@ -331,6 +439,17 @@ class MeijuCloud(MideaCloud):
             return appliances
         return None
 
+    async def get_device_ip(self, appliance_id: int) -> str | None:
+        """Query /v1/appliance/linkType/<id>; its routerIpV4 is the device IP."""
+        response = await self._api_request(
+            endpoint=f"/v1/appliance/linkType/{appliance_id}",
+            data=self._make_general_data(),
+        )
+        if not response:
+            return None
+        network = response.get("network") or {}
+        return network.get("routerIpV4") or None
+
     async def get_cloud_keys(
         self, appliance_id: int, udpid: str | None = None
     ) -> dict[int, dict[str, Any]]:
@@ -384,6 +503,376 @@ class MeijuCloud(MideaCloud):
                             self._home_group_map[appliance_id] = home_group_id
                         return home_group_id
         return None
+
+    @staticmethod
+    def _thing_headers() -> dict[str, str]:
+        """Headers required by Thing Model API endpoints."""
+        return {
+            "caller": "900",
+            "call-source": "mideaApp",
+            "call-module": "appPlugin",
+        }
+
+    @staticmethod
+    def _thing_endpoint(alias: str) -> str:
+        """Build a Thing Model endpoint with requestId and sync parameters."""
+        return f"{alias}?requestId={uuid4().hex}&sync=true"
+
+    async def _thing_api_request(
+        self,
+        endpoint: str,
+        data: dict[str, Any] | list[Any] | None,
+        header: dict[str, Any] | None = None,
+        method: str = "GET",
+        _retried_after_login: bool = False,
+    ) -> dict | None:
+        """Thing Model API request.
+
+        Unlike _api_request, no reqId/stamp is injected into the body and
+        the access token header is lowercase "accesstoken".
+        """
+        header = dict(header or {})
+        random = str(int(time.time()))
+        url = self._api_url + endpoint
+        dump_data = json.dumps(data) if data is not None else ""
+        sign = self._security.sign("", dump_data, random)
+        header.update(
+            {
+                "content-type": "application/json; charset=utf-8",
+                "secretVersion": "1",
+                "sign": sign,
+                "random": random,
+            },
+        )
+        if self._access_token is not None:
+            header.update({"accesstoken": self._access_token})
+        response: dict = {"code": -1}
+        try:
+            async with self._api_lock:
+                r = await self._session.request(
+                    method,
+                    url,
+                    headers=header,
+                    data=dump_data if data is not None else None,
+                    timeout=ClientTimeout(10),
+                )
+                raw = await r.read()
+                _LOGGER.debug(
+                    "thing api: endpoint=%s method=%s data=%s response=%s",
+                    endpoint,
+                    method,
+                    data,
+                    raw,
+                )
+                response = json.loads(raw)
+        except (TimeoutError, ClientConnectionError, json.JSONDecodeError) as e:
+            _LOGGER.warning(
+                "thing api request failed: endpoint=%s error=%s",
+                endpoint,
+                repr(e),
+            )
+        try:
+            code = int(response.get("code", -1))
+        except (TypeError, ValueError):
+            code = -1
+        if code == 0:
+            if _retried_after_login:
+                self._token_invalid_retry_count = 0
+            return response
+        if (
+            not _retried_after_login
+            and self._is_token_invalid_response(response)
+        ):
+            if self._token_invalid_retry_count >= TOKEN_INVALID_RELOGIN_LIMIT:
+                _LOGGER.warning(
+                    "thing api token invalid relogin retries exhausted: endpoint=%s retry_count=%s",
+                    endpoint,
+                    self._token_invalid_retry_count,
+                )
+                return None
+            if not self._relogin_allowed():
+                return None
+            self._token_invalid_retry_count += 1
+            _LOGGER.warning(
+                "thing api token invalid, relogin and retry: endpoint=%s retry_count=%s",
+                endpoint,
+                self._token_invalid_retry_count,
+            )
+            self._access_token = None
+            try:
+                if await self.login():
+                    return await self._thing_api_request(
+                        endpoint=endpoint,
+                        data=data,
+                        header=header,
+                        method=method,
+                        _retried_after_login=True,
+                    )
+            except CloudLoginError as e:
+                _LOGGER.warning(
+                    "relogin failed: endpoint=%s error=%s", endpoint, e
+                )
+            return None
+        if code != -1:
+            msg = str(response.get("msg") or "")
+            self._last_error = (code, msg)
+            _LOGGER.warning(
+                "thing api error: endpoint=%s code=%s msg=%s",
+                endpoint,
+                code,
+                msg,
+            )
+        return None
+
+    async def app_plugin_request(
+        self,
+        alias: str,
+        data: dict[str, Any],
+        header: dict[str, Any] | None = None,
+        sign_request: bool = True,
+        _retried_after_login: bool = False,
+    ) -> dict | None:
+        """Request an App plugin endpoint through the cloud proxy.
+
+        Plugin responses use their own envelopes (retCode/errCode/errorCode)
+        instead of the standard code/data pair, so the raw JSON body is
+        returned and callers interpret the result.
+        """
+        header = dict(header or {})
+        random = str(int(time.time()))
+        url = self._api_url + alias
+        dump_data = json.dumps(data)
+        header["content-type"] = "application/json"
+        if sign_request:
+            sign = self._security.sign("", dump_data, random)
+            if sign:
+                header["sign"] = sign
+            header["secretVersion"] = "1"
+            header["random"] = random
+        if self._access_token is not None:
+            # App gateway endpoints use camelCase, the H5 plugin gateways
+            # use the hyphenated spelling.
+            if sign_request:
+                header["accessToken"] = self._access_token
+            else:
+                header["access-token"] = self._access_token
+        if sign_request and self._uid is not None:
+            header["uid"] = str(self._uid)
+        else:
+            header.setdefault("accept", "application/json, text/plain, */*")
+            header.setdefault("origin", "https://ismart.zhinengxiyifang.cn")
+            header.setdefault("referer", "https://ismart.zhinengxiyifang.cn/")
+
+        response: Any = None
+        try:
+            async with self._api_lock:
+                r = await self._session.request(
+                    "POST",
+                    url,
+                    headers=header,
+                    data=dump_data,
+                    timeout=ClientTimeout(10),
+                )
+                raw = await r.read()
+                status = r.status
+                response = json.loads(raw)
+        except (TimeoutError, ClientConnectionError, json.JSONDecodeError) as e:
+            _LOGGER.warning(
+                "app plugin request failed: alias=%s error=%s",
+                alias,
+                repr(e),
+            )
+            return None
+        if not isinstance(response, dict):
+            return None
+        _LOGGER.debug(
+            "app plugin response: alias=%s status=%s body=%s",
+            alias,
+            status,
+            response,
+        )
+        if status != 200:
+            _LOGGER.warning(
+                "app plugin HTTP error: alias=%s status=%s body=%s",
+                alias,
+                status,
+                response,
+            )
+            return None
+
+        try:
+            code: int | None = int(response.get("code"))
+        except (TypeError, ValueError):
+            code = None
+        if code is not None and code != 0:
+            if (
+                not _retried_after_login
+                and self._is_token_invalid_response(response)
+            ):
+                if (
+                    self._token_invalid_retry_count >= TOKEN_INVALID_RELOGIN_LIMIT
+                    or not self._relogin_allowed()
+                ):
+                    return None
+                self._token_invalid_retry_count += 1
+                _LOGGER.warning(
+                    "app plugin token invalid, relogin and retry: alias=%s",
+                    alias,
+                )
+                self._access_token = None
+                try:
+                    if await self.login():
+                        return await self.app_plugin_request(
+                            alias=alias,
+                            data=data,
+                            header=header,
+                            sign_request=sign_request,
+                            _retried_after_login=True,
+                        )
+                except CloudLoginError as e:
+                    _LOGGER.warning(
+                        "relogin failed: alias=%s error=%s", alias, e
+                    )
+            msg = str(
+                response.get("msg")
+                or response.get("errMsg")
+                or response.get("desc")
+                or ""
+            )
+            self._last_error = (code, msg)
+            _LOGGER.warning(
+                "app plugin error: alias=%s code=%s msg=%s",
+                alias,
+                code,
+                msg,
+            )
+            return None
+        plugin_code = None
+        for key in ("retCode", "errCode", "errorCode"):
+            if key in response:
+                plugin_code = response[key]
+                break
+        if plugin_code is not None and str(plugin_code) != "0":
+            msg = str(
+                response.get("desc")
+                or response.get("errMsg")
+                or response.get("msg")
+                or ""
+            )
+            _LOGGER.warning(
+                "app plugin error: alias=%s code=%s msg=%s",
+                alias,
+                plugin_code,
+                msg,
+            )
+            return None
+        if _retried_after_login:
+            self._token_invalid_retry_count = 0
+        return response
+
+    async def query_thing_properties(
+        self,
+        appliance_code: int,
+        properties: list[str] | None = None,
+    ) -> dict[str, Any] | None:
+        """Query device Thing Model properties (GET all / POST for a list)."""
+        endpoint = self._thing_endpoint(f"/v1/thing/properties/{appliance_code}")
+        response = await self._thing_api_request(
+            endpoint=endpoint,
+            data=None if properties is None else properties,
+            header=self._thing_headers(),
+            method="GET" if properties is None else "POST",
+        )
+        if isinstance(response, dict):
+            data = response.get("data")
+            return data if isinstance(data, dict) else None
+        return None
+
+    async def set_thing_properties(
+        self, appliance_code: int, properties: dict[str, Any]
+    ) -> bool:
+        """Set device Thing Model properties (PUT)."""
+        endpoint = self._thing_endpoint(f"/v1/thing/properties/{appliance_code}")
+        response = await self._thing_api_request(
+            endpoint=endpoint,
+            data=properties,
+            header=self._thing_headers(),
+            method="PUT",
+        )
+        return isinstance(response, dict)
+
+    async def get_specific_data(
+        self, appliance_code: int, endpoint: str
+    ) -> dict[str, Any] | None:
+        """Fetch device-specific REST endpoint data (e.g. fish-tank sections)."""
+        home_group_id = self._home_group_map.get(int(appliance_code))
+        if not home_group_id:
+            home_group_id = await self._query_homegroup(int(appliance_code))
+        if not home_group_id:
+            return None
+        return await self._api_request(
+            endpoint=endpoint,
+            data={
+                "applianceCode": str(appliance_code),
+                "homegroupId": home_group_id,
+            },
+        )
+
+    async def perform_thing_action(
+        self,
+        appliance_code: int,
+        module_code: str,
+        action_code: str,
+        body: dict[str, Any] | None = None,
+    ) -> dict | None:
+        """Trigger a Thing Model action (POST /v1/thing/action/{module}/{action}/{code})."""
+        alias = f"/v1/thing/action/{module_code}/{action_code}/{appliance_code}"
+        return await self._thing_api_request(
+            endpoint=self._thing_endpoint(alias),
+            data=body or {},
+            header=self._thing_headers(),
+            method="POST",
+        )
+
+    async def get_device_status(
+        self,
+        appliance_code: int,
+        query: dict[str, Any] | None = None,
+    ) -> dict | None:
+        """Query device status via the cloud Lua endpoint (/mjl/v1/device/status/lua/get)."""
+        data = {
+            "applianceCode": str(appliance_code),
+            "command": {"query": query or {}},
+        }
+        return await self._api_request(
+            endpoint="/mjl/v1/device/status/lua/get",
+            data=data,
+        )
+
+    async def send_device_control(
+        self,
+        appliance_code: int,
+        control: dict[str, Any],
+        status: dict[str, Any] | None = None,
+    ) -> bool:
+        """Send a Lua control command (/mjl/v1/device/lua/control).
+
+        The cloud runs the same Lua script as the LAN device, so `control`
+        uses the LAN status keys. `status` carries the current state for the
+        script to apply before the control delta.
+        """
+        command: dict[str, Any] = {"control": control}
+        if status:
+            command["status"] = status
+        data = {
+            "applianceCode": str(appliance_code),
+            "command": command,
+        }
+        response = await self._api_request(
+            endpoint="/mjl/v1/device/lua/control",
+            data=data,
+        )
+        return response is not None
 
 
 class MideaAirCloud(MideaCloud):
@@ -439,7 +928,7 @@ class MideaAirCloud(MideaCloud):
         response: dict = {"errorCode": -1}
         for attempt in range(3):
             try:
-                with self._api_lock:
+                async with self._api_lock:
                     r = await self._session.request(
                         "POST",
                         url,
@@ -492,7 +981,11 @@ class MideaAirCloud(MideaCloud):
                 self._access_token = response["accessToken"]
                 self._uid = response["userId"]
                 self._session_id = response["sessionId"]
+                self._last_login_at = time.monotonic()
                 return True
+        # Count failed attempts as well, otherwise a rejected login would be
+        # retried on every poll and keep triggering app alerts.
+        self._last_login_at = time.monotonic()
         if self._last_error:
             raise CloudLoginError(self._last_error[0], self._last_error[1])
         _LOGGER.warning("login failed: account=%s device_id=%s", self._account, self._device_id)

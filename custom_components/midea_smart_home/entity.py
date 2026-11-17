@@ -1,8 +1,10 @@
+import re
 from typing import Any, Optional, Union, Generator
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.device_registry import DeviceInfo
+from homeassistant.helpers.translation import async_get_translations
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .const import (
@@ -13,10 +15,14 @@ from .const import (
     CONF_PRODUCT_MODEL,
     CONF_SN,
     CONF_SN8,
+    CONNECTION_TYPE_BADGES,
+    CONNECTION_TYPE_CLOUD_V2,
+    CONNECTION_TYPE_LAN,
     DOMAIN,
 )
 from .coordinator import MideaCoordinator, ControlValue
 from .device_mapping import get_device_mapping
+from .device_mapping.cloud_v2 import get_cloud_v2_mapping
 
 def iter_midea_device_configs(
     hass: HomeAssistant, entry: ConfigEntry
@@ -32,9 +38,6 @@ def iter_midea_device_configs(
         coordinator = data.get("coordinator")
         if not coordinator:
             continue
-        device = data.get("device")
-        # Runtime-detected T0xD9 drum layout: dual_drum_lr / dual_drum_lr_pro / dual_drum_tb.
-        d9_profile = getattr(device, "d9_profile", "") or ""
         device_id = data[CONF_DEVICE_ID]
         device_type = data[CONF_DEVICE_TYPE]
         sn8 = data.get(CONF_SN8, "")
@@ -45,10 +48,38 @@ def iter_midea_device_configs(
         device_type_int = (
             int(device_type, 16) if isinstance(device_type, str) else device_type
         )
-        device_mapping = get_device_mapping(
-            device_type_int, model, sn8, category, d9_profile=d9_profile
-        )
+        # Cloud v2 devices use the Thing Model mappings, not the LAN ones.
+        if (
+            getattr(coordinator, "connection_type", CONNECTION_TYPE_LAN)
+            == CONNECTION_TYPE_CLOUD_V2
+        ):
+            device_mapping = get_cloud_v2_mapping(
+                device_type_int, model, sn8, category
+            )
+        else:
+            device_mapping = get_device_mapping(
+                device_type_int, model, sn8, category
+            )
         yield coordinator, device_id, device_type, sn, sn8, device_name, model, device_mapping
+
+async def async_load_state_labels(
+    hass: HomeAssistant, platform: str, translation_key: str | None
+) -> dict[str, str]:
+    """Load entity.<platform>.<translation_key>.state option labels.
+
+    Returns {slug: label}; empty dict when translation_key is missing.
+    """
+    if not translation_key:
+        return {}
+    translations = await async_get_translations(
+        hass, hass.config.language, "entity", {DOMAIN}
+    )
+    prefix = f"component.{DOMAIN}.entity.{platform}.{translation_key}.state."
+    return {
+        key[len(prefix):]: value
+        for key, value in translations.items()
+        if key.startswith(prefix)
+    }
 
 
 class MideaBaseEntity(CoordinatorEntity[MideaCoordinator]):
@@ -87,12 +118,31 @@ class MideaBaseEntity(CoordinatorEntity[MideaCoordinator]):
         device_display_name = device_name
         model_display = model if model else device_type_code
 
+        self._connection_type = getattr(
+            coordinator, "connection_type", CONNECTION_TYPE_LAN
+        )
+        badge = CONNECTION_TYPE_BADGES.get(self._connection_type)
+        if badge and not model_display.endswith(f"| {badge}"):
+            model_display = f"{model_display} | {badge}"
+
+        # Cloud V2 devices report Thing Model property names instead of the
+        # Lua status keys; resolve this entity's thing_key from the mapping.
+        self._thing_key: Optional[str] = None
+        if self._connection_type == CONNECTION_TYPE_CLOUD_V2:
+            self._thing_key = self._resolve_thing_key(coordinator, entity_key)
+
         self._attr_unique_id = f"{platform_name}.midea_{device_id}_{entity_key}" if platform_name else f"midea_{device_id}_{entity_key}"
 
         if platform_name:
-            self.entity_id = f"{platform_name}.midea_{device_id}_{entity_key.lower()}"
+            # Entity IDs must be slugified: cloud_v2 keys contain dots
+            # (e.g. "fishtank.silentswitch") and uppercase letters.
+            slug = re.sub(r"[^a-z0-9_]+", "_", entity_key.lower()).strip("_")
+            self.entity_id = f"{platform_name}.midea_{device_id}_{slug}"
 
         self._attr_translation_key = self._config.get("translation_key", entity_key)
+
+        if self._config.get("icon"):
+            self._attr_icon = self._config["icon"]
 
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, str(device_id))},
@@ -117,7 +167,33 @@ class MideaBaseEntity(CoordinatorEntity[MideaCoordinator]):
 
         return self._check_condition(self._condition)
 
+    @staticmethod
+    def _resolve_thing_key(
+        coordinator: MideaCoordinator, entity_key: str
+    ) -> Optional[str]:
+        """Return the entity's Thing Model property name, if configured."""
+        mapping = getattr(coordinator, "device_mapping", None) or {}
+        for platform_cfg in (mapping.get("entities") or {}).values():
+            if not isinstance(platform_cfg, dict):
+                continue
+            cfg = platform_cfg.get(entity_key)
+            if isinstance(cfg, dict) and cfg.get("thing_key"):
+                return cfg["thing_key"]
+        return None
+
     def _get_nested_value(
+        self,
+        key: str | list[str]
+    ) -> Union[str, int, float, bool, None]:
+        # Cloud V2 devices expose Thing Model property names; prefer the
+        # entity's thing_key when it resolves to a value.
+        if self._thing_key:
+            value = self._lookup_nested_value(self._thing_key)
+            if value is not None:
+                return value
+        return self._lookup_nested_value(key)
+
+    def _lookup_nested_value(
         self,
         key: str | list[str]
     ) -> Union[str, int, float, bool, None]:

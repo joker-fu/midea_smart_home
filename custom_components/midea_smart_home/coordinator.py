@@ -1,4 +1,5 @@
 import logging
+from datetime import timedelta
 from typing import Any, Union
 
 from homeassistant.components.persistent_notification import async_create, async_dismiss
@@ -6,7 +7,12 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
-from .const import DOMAIN
+from .const import (
+    CONNECTION_TYPE_LAN,
+    DEFAULT_CLOUD_STATS_SCAN_INTERVAL,
+    DOMAIN,
+)
+from .midea_lib.cloud_stats import async_fetch_cloud_stats
 from .midea_lib.device import MideaDevice
 
 from .midea_lib.logger import prefix_logger
@@ -123,10 +129,14 @@ class MideaCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         device_name: str,
         area: str = "",
         config_entry: ConfigEntry | None = None,
+        connection_type: str = CONNECTION_TYPE_LAN,
+        device_mapping: dict | None = None,
     ):
         self.device = device
         self.device_name = device_name
         self.area = area
+        self.connection_type = connection_type
+        self.device_mapping = device_mapping or {}
         self.device_type = device.device_id
         self._was_available: bool | None = None
         self._initialized: bool = False
@@ -245,3 +255,49 @@ class MideaCoordinator(DataUpdateCoordinator[dict[str, Any]]):
     async def async_set_controls(self, controls: dict[str, ControlValue]) -> StatusDict:
         """Send multiple control commands."""
         return await self.async_set_control(controls)
+
+
+class MideaCloudStatsCoordinator(DataUpdateCoordinator[dict[str, Any]]):
+    """Fetch cloud statistics independently of the device connection."""
+
+    def __init__(
+        self,
+        hass: HomeAssistant,
+        cloud,
+        device_id: int,
+        device_type: int,
+        sn8: str = "",
+        category: str = "",
+        project_no: str = "",
+        update_interval: int = DEFAULT_CLOUD_STATS_SCAN_INTERVAL,
+    ):
+        self._cloud = cloud
+        self._device_id = device_id
+        self._device_type = device_type
+        self._sn8 = sn8
+        self._category = category
+        self._project_no = project_no
+
+        super().__init__(
+            hass,
+            _LOGGER,
+            name=f"Midea Cloud Stats {device_id}",
+            update_interval=timedelta(seconds=update_interval),
+        )
+
+    async def _async_update_data(self) -> dict[str, Any]:
+        data = await async_fetch_cloud_stats(
+            self._cloud,
+            device_type=self._device_type,
+            appliance_code=self._device_id,
+            sn8=self._sn8,
+            category=self._category,
+            project_no=self._project_no,
+        )
+        if not data:
+            _LOGGER.warning(
+                "[cloud] no statistics returned: device_id=%s device_type=T0x%02X",
+                self._device_id,
+                self._device_type,
+            )
+        return data

@@ -20,6 +20,10 @@ class PrefixLoggerAdapter(logging.LoggerAdapter):
         extra = self.extra or {}
         return f"{extra['prefix']} {msg}", kwargs
 
+def prefix_logger(logger: logging.Logger, prefix: str) -> PrefixLoggerAdapter:
+    """Return a logger adapter that prepends ``prefix`` to every message."""
+    return PrefixLoggerAdapter(logger, {"prefix": prefix})
+
 def device_logger(
     logger: logging.Logger, name: str, device_id: int
 ) -> PrefixLoggerAdapter:

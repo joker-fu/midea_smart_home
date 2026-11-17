@@ -460,13 +460,6 @@ class MideaDevice:
         self._polling_query = polling_query or []
         # D9 polling device flag (only meaningful for T0xD9)
         self._d9_polling_device = False
-        # D9 runtime profile: "dual_drum_lr" / "dual_drum_lr_pro"
-        # (left/right, drum ids 1/2 or 3/4) or "dual_drum_tb"
-        # (top/bottom). None until detected.
-        self._d9_profile: Optional[str] = None
-        # Raw db_location ids observed in device responses, used to learn
-        # whether the drums are 1/2 or 3/4.
-        self._d9_observed_locations: set[int] = set()
         # D9 drum location ids: raw values differ per model (most use 1/2,
         # some use 3/4). Internally 1 (left) / 2 (right) are canonical;
         # translation happens on the wire boundary only.
@@ -551,11 +544,6 @@ class MideaDevice:
     @property
     def device_id(self):
         return self._device_id
-
-    @property
-    def d9_profile(self) -> Optional[str]:
-        """Detected T0xD9 profile: dual_drum_lr / dual_drum_lr_pro / dual_drum_tb."""
-        return self._d9_profile
 
     @property
     def available(self):
@@ -762,12 +750,6 @@ class MideaDevice:
             self._available = True
 
         if self._device_type == 0xD9:
-            raw_location = status.get("db_location")
-            if raw_location is not None:
-                try:
-                    self._d9_observed_locations.add(int(raw_location))
-                except (TypeError, ValueError):
-                    pass
             # D9 push devices rely on push updates and fall through below.
             if self._d9_polling_device:
                 # D9 polling devices use the dedicated poll thread.
@@ -967,96 +949,3 @@ class MideaDevice:
 
     def refresh_status(self, query: Optional[dict] = None):
         self._controller.refresh_status(query)
-
-    def detect_d9_profile(self, timeout: float = 2.0) -> Optional[str]:
-        """Probe a T0xD9 device to tell left/right from top/bottom drums.
-
-        Compound washer/dryers expose a ``dc`` (dryer) bucket in their status;
-        left/right machines only answer per-drum ``db`` queries and report a
-        raw ``db_location``. The raw ids (1/2 or 3/4) are learned from the
-        same responses, so new models need no sn8 entry.
-        """
-        if self._device_type != 0xD9 or self._d9_profile:
-            return self._d9_profile
-        if not self._controller.connected:
-            return None
-
-        probes = [{"query_type": "dc"}]
-        probes += [{"query_type": "db", "db_location": loc} for loc in (1, 2, 3, 4)]
-        # Query dc again last so a slow dryer bucket cannot be missed and
-        # misread as a left/right machine.
-        probes.append({"query_type": "dc"})
-        for probe in probes:
-            self.refresh_status(probe)
-            time.sleep(0.3)
-            if self._has_dc_keys():
-                return self._finish_profile("dual_drum_tb")
-
-        deadline = time.time() + timeout
-        while time.time() < deadline:
-            if self._has_dc_keys():
-                return self._finish_profile("dual_drum_tb")
-            time.sleep(0.2)
-
-        profile = self._infer_dual_profile()
-        if profile:
-            return self._finish_profile(profile)
-
-        self._logger.warning(
-            "d9 profile undetected: keys=%s locations=%s",
-            sorted(self._data.keys()), sorted(self._d9_observed_locations)
-        )
-        return None
-
-    def _has_dc_keys(self) -> bool:
-        """Return True when the status carries a dryer (dc) bucket.
-
-        Only real dryer fields count: a stray ``dc_`` key from a probe must not
-        turn a left/right machine into a top/bottom one.
-        """
-        return "dc_power" in self._data or "dc_running_status" in self._data
-
-    def _infer_dual_profile(self) -> Optional[str]:
-        locations = self._d9_observed_locations
-        # Compound machines report the bottom drum as location 2 only, so a
-        # single raw id is not enough to claim a left/right layout. Left/right
-        # machines answer 1+2, or 3+4 on some models.
-        if locations & {3, 4}:
-            return "dual_drum_lr_pro"
-        if len(locations & {1, 2}) >= 2:
-            return "dual_drum_lr"
-        return None
-
-    def _finish_profile(self, profile: str) -> str:
-        self._logger.info(
-            "d9 profile detected: profile=%s locations=%s",
-            profile, sorted(self._d9_observed_locations)
-        )
-        return profile
-
-    def apply_d9_profile(self, profile: Optional[str]) -> None:
-        """Apply a detected D9 profile to polling mode and drum locations."""
-        if self._device_type != 0xD9 or not profile:
-            return
-        self._d9_profile = profile
-        if not profile.startswith("dual_drum_lr"):
-            self._d9_polling_device = False
-            self._stop_poll_thread()
-            return
-
-        if profile == "dual_drum_lr_pro":
-            locations = {"left": 3, "right": 4}
-        else:
-            locations = {"left": 1, "right": 2}
-        self._d9_drum_locations = locations
-        self._logic_handler.set_drum_locations(locations)
-        self._d9_polling_device = True
-        # Poll both drums on the first cycle so neither drum's entities stay
-        # unknown after a restart/reload.
-        self._d9_alternate_polling = True
-        self._controller.set_skip_initial_refresh(True)
-        self._start_poll_thread()
-        self._logger.info(
-            "d9 dual-drum polling enabled: locations=%s",
-            locations
-        )
