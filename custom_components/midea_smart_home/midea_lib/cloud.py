@@ -35,6 +35,22 @@ from .logger import prefix_logger
 _LOGGER = logging.getLogger(__name__)
 _LOGGER = prefix_logger(_LOGGER, "[cloud]")
 
+def with_cache_buster(data: dict[str, Any]) -> dict[str, Any]:
+    """Add per-request unique fields so the gateway cannot serve a cached reply.
+
+    The App plugin gateways cache responses keyed by the request payload, so a
+    body that only carries an appliance id keeps returning the first response
+    for hours.  The washing machine endpoints already send these fields; mirror
+    them for every plugin request.
+    """
+    if "stamp" in data or "reqId" in data:
+        return data
+    return {
+        **data,
+        "stamp": datetime.now().strftime("%Y%m%d%H%M%S"),
+        "reqId": str(uuid4()),
+    }
+
 SUPPORTED_CLOUDS = {
     "Meiju Cloud": {
         "class_name": "MeijuCloud",
@@ -152,18 +168,24 @@ class MideaCloud:
         endpoint: str,
         data: dict[str, Any],
         header: dict[str, Any] | None = None,
+        method: str = "POST",
         _retried_after_login: bool = False,
     ) -> dict | None:
         header = header or {}
-        if not data.get("reqId"):
-            data.update({"reqId": token_hex(16)})
-        if not data.get("stamp"):
-            data.update(
-                {"stamp": datetime.now(tz=UTC).strftime("%Y%m%d%H%M%S")},
-            )
+        if method == "GET":
+            # GET endpoints (e.g. /v1/appliance/linkType/<id>) carry no body;
+            # the sign is computed over an empty payload.
+            dump_data = ""
+        else:
+            if not data.get("reqId"):
+                data.update({"reqId": token_hex(16)})
+            if not data.get("stamp"):
+                data.update(
+                    {"stamp": datetime.now(tz=UTC).strftime("%Y%m%d%H%M%S")},
+                )
+            dump_data = json.dumps(data)
         random = str(int(time.time()))
         url = self._api_url + endpoint
-        dump_data = json.dumps(data)
         sign = self._security.sign("", dump_data, random)
         header.update(
             {
@@ -182,10 +204,10 @@ class MideaCloud:
             try:
                 async with self._api_lock:
                     r = await self._session.request(
-                        "POST",
+                        method,
                         url,
                         headers=header,
-                        data=dump_data,
+                        data=dump_data or None,
                         timeout=ClientTimeout(10),
                     )
                     raw = await r.read()
@@ -234,6 +256,7 @@ class MideaCloud:
                         endpoint=endpoint,
                         data=data,
                         header=header,
+                        method=method,
                         _retried_after_login=True,
                     )
             except CloudLoginError as e:
@@ -440,10 +463,15 @@ class MeijuCloud(MideaCloud):
         return None
 
     async def get_device_ip(self, appliance_id: int) -> str | None:
-        """Query /v1/appliance/linkType/<id>; its routerIpV4 is the device IP."""
+        """Query /v1/appliance/linkType/<id>; its routerIpV4 is the device IP.
+
+        The official app calls this endpoint with GET; a POST request is
+        rejected by the cloud with ``code=1000 system error``.
+        """
         response = await self._api_request(
             endpoint=f"/v1/appliance/linkType/{appliance_id}",
             data=self._make_general_data(),
+            method="GET",
         )
         if not response:
             return None
@@ -639,6 +667,7 @@ class MeijuCloud(MideaCloud):
         returned and callers interpret the result.
         """
         header = dict(header or {})
+        data = with_cache_buster(data)
         random = str(int(time.time()))
         url = self._api_url + alias
         dump_data = json.dumps(data)
@@ -916,11 +945,19 @@ class MideaAirCloud(MideaCloud):
         endpoint: str,
         data: dict[str, Any],
         header: dict[str, Any] | None = None,
+        method: str = "POST",
     ) -> dict[str, Any] | None:
         header = header or {}
         url = self._api_url + endpoint
         sign = self._security.sign(url, data, "")
-        data.update({"sign": sign})
+        if method == "GET":
+            # GET endpoints carry no body; append the sign as a query param.
+            sep = "&" if "?" in url else "?"
+            url = f"{url}{sep}sign={sign}"
+            body = None
+        else:
+            data.update({"sign": sign})
+            body = data
         if self._uid is not None:
             header.update({"uid": self._uid})
         if self._access_token is not None:
@@ -930,10 +967,10 @@ class MideaAirCloud(MideaCloud):
             try:
                 async with self._api_lock:
                     r = await self._session.request(
-                        "POST",
+                        method,
                         url,
                         headers=header,
-                        data=data,
+                        data=body,
                         timeout=ClientTimeout(10),
                     )
                     raw = await r.read()
