@@ -52,7 +52,7 @@ DEVICE_MAPPING = {
                 }
             },
             Platform.BINARY_SENSOR: {
-                "door_warn": {
+                "microswitch": {
                     "device_class": BinarySensorDeviceClass.OPENING,
                     "translation_key": "door_opened"
                 }
@@ -131,7 +131,7 @@ DEVICE_MAPPING = {
                 }
             },
             Platform.BINARY_SENSOR: {
-                "door_warn": {
+                "microswitch": {
                     "device_class": BinarySensorDeviceClass.OPENING,
                     "translation_key": "door_opened"
                 }
@@ -218,7 +218,7 @@ DEVICE_MAPPING = {
                 }
             },
             Platform.BINARY_SENSOR: {
-                "door_warn": {
+                "microswitch": {
                     "device_class": BinarySensorDeviceClass.OPENING,
                     "translation_key": "door_opened"
                 }
@@ -442,7 +442,7 @@ DEVICE_MAPPING = {
                 }
             },
             Platform.BINARY_SENSOR: {
-                "door_warn": {
+                "microswitch": {
                     "device_class": BinarySensorDeviceClass.OPENING,
                     "translation_key": "door_opened"
                 }
