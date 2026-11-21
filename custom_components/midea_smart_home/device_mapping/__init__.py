@@ -145,3 +145,12 @@ def d9_may_need_polling(device_type: int) -> bool:
         if is_d9_polling_device(device_type, profile):
             return True
     return False
+
+def is_d9_push_driven(device_mapping: dict) -> bool:
+    """Check if a T0xD9 mapping is a three-drum push-driven model.
+
+    Three-drum models (bottom + left + right) report state through 04db
+    pushes, so they never need a polling interval at runtime.
+    """
+    drum_locations = device_mapping.get("drum_locations") or {}
+    return {"bottom", "left", "right"} <= set(drum_locations)

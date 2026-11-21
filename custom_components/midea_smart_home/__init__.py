@@ -52,7 +52,7 @@ from .midea_lib.cloud_stats import CLOUD_STATS_DEVICE_TYPES
 from .midea_lib.cloud_device import CloudV1Device, CloudV2Device
 from .midea_lib.device import MideaDevice
 from .midea_lib.lua import write_file, ensure_lua_files
-from .device_mapping import get_device_mapping, is_d9_polling_device
+from .device_mapping import get_device_mapping, is_d9_polling_device, is_d9_push_driven
 from .device_mapping.cloud_v2 import get_cloud_v2_mapping
 
 from .midea_lib.logger import prefix_logger
@@ -248,9 +248,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         # Check if polling is supported (based on existence of polling_query,
         # or the dedicated poll thread for D9 polling devices)
         d9_polling = is_d9_polling_device(device_type_int, device_mapping)
+        # Three-drum models are push-driven: no polling interval to configure
+        push_driven = is_d9_push_driven(device_mapping)
         enable_polling = (
             polling_query is not None and isinstance(polling_query, list) and len(polling_query) > 0
-        ) or d9_polling
+        ) or (d9_polling and not push_driven)
         # Get polling settings from device data (user configurable via Options)
         polling_enabled = device_data.get("polling_enabled", True)  # Default to enabled
         # D9 polling devices: per-drum refresh interval defaults to 1s
@@ -281,6 +283,13 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         # one when they expose cloud statistics and the account is available.
         # Both cloud_v2 and cloud_v1 use the Meiju account.
         stats_supported = device_type_int in CLOUD_STATS_DEVICE_TYPES
+        if (
+            stats_supported
+            and device_type_int == 0xD9
+            and not is_d9_push_driven(device_mapping)
+        ):
+            # Only compound (three-drum) washers expose per-drum statistics.
+            stats_supported = False
         cloud_kind = {
             CONNECTION_TYPE_CLOUD_V2: "meiju",
             CONNECTION_TYPE_CLOUD_V1: "meiju",
@@ -302,6 +311,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
                     device_id, device_name, connection_type,
                 )
                 return None
+        elif stats_supported:
+            _LOGGER.debug(
+                "cloud stats skipped (no account in entry): device_id=%s", device_id
+            )
 
         def init_device():
             if connection_type == CONNECTION_TYPE_CLOUD_V2:
@@ -398,6 +411,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
                     category=category,
                     project_no=str(device_data.get("project_no") or ""),
                     update_interval=_cloud_stats_interval(entry),
+                    model_number=device_data.get(CONF_MODEL_NUMBER, 0),
+                    drum_locations=device_mapping.get("drum_locations"),
                 )
 
             if connection_type == CONNECTION_TYPE_LAN:
