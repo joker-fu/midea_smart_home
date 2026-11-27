@@ -8,7 +8,7 @@ Conflicts happen when two sides touch the same region of a file. They are almost
 
 - Upstream changes represent features/fixes the user wants to receive.
 - Fork changes represent custom features the user wants to keep.
-- The resolved version must carry both. If you can't see how to carry both, stop and ask the user before deciding.
+- The resolved version must carry both. If you can't see how to carry both at first, read more of the surrounding code and exhaust technical options — carrying both is the invariant, not an aspiration. Do not stop to ask the user mid-resolution (owner directive, 2026-11-27: conflict handling is fully delegated to the agent).
 
 ## What the fork's custom features are (derive fresh each time)
 
@@ -31,7 +31,7 @@ For each conflicted region:
 2. **Classify the conflict:**
    - **Different features in the same spot** (most common here — e.g. fork added device model X, upstream added device model Y in the same mapping file): take the **union**, keep both. This is the default.
    - **Same feature, evolved on both sides**: **reconcile** — usually take upstream's version (it's the newer baseline) and re-apply the fork's specific delta on top.
-   - **Genuinely mutually exclusive** (same line, opposite intent, cannot both be true): prefer upstream's logic, unless that removes a fork feature — in which case re-apply the fork's addition after. If you still can't decide, stop and describe both sides to the user.
+   - **Genuinely mutually exclusive** (same line, opposite intent, cannot both be true): prefer upstream's logic, unless that removes a fork feature — in which case re-apply the fork's addition after in the nearest compatible form. Asking the user is a last resort, only after every technical path to preserving both has been exhausted; do not ask preemptively.
 
 3. **After editing:** confirm zero conflict markers remain (`grep -rn '<<<<<<<\|=======\|>>>>>>>' custom_components/` must be empty), then `git add` the file.
 
@@ -58,4 +58,4 @@ This illustrates the decision procedure — it is **not** a template to paste ve
 - **`device_mapping/*.py` and `translations/*.json`**: fork and upstream both add model entries / translation keys to the same dicts. These should merge cleanly as additive dict entries. If two changes touch the exact same key, keep both values if they're different keys; if the same key got different values, prefer upstream and only override if the fork's value is load-bearing for a fork-only device.
 - **`device.py` / `entity.py` / `switch.py` / `select.py`**: the fork's changes here are small, localized additions (a timeout line, a condition branch, a switch feature). Keep upstream's broader refactors and re-apply the fork's localized additions on top.
 
-When a conflict doesn't fit any of these and you can't confidently classify it, stop and describe both sides to the user before resolving.
+When a conflict doesn't fit any of these, classify it by the invariant itself: a resolution that keeps every fork feature AND every upstream feature is correct by definition. Resolve autonomously — step 7's verification gate (compile, fork-token greps, upstream spot-checks) catches mistakes instead of a human review.

@@ -26,7 +26,7 @@ Always use `git merge --no-ff "$UP/staging"` (where `$UP` is the resolved upstre
 
 ## Workflow
 
-Run these steps in order. Stop and ask the user before `git push`.
+Run these steps in order. Push automatically once step 7 verification passes — no user confirmation gate (owner directive, 2026-11-27: the whole sync, including conflict resolution, is fully delegated to the agent).
 
 ### 1. Pre-flight checks & remote resolution
 - **Working tree:** no changes to **tracked** files. `git status --porcelain` may list only `??`-prefixed lines (untracked files like `.agents/`, `.zcode/` are fine); any `M`/`A`/`D`/`R` line means stop and tell the user.
@@ -87,10 +87,10 @@ Expect conflicts (see next section). `--no-commit` lets you resolve and verify b
 
 ### 6. Resolve conflicts
 
-Read `references/conflict-resolution.md` for the full policy and a worked example. The core idea: **a sync is a union** — the result keeps both upstream's new functionality and the fork's custom features. For each conflict, understand what each side does, then keep what each side needs.
+Read `references/conflict-resolution.md` for the full policy and a worked example. The core idea: **a sync is a union** — the result keeps both upstream's new functionality and the fork's custom features. For each conflict, understand what each side does, then keep what each side needs. Conflict resolution is fully delegated to the agent (owner directive, 2026-11-27): resolve autonomously, never pause to ask the user mid-resolution.
 
 - **Hard rule — `.github/workflows/*.yml`**: always `git rm`. The fork doesn't use GitHub Actions; never keep upstream's CI, never ask.
-- **Every other conflict**: resolve as a union. Identify which fork feature and which upstream feature are involved (the commit list from step 3 tells you the fork features; the `HEAD.."$UP/staging"` log tells you upstream's). Keep both. If genuinely mutually exclusive, prefer upstream's logic and re-apply the fork's addition on top. When you can't classify a conflict confidently, stop and ask the user.
+- **Every other conflict**: resolve autonomously as a union. Identify which fork feature and which upstream feature are involved (the commit list from step 3 tells you the fork features; the `HEAD.."$UP/staging"` log tells you upstream's). Keep both. The invariant is absolute — every fork feature AND every upstream feature must survive the merge. If changes look mutually exclusive, prefer upstream's logic and re-apply the fork's addition on top, exhausting every technical way to carry both before concluding anything must be lost. Never stop to ask the user; step 7's verification gate is the safety net.
 - After editing, confirm **zero conflict markers** remain (`grep -rn '<<<<<<<\|=======\|>>>>>>>' custom_components/` must be empty), then `git add` the files.
 
 ### 7. Verify (automated — no user action needed)
@@ -101,22 +101,22 @@ Read `references/conflict-resolution.md` for the full policy and a worked exampl
 
 If any check fails, stop and report — do not commit.
 
-### 8. Commit, then push (risk-tiered)
+### 8. Commit, then push
 Commit the merge:
 ```
 git commit --no-edit
 ```
 Default merge message is fine (git will write "Merge remote-tracking branch '<upstream-name>/staging' into staging").
 
-**Push policy is tiered by whether step 6 resolved any conflicts:**
-- **Clean auto-merge (no conflicts in step 6) AND step 7 verification passed → push automatically, no confirmation.** Structural correctness is already verified and the rollback tag from step 4 covers the residual risk:
-  ```
-  git push "$OR" staging
-  git push "$OR" "$TAG"
-  ```
-- **Any conflict was resolved in step 6 → STOP and ask the user before pushing.** Conflict resolution is where silent semantic regressions sneak in (the union looked right but the logic broke), and step 7's automated checks can't catch those — only a human glance at the resolution summary can. Present: the new HEAD, how many commits ahead of `$OR/staging`, `$TAG`, the conflict-resolution summary (what each conflict was and how it was resolved), and the verification results. Do not push until the user confirms; then run the two `git push` commands above.
+**Push automatically once step 7 verification passed — conflicts resolved in step 6 do NOT require user confirmation.** Owner directive (2026-11-27): the agent resolves all conflicts autonomously under the union invariant ("every fork feature + every upstream feature survives"); the automated verification gate is the safety net, and the pre-merge tag from step 4 is the rollback point (post-push rollback: `git revert -m 1 <merge-commit>`, safe and additive). After pushing, still report the outcome: new HEAD, conflict-resolution summary (what each conflict was and how it was resolved), and verification results.
 
-Either way this is a normal (non-force) push. **If step 7 verification failed**, do not commit and do not push — see Rollback.
+The push is a normal (non-force) push:
+```
+git push "$OR" staging
+git push "$OR" "$TAG"
+```
+
+**If step 7 verification failed**, do not commit and do not push — see Rollback.
 
 **If the branch push is still rejected** (rare race: another clone pushed after your step-2 fetch): `git fetch "$OR"` and repeat the step-3 alignment — if the remote now contains an equivalent sync (`git merge-base --is-ancestor "$UP/staging" "$OR/staging"` succeeds AND `git diff HEAD "$OR/staging"` is empty), `git reset --hard "$OR/staging"` and push just the tag; otherwise `git merge "$OR/staging"`, re-run the step 7 checks, and report to the user before pushing. Never force-push.
 
